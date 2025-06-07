@@ -3,6 +3,7 @@ from ignis import DATA_DIR, CACHE_DIR, is_sphinx_build
 from gi.repository import GLib  # type: ignore
 from ignis.options_manager import OptionsManager, OptionsGroup, TrackedList
 from loguru import logger
+from ignis.services._shared import recorder_arg_types
 
 
 OPTIONS_FILE = f"{DATA_DIR}/options.json"
@@ -119,14 +120,44 @@ class Options(OptionsManager):
         Options for the :class:`~ignis.services.recorder.RecorderService`.
         """
 
-        #: The bitrate of the recording.
-        bitrate: int = 8000
-
         #: The default location for saving recordings. Defaults to XDG Video directory.
         default_file_location: str | None = get_recorder_default_file_location()
 
         #: The default filename for recordings. Supports time formating.
         default_filename: str = "%Y-%m-%d_%H-%M-%S.mp4"
+
+        default_source: recorder_arg_types.Source = "portal"
+
+        default_path: recorder_arg_types.Path = os.path.join(
+            default_file_location,  # type: ignore
+            default_filename,
+        )
+
+        default_resolution_limit: recorder_arg_types.ResolutionLimit = None
+
+        default_region: recorder_arg_types.Region = None
+
+        default_framerate: recorder_arg_types.Framerate = None
+
+        default_audio_devices: recorder_arg_types.AudioDevices = None
+
+        default_quality: recorder_arg_types.Quality = None
+
+        default_video_codec: recorder_arg_types.VideoCodec = None
+
+        default_audio_codec: recorder_arg_types.AudioCodec = None
+
+        default_audio_bitrate: recorder_arg_types.AudioBitrate = None
+
+        default_framerate_mode: recorder_arg_types.FramerateMode = None
+
+        default_bitrate_mode: recorder_arg_types.BitrateMode = None
+
+        default_color_range: recorder_arg_types.ColorRange = None
+
+        default_cursor: recorder_arg_types.Cursor = None
+
+        default_encoder: recorder_arg_types.Encoder = None
 
     class Applications(OptionsGroup):
         """
