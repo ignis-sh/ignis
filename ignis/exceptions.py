@@ -458,3 +458,44 @@ class RecorderPortalCaptureCanceled(Exception):
 
     def __init__(self, *args):
         super().__init__("The desktop portal capture was canceled by the user", *args)
+
+
+class CssNotFoundError(Exception):
+    """
+    Raised when the style path is not found / not applied to the application.
+    """
+
+    def __init__(self, name: str, *args: object) -> None:
+        self._name = name
+        super().__init__(
+            f'Css provider with the given name is not found: "{name}"', *args
+        )
+
+    @property
+    def name(self) -> str:
+        """
+        Path to the .css/.scss/.sass file.
+        """
+        return self._name
+
+
+class CssAlreadyAppliedError(Exception):
+    """
+    Raised when the style path is already applied to the application.
+
+    Args:
+        style_path: Path to the .css/.scss/.sass file.
+    """
+
+    def __init__(self, name: str, *args: object) -> None:
+        self._name = name
+        super().__init__(
+            f'Css provider with the given name is already applied: "{name}"', *args
+        )
+
+    @property
+    def name(self) -> str:
+        """
+        Path to the .css/.scss/.sass file.
+        """
+        return self._name
