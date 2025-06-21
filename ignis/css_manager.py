@@ -27,27 +27,26 @@ def _raise_css_parsing_error(_, section: Gtk.CssSection, gerror: GLib.Error) -> 
 class _CssInfoBase:
     name: str
     priority: StylePriority
+    compiler_function: Callable[[str], str] | None = None
 
     def get_string(self) -> str:
         raise NotImplementedError()
 
 
 @dataclass
-class _SassInfoBase:
-    compiler_function: Callable[[str], str]
-
-
-@dataclass
 class CssInfoString(_CssInfoBase):
-    string: str
+    string: str = ""
 
     def get_string(self) -> str:
+        if self.compiler_function:
+            return self.compiler_function(self.string)
+
         return self.string
 
 
 @dataclass
 class CssInfoPath(_CssInfoBase):
-    path: str
+    path: str = ""
     autoreload: bool = True
     watch_dir: bool = True
     watch_recursively: bool = True
@@ -55,29 +54,17 @@ class CssInfoPath(_CssInfoBase):
     custom_watch_paths: list[str] | None = None
 
     def get_string(self) -> str:
+        if self.compiler_function:
+            return self.compiler_function(self.path)
+
         with open(self.path) as f:
             return f.read()
-
-
-@dataclass
-class SassInfoString(CssInfoString, _SassInfoBase):
-    def get_string(self) -> str:
-        return self.compiler_function(self.string)
-
-
-@dataclass
-class SassInfoPath(CssInfoPath, _SassInfoBase):
-    def get_string(self) -> str:
-        return self.compiler_function(self.path)
-
-
-AllInfos = CssInfoString | CssInfoPath | SassInfoString | SassInfoPath
 
 
 class CssManager(IgnisGObjectSingleton):
     def __init__(self):
         self._css_providers: dict[str, Gtk.CssProvider] = {}
-        self._css_infos: dict[str, AllInfos] = {}
+        self._css_infos: dict[str, CssInfoString | CssInfoPath] = {}
 
         self._watchers: dict[str, utils.FileMonitor] = {}
 
@@ -139,7 +126,7 @@ class CssManager(IgnisGObjectSingleton):
 
         file_monitor.cancel()
 
-    def apply_css(self, info: AllInfos) -> None:
+    def apply_css(self, info: CssInfoString | CssInfoPath) -> None:
         self._css_infos[info.name] = info
         self.__create_css_provider(info.name, info.priority, info.get_string())
 
