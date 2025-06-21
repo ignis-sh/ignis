@@ -246,6 +246,8 @@ class HyprlandService(BaseService):
                 self.__change_special_ws_on_monitor(ws_id, value_list[1], value_list[2])
             case "moveworkspacev2":
                 self.__move_workspace(int(value_list[0]), value_list[2])
+            case "togglegroup":
+                self.__toggle_window_group(int(value_list[0]), value_list[1].split(","))
 
     def __get_self_dict(self, obj_desc: _HyprlandObjDesc) -> dict:
         return getattr(self, f"_{obj_desc.prop_name}")
@@ -389,6 +391,13 @@ class HyprlandService(BaseService):
             key=address,
             data={"title": {"pinned": bool(pin_state)}},
         )
+
+    def __toggle_window_group(self, state: int, addresses: list[str]) -> None:
+        # To be honest, I can't understand at all how these window groups work
+        # For some reason IPC always sends only one window address
+        # even if there are several windows in a group (I add them there with the mouse, maybe that's the problem...)
+        for addr in addresses:
+            self.__sync_obj_data("window", addr, self.__get_obj_data("window", addr))
 
     def __add_monitor(self, monitor_name: str) -> None:
         self.__add_obj(type_="monitor", key=monitor_name)
