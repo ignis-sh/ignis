@@ -63,34 +63,11 @@ class CssInfoPath(_CssInfoBase):
 
 class CssManager(IgnisGObjectSingleton):
     def __init__(self):
-        self._css_providers: dict[str, Gtk.CssProvider] = {}
-        self._css_infos: dict[str, CssInfoString | CssInfoPath] = {}
+        self._css_infos: dict[
+            str, tuple[CssInfoString | CssInfoPath, Gtk.CssProvider]
+        ] = {}
 
         self._watchers: dict[str, utils.FileMonitor] = {}
-
-    def __create_css_provider(
-        self,
-        name: str,
-        priority: StylePriority,
-        string: str,
-    ) -> None:
-        display = utils.get_gdk_display()
-
-        if name in self._css_providers:
-            raise CssAlreadyAppliedError(name)
-
-        provider = Gtk.CssProvider()
-        provider.connect("parsing-error", _raise_css_parsing_error)
-
-        provider.load_from_string(string)
-
-        Gtk.StyleContext.add_provider_for_display(
-            display,
-            provider,
-            GTK_STYLE_PRIORITIES[priority],
-        )
-
-        self._css_providers[name] = provider
 
     def __watch_css_files(self, path: str, event_type: str, name: str) -> None:
         if event_type != "changes_done_hint":
@@ -127,8 +104,23 @@ class CssManager(IgnisGObjectSingleton):
         file_monitor.cancel()
 
     def apply_css(self, info: CssInfoString | CssInfoPath) -> None:
-        self._css_infos[info.name] = info
-        self.__create_css_provider(info.name, info.priority, info.get_string())
+        display = utils.get_gdk_display()
+
+        if info.name in self._css_infos:
+            raise CssAlreadyAppliedError(info.name)
+
+        provider = Gtk.CssProvider()
+        provider.connect("parsing-error", _raise_css_parsing_error)
+
+        provider.load_from_string(info.get_string())
+
+        Gtk.StyleContext.add_provider_for_display(
+            display,
+            provider,
+            GTK_STYLE_PRIORITIES[info.priority],
+        )
+
+        self._css_infos[info.name] = info, provider
 
         if isinstance(info, CssInfoPath) and info.autoreload:
             self.__start_watching(info)
@@ -136,18 +128,17 @@ class CssManager(IgnisGObjectSingleton):
     def remove_css(self, name: str) -> None:
         display = utils.get_gdk_display()
 
-        css_provider = self._css_providers.pop(name, None)
-        css_info = self._css_infos.pop(name, None)
+        info, provider = self._css_infos.pop(name, (None, None))
 
-        if css_provider is None or css_info is None:
+        if info is None or provider is None:
             raise CssNotFoundError(name)
 
-        if isinstance(css_info, CssInfoPath) and css_info.autoreload:
-            self.__stop_watching(css_info.name)
+        if isinstance(info, CssInfoPath) and info.autoreload:
+            self.__stop_watching(info.name)
 
         Gtk.StyleContext.remove_provider_for_display(
             display,
-            css_provider,
+            provider,
         )
 
     def reset_css(self) -> None:
@@ -157,7 +148,7 @@ class CssManager(IgnisGObjectSingleton):
         Raises:
             DisplayNotFoundError
         """
-        for name in self._css_providers.copy().keys():
+        for name in self._css_infos.copy().keys():
             self.remove_css(name)
 
     def reload_css(self, name: str) -> None:
@@ -170,14 +161,13 @@ class CssManager(IgnisGObjectSingleton):
         Raises:
             DisplayNotFoundError
         """
-        css_info = self._css_infos.get(name, None)
+        info, _ = self._css_infos.get(name, (None, None))
 
-        if not css_info:
+        if not info:
             raise CssNotFoundError(name)
 
         self.remove_css(name)
-
-        self.apply_css(css_info)
+        self.apply_css(info)
 
     def reload_all_css(self) -> None:
         """
@@ -186,5 +176,5 @@ class CssManager(IgnisGObjectSingleton):
         Raises:
             DisplayNotFoundError
         """
-        for name in self._css_providers.copy().keys():
+        for name in self._css_infos.copy().keys():
             self.reload_css(name)
