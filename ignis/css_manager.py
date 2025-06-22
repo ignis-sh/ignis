@@ -29,7 +29,7 @@ class _CssInfoBase:
     priority: StylePriority = "application"
     compiler_function: Callable[[str], str] | None = None
 
-    def get_string(self) -> str:
+    def _get_string(self) -> str:
         raise NotImplementedError()
 
 
@@ -37,7 +37,7 @@ class _CssInfoBase:
 class CssInfoString(_CssInfoBase):
     string: str
 
-    def get_string(self) -> str:
+    def _get_string(self) -> str:
         if self.compiler_function:
             return self.compiler_function(self.string)
 
@@ -53,7 +53,7 @@ class CssInfoPath(_CssInfoBase):
 
     custom_watch_paths: list[str] | None = None
 
-    def get_string(self) -> str:
+    def _get_string(self) -> str:
         if self.compiler_function:
             return self.compiler_function(self.path)
 
@@ -112,7 +112,7 @@ class CssManager(IgnisGObjectSingleton):
         provider = Gtk.CssProvider()
         provider.connect("parsing-error", _raise_css_parsing_error)
 
-        provider.load_from_string(info.get_string())
+        provider.load_from_string(info._get_string())
 
         Gtk.StyleContext.add_provider_for_display(
             display,
