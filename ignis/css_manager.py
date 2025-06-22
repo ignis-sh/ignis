@@ -24,18 +24,12 @@ def _raise_css_parsing_error(_, section: Gtk.CssSection, gerror: GLib.Error) -> 
 
 
 @dataclass
-class _CssInfoBase:
+class CssInfoString:
     name: str
-    priority: StylePriority
+    string: str
+
+    priority: StylePriority = "application"
     compiler_function: Callable[[str], str] | None = None
-
-    def get_string(self) -> str:
-        raise NotImplementedError()
-
-
-@dataclass
-class CssInfoString(_CssInfoBase):
-    string: str = ""
 
     def get_string(self) -> str:
         if self.compiler_function:
@@ -45,8 +39,13 @@ class CssInfoString(_CssInfoBase):
 
 
 @dataclass
-class CssInfoPath(_CssInfoBase):
-    path: str = ""
+class CssInfoPath:
+    name: str
+    path: str
+
+    priority: StylePriority = "application"
+    compiler_function: Callable[[str], str] | None = None
+
     autoreload: bool = True
     watch_dir: bool = True
     watch_recursively: bool = True
