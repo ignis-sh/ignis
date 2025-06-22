@@ -35,7 +35,7 @@ class _CssInfoBase:
 
 @dataclass(kw_only=True)
 class CssInfoString(_CssInfoBase):
-    string: str = ""
+    string: str
 
     def get_string(self) -> str:
         if self.compiler_function:
@@ -46,7 +46,7 @@ class CssInfoString(_CssInfoBase):
 
 @dataclass(kw_only=True)
 class CssInfoPath(_CssInfoBase):
-    path: str = ""
+    path: str
     autoreload: bool = True
     watch_dir: bool = True
     watch_recursively: bool = True
