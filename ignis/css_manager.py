@@ -23,7 +23,7 @@ def _raise_css_parsing_error(_, section: Gtk.CssSection, gerror: GLib.Error) -> 
     raise CssParsingError(section, gerror)
 
 
-@dataclass
+@dataclass(kw_only=True)
 class _CssInfoBase:
     name: str
     priority: StylePriority
@@ -33,7 +33,7 @@ class _CssInfoBase:
         raise NotImplementedError()
 
 
-@dataclass
+@dataclass(kw_only=True)
 class CssInfoString(_CssInfoBase):
     string: str = ""
 
@@ -44,7 +44,7 @@ class CssInfoString(_CssInfoBase):
         return self.string
 
 
-@dataclass
+@dataclass(kw_only=True)
 class CssInfoPath(_CssInfoBase):
     path: str = ""
     autoreload: bool = True
