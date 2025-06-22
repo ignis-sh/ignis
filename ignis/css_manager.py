@@ -26,7 +26,7 @@ def _raise_css_parsing_error(_, section: Gtk.CssSection, gerror: GLib.Error) -> 
 @dataclass(kw_only=True)
 class _CssInfoBase:
     name: str
-    priority: StylePriority
+    priority: StylePriority = "application"
     compiler_function: Callable[[str], str] | None = None
 
     def get_string(self) -> str:
