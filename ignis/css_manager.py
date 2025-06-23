@@ -24,9 +24,56 @@ def _raise_css_parsing_error(_, section: Gtk.CssSection, gerror: GLib.Error) -> 
 
 
 @dataclass(kw_only=True)
-class _CssInfoBase:
+class CssInfoBase:
+    """
+    The base class for CSS infos.
+
+    You shouldn't use it, use :class:`CssInfoString` and :class:`CssInfoPath` instead.
+    """
+
+    #: The name of the info by which you will be able to use :class:`CssManager` functions.
     name: str
+
+    #: The style priority.
+    #: Most likely you should use either ``"application"`` or ``"user"``.
+    #:
+    #: * ``"user"`` - you want to override styles defined in ``~/.config/gtk-4.0/gtk.css``
+    #: * ``"application"`` (the default one) - you do **not** want to override it.
     priority: StylePriority = "application"
+
+    #: A custom compiler function. It should receive only one argument:
+    #: - :class:`CssInfoString` - the string
+    #: - :class:`CssInfoPath` - the path
+    #:
+    #: It must return a string containing a valid CSS code.
+    #:
+    #: .. hint::
+    #:    You can use it to compile Sass/SCSS:
+    #:
+    #:    .. code-block::
+    #:
+    #:        from ignis.css_manager import CssManager, CssInfoString, CssInfoPath
+    #:        from ignis import utils
+    #:
+    #:        css_manager = CssManager.get_default()
+    #:
+    #:        # File
+    #:        css_manager.apply_css(
+    #:            CssInfoPath(
+    #:                name="main",
+    #:                path="PATH/TO/style.scss",
+    #:                compiler_function=lambda path: utils.sass_compile(path=path),
+    #:            )
+    #:        )
+    #:
+    #:        # String
+    #:        css_manager.apply_css(
+    #:            CssInfoString(
+    #:                name="some-name",
+    #:                string="some sass/scss string",
+    #:                compiler_function=lambda string: utils.sass_compile(string=string),
+    #:            )
+    #:        )
     compiler_function: Callable[[str], str] | None = None
 
     def _get_string(self) -> str:
@@ -34,7 +81,12 @@ class _CssInfoBase:
 
 
 @dataclass(kw_only=True)
-class CssInfoString(_CssInfoBase):
+class CssInfoString(CssInfoBase):
+    """
+    CSS info for a string.
+    """
+
+    #: A string containing CSS code.
     string: str
 
     def _get_string(self) -> str:
@@ -45,12 +97,24 @@ class CssInfoString(_CssInfoBase):
 
 
 @dataclass(kw_only=True)
-class CssInfoPath(_CssInfoBase):
+class CssInfoPath(CssInfoBase):
+    """
+    CSS info for a path.
+    """
+
+    #: The path to the CSS file.
     path: str
+
+    #: Whether to automatically reload this info when the file changes.
     autoreload: bool = True
+
+    #: Whether to additionally watch for the changes of the directory where the file is placed.
     watch_dir: bool = True
+
+    #: Whether to watch the directory recursively.
     watch_recursively: bool = True
 
+    #: Custom paths to watch.
     custom_watch_paths: list[str] | None = None
 
     def _get_string(self) -> str:
@@ -62,6 +126,44 @@ class CssInfoPath(_CssInfoBase):
 
 
 class CssManager(IgnisGObjectSingleton):
+    """
+    The CSS manager. Provides convenient utilities to apply, remove, and reload CSS.
+
+    It also supports Sass/SCSS (see :attr:`CssInfoBase.compiler_function`).
+
+    Example usage:
+
+    .. code-block::
+
+        import os
+        from ignis.css_manager import CssManager, CssInfoString, CssInfoPath
+        from ignis import utils
+
+        css_manager = CssManager.get_default()
+
+        # Apply from a path
+        css_manager.apply_css(
+            CssInfoPath(
+                name="main",
+                path="PATH/TO/style.css", # e.g., os.path.join(utils.get_current_dir(), "style.css"),
+            )
+        )
+
+        # Apply from a string
+        css_manager.apply_css(
+            CssInfoString(
+                name="some-name",
+                string="* { background-color: red; }",
+            )
+        )
+
+        # Remove an applied info
+        css_manager.remove_css("some-name")
+
+        # Reload an applied info
+        css_manager.reload_css("main")
+    """
+
     def __init__(self):
         self._css_infos: dict[
             str, tuple[CssInfoString | CssInfoPath, Gtk.CssProvider]
@@ -104,6 +206,15 @@ class CssManager(IgnisGObjectSingleton):
         file_monitor.cancel()
 
     def apply_css(self, info: CssInfoString | CssInfoPath) -> None:
+        """
+        Apply a CSS info.
+
+        Args:
+            info: The CSS info to apply.
+
+        Raises:
+            CssAlreadyAppliedError
+        """
         display = utils.get_gdk_display()
 
         if info.name in self._css_infos:
@@ -126,6 +237,15 @@ class CssManager(IgnisGObjectSingleton):
             self.__start_watching(info)
 
     def remove_css(self, name: str) -> None:
+        """
+        Remove CSS info by its name.
+
+        Args:
+            name: The name of the CSS info to remove.
+
+        Raises:
+            CssNotFoundError
+        """
         display = utils.get_gdk_display()
 
         info, provider = self._css_infos.pop(name, (None, None))
@@ -143,23 +263,17 @@ class CssManager(IgnisGObjectSingleton):
 
     def reset_css(self) -> None:
         """
-        Reset all applied CSS/SCSS/SASS styles.
-
-        Raises:
-            DisplayNotFoundError
+        Remove **all** applied CSS infos.
         """
         for name in self._css_infos.copy().keys():
             self.remove_css(name)
 
     def reload_css(self, name: str) -> None:
         """
-        Reload CSS by its name.
+        Reload a CSS info by its name.
 
         Args:
-            name: The name of the applied css.
-
-        Raises:
-            DisplayNotFoundError
+            name: The name of the CSS info to reload.
         """
         info, _ = self._css_infos.get(name, (None, None))
 
@@ -171,10 +285,7 @@ class CssManager(IgnisGObjectSingleton):
 
     def reload_all_css(self) -> None:
         """
-        Reload all applied CSS/SCSS/Sass styles.
-
-        Raises:
-            DisplayNotFoundError
+        Reload **all** applied CSS infos.
         """
         for name in self._css_infos.copy().keys():
             self.reload_css(name)
