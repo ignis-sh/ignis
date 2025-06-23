@@ -462,40 +462,35 @@ class RecorderPortalCaptureCanceled(Exception):
 
 class CssInfoNotFoundError(Exception):
     """
-    Raised when the style path is not found / not applied to the application.
+    Raised when a CSS info with the given name is not found.
     """
 
     def __init__(self, name: str, *args: object) -> None:
         self._name = name
-        super().__init__(
-            f'Css provider with the given name is not found: "{name}"', *args
-        )
+        super().__init__(f'CSS info with the given name is not found: "{name}"', *args)
 
     @property
     def name(self) -> str:
         """
-        Path to the .css/.scss/.sass file.
+        The name of the CSS info.
         """
         return self._name
 
 
 class CssInfoAlreadyAppliedError(Exception):
     """
-    Raised when the style path is already applied to the application.
-
-    Args:
-        style_path: Path to the .css/.scss/.sass file.
+    Raised when a CSS info with the given name is already applied.
     """
 
     def __init__(self, name: str, *args: object) -> None:
         self._name = name
         super().__init__(
-            f'Css provider with the given name is already applied: "{name}"', *args
+            f'CSS info with the given name is already applied: "{name}"', *args
         )
 
     @property
     def name(self) -> str:
         """
-        Path to the .css/.scss/.sass file.
+        The name of the CSS info.
         """
         return self._name

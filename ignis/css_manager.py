@@ -4,7 +4,11 @@ from dataclasses import dataclass
 from ignis.gobject import IgnisGObjectSingleton
 from collections.abc import Callable
 from typing import Literal
-from ignis.exceptions import CssParsingError, CssInfoNotFoundError, CssInfoAlreadyAppliedError
+from ignis.exceptions import (
+    CssParsingError,
+    CssInfoNotFoundError,
+    CssInfoAlreadyAppliedError,
+)
 from ignis import utils
 
 
