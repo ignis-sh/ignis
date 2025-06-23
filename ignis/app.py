@@ -4,7 +4,6 @@ import sys
 import datetime
 import ignis
 import shutil
-from dataclasses import dataclass
 from typing import Literal
 from ignis.dbus import DBusService
 from ignis import utils
@@ -15,51 +14,30 @@ from ignis.exceptions import (
     WindowNotFoundError,
     StylePathNotFoundError,
     StylePathAppliedError,
-    CssParsingError,
+    CssInfoNotFoundError,
+    CssInfoAlreadyAppliedError,
 )
 from ignis.log_utils import configure_logger
 from ignis.window_manager import WindowManager
+from ignis.css_manager import CssManager, StylePriority, CssInfoPath
 from ignis._deprecation import (
     deprecated,
     deprecation_warning,
     _enable_deprecation_warnings,
 )
 
-StylePriority = Literal["application", "fallback", "settings", "theme", "user"]
-
-GTK_STYLE_PRIORITIES: dict[StylePriority, int] = {
-    "application": Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
-    "fallback": Gtk.STYLE_PROVIDER_PRIORITY_FALLBACK,
-    "settings": Gtk.STYLE_PROVIDER_PRIORITY_SETTINGS,
-    "theme": Gtk.STYLE_PROVIDER_PRIORITY_THEME,
-    "user": Gtk.STYLE_PROVIDER_PRIORITY_USER,
-}
-
 window_manager = WindowManager.get_default()
+css_manager = CssManager.get_default()
 
 
 def _get_wm_depr_msg(name: str):
     return f"IgnisApp.{name}() is deprecated, use WindowManager.{name}() instead."
 
 
-def raise_css_parsing_error(
-    css_provider: Gtk.CssProvider, section: Gtk.CssSection, gerror: GLib.Error
-) -> None:
-    raise CssParsingError(section, gerror)
-
-
 def _is_elf_file(path: str) -> bool:
     with open(path, "rb") as f:
         magic = f.read(4)
         return magic == b"\x7fELF"
-
-
-@dataclass
-class _CssProviderInfo:
-    provider: Gtk.CssProvider
-    path: str
-    priority: StylePriority
-    compiler: Literal["sass", "grass"] | None = None
 
 
 class IgnisApp(Gtk.Application, IgnisGObject):
@@ -107,12 +85,12 @@ class IgnisApp(Gtk.Application, IgnisGObject):
         self.__dbus.register_dbus_method(name="ListWindows", method=self.__ListWindows)
 
         self._config_path: str | None = None
-        self._css_providers: dict[str, _CssProviderInfo] = {}
         self._autoreload_config: bool = True
-        self._autoreload_css: bool = True
         self._reload_on_monitors_change: bool = True
         self._is_ready = False
-        self._widgets_style_priority: StylePriority = "application"
+
+        # FIXME: deprecated
+        self._autoreload_css: bool = True
 
     def __watch_config(
         self, file_monitor: utils.FileMonitor, path: str, event_type: str
@@ -124,8 +102,6 @@ class IgnisApp(Gtk.Application, IgnisGObject):
             extension = os.path.splitext(path)[1]
             if extension == ".py" and self.autoreload_config:
                 self.reload()
-            elif extension in (".css", ".scss", ".sass") and self.autoreload_css:
-                self.reload_css()
 
     def __watch_monitors(self) -> None:
         def callback(*_) -> None:
@@ -186,19 +162,6 @@ class IgnisApp(Gtk.Application, IgnisGObject):
         self._autoreload_config = value
 
     @IgnisProperty
-    def autoreload_css(self) -> bool:
-        """
-        Whether to automatically reload the CSS style when it changes (only .css/.scss/.sass files).
-
-        Default: ``True``.
-        """
-        return self._autoreload_css
-
-    @autoreload_css.setter
-    def autoreload_css(self, value: bool) -> None:
-        self._autoreload_css = value
-
-    @IgnisProperty
     def reload_on_monitors_change(self) -> bool:
         """
         Whether to reload Ignis on monitors change (connect/disconnect).
@@ -211,153 +174,11 @@ class IgnisApp(Gtk.Application, IgnisGObject):
     def reload_on_monitors_change(self, value: bool) -> None:
         self._reload_on_monitors_change = value
 
-    @IgnisProperty
-    def widgets_style_priority(self) -> StylePriority:
-        """
-        The priority used for each widget style
-        unless a widget specifies a custom style priority using :attr:`~ignis.base_widget.BaseWidget.style_priority`.
-        More info about style priorities: :obj:`Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION`.
-
-        Default: ``"application"``.
-
-        .. warning::
-            Changing this property won't affect already initialized widgets!
-            If you want to set a custom global style priority for all widgets, do this at the start of the configuration.
-
-            .. code-block:: python
-
-                from ignis.app import IgnisApp
-
-                app = IgnisApp.get_default()
-
-                app.widgets_style_priority = "user"
-
-                # ... rest of config goes here
-        """
-        return self._widgets_style_priority
-
-    @widgets_style_priority.setter
-    def widgets_style_priority(self, value: StylePriority) -> None:
-        self._widgets_style_priority = value
-
     def _setup(self, config_path: str) -> None:
         """
         :meta private:
         """
         self._config_path = config_path
-
-    def apply_css(
-        self,
-        style_path: str,
-        style_priority: StylePriority = "application",
-        compiler: Literal["sass", "grass"] | None = None,
-    ) -> None:
-        """
-        Apply a CSS/SCSS/SASS style from a path.
-        If ``style_path`` has a ``.sass`` or ``.scss`` extension, it will be automatically compiled.
-        Requires either ``dart-sass`` or ``grass-sass`` for SASS/SCSS compilation.
-
-        Args:
-            style_path: Path to the .css/.scss/.sass file.
-            style_priority: A priority of the CSS style. More info about style priorities: :obj:`Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION`.
-            compiler: The desired Sass compiler.
-
-        .. warning::
-            ``style_priority`` won't affect a style applied to widgets using the ``style`` property,
-            for these purposes use :attr:`widgets_style_priority` or :attr:`ignis.base_widget.BaseWidget.style_priority`.
-
-        Raises:
-            StylePathAppliedError: if the given style path is already to the application.
-            DisplayNotFoundError
-            CssParsingError: If an error occured while parsing the CSS/SCSS file. NOTE: If you compile a SASS/SCSS file, it will print the wrong section.
-        """
-
-        if style_path in self._css_providers:
-            raise StylePathAppliedError(style_path)
-
-        if not os.path.exists(style_path):
-            raise FileNotFoundError(
-                f"Provided style path doesn't exists: '{style_path}'"
-            )
-
-        if style_path.endswith(".scss") or style_path.endswith(".sass"):
-            css_style = utils.sass_compile(path=style_path, compiler=compiler)
-        elif style_path.endswith(".css"):
-            with open(style_path) as file:
-                css_style = file.read()
-        else:
-            raise ValueError(
-                'The "style_path" argument must be a path to a CSS, SASS, or SCSS file'
-            )
-
-        provider = Gtk.CssProvider()
-        provider.connect("parsing-error", raise_css_parsing_error)
-
-        provider.load_from_string(css_style)
-
-        Gtk.StyleContext.add_provider_for_display(
-            utils.get_gdk_display(),
-            provider,
-            GTK_STYLE_PRIORITIES[style_priority],
-        )
-
-        self._css_providers[style_path] = _CssProviderInfo(
-            provider=provider,
-            path=style_path,
-            priority=style_priority,
-            compiler=compiler,
-        )
-
-        logger.info(f"Applied css: {style_path}")
-
-    def remove_css(self, style_path: str) -> None:
-        """
-        Remove the applied CSS/SCSS/SASS style by its path.
-
-        Args:
-            style_path: Path to the applied .css/.scss/.sass file.
-
-        Raises:
-            StylePathNotFoundError: if the given style path is not applied to the application.
-            DisplayNotFoundError
-        """
-
-        provider_info = self._css_providers.pop(style_path, None)
-
-        if provider_info is None:
-            raise StylePathNotFoundError(style_path)
-
-        Gtk.StyleContext.remove_provider_for_display(
-            utils.get_gdk_display(),
-            provider_info.provider,
-        )
-
-    def reset_css(self) -> None:
-        """
-        Reset all applied CSS/SCSS/SASS styles.
-
-        Raises:
-            DisplayNotFoundError
-        """
-        for style_path in self._css_providers.copy().keys():
-            self.remove_css(style_path)
-
-    def reload_css(self) -> None:
-        """
-        Reload all applied CSS/SCSS/SASS styles.
-
-        Raises:
-            DisplayNotFoundError
-        """
-        css_providers = self._css_providers.copy().values()
-        self.reset_css()
-
-        for provider_info in css_providers:
-            self.apply_css(
-                style_path=provider_info.path,
-                style_priority=provider_info.priority,
-                compiler=provider_info.compiler,
-            )
 
     def add_icons(self, path: str) -> None:
         """
@@ -513,6 +334,170 @@ class IgnisApp(Gtk.Application, IgnisGObject):
         self.quit()
 
     # =========================== DEPRECATED ZONE START ===========================
+
+    @IgnisProperty
+    def autoreload_css(self) -> bool:
+        """
+        Whether to automatically reload the CSS style when it changes (only .css/.scss/.sass files).
+
+        Default: ``True``.
+
+        .. deprecated:: 0.6
+            Use :attr:`~ignis.css_manager.CssInfoPath.autoreload` instead.
+
+        """
+        deprecation_warning(
+            "IgnisApp.autoreload_css is deprecated, use CssInfoPath.autoreload instead."
+        )
+        return self._autoreload_css
+
+    @autoreload_css.setter
+    def autoreload_css(self, value: bool) -> None:
+        self._autoreload_css = value
+
+    @IgnisProperty
+    def widgets_style_priority(self) -> StylePriority:
+        """
+        The priority used for each widget style
+        unless a widget specifies a custom style priority using :attr:`~ignis.base_widget.BaseWidget.style_priority`.
+        More info about style priorities: :obj:`Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION`.
+
+        Default: ``"application"``.
+
+        .. warning::
+            Changing this property won't affect already initialized widgets!
+            If you want to set a custom global style priority for all widgets, do this at the start of the configuration.
+
+            .. code-block:: python
+
+                from ignis.app import IgnisApp
+
+                app = IgnisApp.get_default()
+
+                app.widgets_style_priority = "user"
+
+                # ... rest of config goes here
+
+        .. deprecated:: 0.6
+            Use :attr:`~ignis.css_manager.CssManager.widgets_style_priority` instead.
+        """
+        deprecation_warning(
+            "IgnisApp.widgets_style_priority is deprecated, use CssManager.widgets_style_priority instead."
+        )
+        return css_manager.widgets_style_priority
+
+    @widgets_style_priority.setter
+    def widgets_style_priority(self, value: StylePriority) -> None:
+        css_manager.widgets_style_priority = value
+
+    @deprecated(
+        "IgnisApp.apply_css() is deprecated, use CssManager.apply_css() instead."
+    )
+    def apply_css(
+        self,
+        style_path: str,
+        style_priority: StylePriority = "application",
+        compiler: Literal["sass", "grass"] | None = None,
+    ) -> None:
+        """
+        Apply a CSS/SCSS/SASS style from a path.
+        If ``style_path`` has a ``.sass`` or ``.scss`` extension, it will be automatically compiled.
+        Requires either ``dart-sass`` or ``grass-sass`` for SASS/SCSS compilation.
+
+        Args:
+            style_path: Path to the .css/.scss/.sass file.
+            style_priority: A priority of the CSS style. More info about style priorities: :obj:`Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION`.
+            compiler: The desired Sass compiler.
+
+        .. warning::
+            ``style_priority`` won't affect a style applied to widgets using the ``style`` property,
+            for these purposes use :attr:`widgets_style_priority` or :attr:`ignis.base_widget.BaseWidget.style_priority`.
+
+        Raises:
+            StylePathAppliedError: if the given style path is already to the application.
+            DisplayNotFoundError
+            CssParsingError: If an error occured while parsing the CSS/SCSS file. NOTE: If you compile a SASS/SCSS file, it will print the wrong section.
+
+        .. deprecated:: 0.6
+            Use :func:`~ignis.css_manager.CssManager.apply_css` instead.
+        """
+
+        if style_path.endswith((".scss", ".sass")):
+
+            def compiler_function(path: str) -> str:
+                return utils.sass_compile(path=path, compiler=compiler)
+        else:
+            compiler_function = None  # type: ignore
+
+        try:
+            css_manager.apply_css(
+                CssInfoPath(
+                    name=style_path,
+                    priority=style_priority,
+                    compiler_function=compiler_function,
+                    path=style_path,
+                    autoreload=self.autoreload_css,
+                )
+            )
+        except CssInfoAlreadyAppliedError:
+            raise StylePathAppliedError(style_path) from None
+
+    @deprecated(
+        "IgnisApp.remove_css() is deprecated, use CssManager.remove_css() instead."
+    )
+    def remove_css(self, style_path: str) -> None:
+        """
+        Remove the applied CSS/SCSS/SASS style by its path.
+
+        Args:
+            style_path: Path to the applied .css/.scss/.sass file.
+
+        Raises:
+            StylePathNotFoundError: if the given style path is not applied to the application.
+            DisplayNotFoundError
+
+        .. deprecated:: 0.6
+            Use :func:`~ignis.css_manager.CssManager.remove` instead.
+        """
+
+        try:
+            css_manager.remove_css(style_path)
+        except CssInfoNotFoundError:
+            raise StylePathNotFoundError(style_path) from None
+
+    @deprecated(
+        "IgnisApp.reset_css() is deprecated, use CssManager.reset_css() instead."
+    )
+    def reset_css(self) -> None:
+        """
+        Reset all applied CSS/SCSS/SASS styles.
+
+        Raises:
+            DisplayNotFoundError
+
+        .. deprecated:: 0.6
+            Use :func:`~ignis.css_manager.CssManager.reset_css` instead.
+        """
+        try:
+            css_manager.reset_css()
+        except CssInfoNotFoundError as e:
+            raise StylePathNotFoundError(e.name) from None
+
+    @deprecated(
+        "IgnisApp.reload_css() is deprecated, use CssManager.reload_css() or CssManager.reload_all_css() instead."
+    )
+    def reload_css(self) -> None:
+        """
+        Reload all applied CSS/SCSS/SASS styles.
+
+        Raises:
+            DisplayNotFoundError
+
+        .. deprecated:: 0.6
+            Use :func:`~ignis.css_manager.CssManager.reload_css` or
+            :func:`~ignis.css_manager.CssManager.reload_all_css` instead.
+        """
+        css_manager.reload_all_css()
 
     @deprecated(_get_wm_depr_msg("get_window"))
     def get_window(self, window_name: str) -> Gtk.Window:

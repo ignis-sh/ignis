@@ -263,6 +263,9 @@ class DisplayNotFoundError(Exception):
         )
 
 
+@deprecated(
+    "StylePathNotFoundError is deprecated, use the new CssManager API and CssInfoNotFoundError."
+)
 class StylePathNotFoundError(Exception):
     """
     Raised when the style path is not found / not applied to the application.
@@ -283,6 +286,9 @@ class StylePathNotFoundError(Exception):
         return self._style_path
 
 
+@deprecated(
+    "StylePathAppliedError is deprecated, use the new CssManager API and CssInfoAlreadyAppliedError."
+)
 class StylePathAppliedError(Exception):
     """
     Raised when the style path is already applied to the application.
