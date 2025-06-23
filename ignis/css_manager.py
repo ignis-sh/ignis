@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from ignis.gobject import IgnisGObjectSingleton
 from collections.abc import Callable
 from typing import Literal
-from ignis.exceptions import CssParsingError, CssNotFoundError, CssAlreadyAppliedError
+from ignis.exceptions import CssParsingError, CssInfoNotFoundError, CssInfoAlreadyAppliedError
 from ignis import utils
 
 
@@ -201,7 +201,7 @@ class CssManager(IgnisGObjectSingleton):
         file_monitor = self._watchers.pop(name, None)
 
         if not file_monitor:
-            raise CssNotFoundError(name)
+            raise CssInfoNotFoundError(name)
 
         file_monitor.cancel()
 
@@ -213,12 +213,12 @@ class CssManager(IgnisGObjectSingleton):
             info: The CSS info to apply.
 
         Raises:
-            CssAlreadyAppliedError
+            CssInfoAlreadyAppliedError
         """
         display = utils.get_gdk_display()
 
         if info.name in self._css_infos:
-            raise CssAlreadyAppliedError(info.name)
+            raise CssInfoAlreadyAppliedError(info.name)
 
         provider = Gtk.CssProvider()
         provider.connect("parsing-error", _raise_css_parsing_error)
@@ -244,14 +244,14 @@ class CssManager(IgnisGObjectSingleton):
             name: The name of the CSS info to remove.
 
         Raises:
-            CssNotFoundError
+            CssInfoNotFoundError
         """
         display = utils.get_gdk_display()
 
         info, provider = self._css_infos.pop(name, (None, None))
 
         if info is None or provider is None:
-            raise CssNotFoundError(name)
+            raise CssInfoNotFoundError(name)
 
         if isinstance(info, CssInfoPath) and info.autoreload:
             self.__stop_watching(info.name)
@@ -278,7 +278,7 @@ class CssManager(IgnisGObjectSingleton):
         info, _ = self._css_infos.get(name, (None, None))
 
         if not info:
-            raise CssNotFoundError(name)
+            raise CssInfoNotFoundError(name)
 
         self.remove_css(name)
         self.apply_css(info)

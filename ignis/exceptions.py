@@ -460,7 +460,7 @@ class RecorderPortalCaptureCanceled(Exception):
         super().__init__("The desktop portal capture was canceled by the user", *args)
 
 
-class CssNotFoundError(Exception):
+class CssInfoNotFoundError(Exception):
     """
     Raised when the style path is not found / not applied to the application.
     """
@@ -479,7 +479,7 @@ class CssNotFoundError(Exception):
         return self._name
 
 
-class CssAlreadyAppliedError(Exception):
+class CssInfoAlreadyAppliedError(Exception):
     """
     Raised when the style path is already applied to the application.
 
