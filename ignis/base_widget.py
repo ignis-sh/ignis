@@ -10,8 +10,6 @@ from ignis.css_manager import (
     GTK_STYLE_PRIORITIES,
 )
 
-css_manager = CssManager.get_default()
-
 
 class BaseWidget(Gtk.Widget, IgnisGObject):
     """
@@ -37,6 +35,8 @@ class BaseWidget(Gtk.Widget, IgnisGObject):
 
         self._style: str | None = None
         self._css_provider: Gtk.CssProvider | None = None
+
+        css_manager = CssManager.get_default()
         self._style_priority: StylePriority = (
             css_manager.widgets_style_priority
             if style_priority is None
