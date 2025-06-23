@@ -27,7 +27,6 @@ from ignis._deprecation import (
 )
 
 window_manager = WindowManager.get_default()
-css_manager = CssManager.get_default()
 
 
 def _get_wm_depr_msg(name: str):
@@ -91,6 +90,9 @@ class IgnisApp(Gtk.Application, IgnisGObject):
 
         # FIXME: deprecated
         self._autoreload_css: bool = True
+
+        # Put here because sphinx complains (as always)
+        self._css_manager = CssManager.get_default()
 
     def __watch_config(
         self, file_monitor: utils.FileMonitor, path: str, event_type: str
@@ -384,11 +386,11 @@ class IgnisApp(Gtk.Application, IgnisGObject):
         deprecation_warning(
             "IgnisApp.widgets_style_priority is deprecated, use CssManager.widgets_style_priority instead."
         )
-        return css_manager.widgets_style_priority
+        return self._css_manager.widgets_style_priority
 
     @widgets_style_priority.setter
     def widgets_style_priority(self, value: StylePriority) -> None:
-        css_manager.widgets_style_priority = value
+        self._css_manager.widgets_style_priority = value
 
     @deprecated(
         "IgnisApp.apply_css() is deprecated, use CssManager.apply_css() instead."
@@ -430,7 +432,7 @@ class IgnisApp(Gtk.Application, IgnisGObject):
             compiler_function = None  # type: ignore
 
         try:
-            css_manager.apply_css(
+            self._css_manager.apply_css(
                 CssInfoPath(
                     name=style_path,
                     priority=style_priority,
@@ -461,7 +463,7 @@ class IgnisApp(Gtk.Application, IgnisGObject):
         """
 
         try:
-            css_manager.remove_css(style_path)
+            self._css_manager.remove_css(style_path)
         except CssInfoNotFoundError:
             raise StylePathNotFoundError(style_path) from None
 
@@ -479,7 +481,7 @@ class IgnisApp(Gtk.Application, IgnisGObject):
             Use :func:`~ignis.css_manager.CssManager.reset_css` instead.
         """
         try:
-            css_manager.reset_css()
+            self._css_manager.reset_css()
         except CssInfoNotFoundError as e:
             raise StylePathNotFoundError(e.name) from None
 
@@ -497,7 +499,7 @@ class IgnisApp(Gtk.Application, IgnisGObject):
             Use :func:`~ignis.css_manager.CssManager.reload_css` or
             :func:`~ignis.css_manager.CssManager.reload_all_css` instead.
         """
-        css_manager.reload_all_css()
+        self._css_manager.reload_all_css()
 
     @deprecated(_get_wm_depr_msg("get_window"))
     def get_window(self, window_name: str) -> Gtk.Window:
