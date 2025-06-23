@@ -1,7 +1,7 @@
 import os
 from gi.repository import Gtk, GLib  # type: ignore
 from dataclasses import dataclass
-from ignis.gobject import IgnisGObjectSingleton
+from ignis.gobject import IgnisGObjectSingleton, IgnisProperty
 from collections.abc import Callable
 from typing import Literal
 from ignis.exceptions import (
@@ -175,6 +175,8 @@ class CssManager(IgnisGObjectSingleton):
 
         self._watchers: dict[str, utils.FileMonitor] = {}
 
+        self._widgets_style_priority: StylePriority = "application"
+
     def __watch_css_files(self, path: str, event_type: str, name: str) -> None:
         if event_type != "changes_done_hint":
             return
@@ -208,6 +210,35 @@ class CssManager(IgnisGObjectSingleton):
             raise CssInfoNotFoundError(name)
 
         file_monitor.cancel()
+
+    @IgnisProperty
+    def widgets_style_priority(self) -> StylePriority:
+        """
+        The priority used for each widget style
+        unless a widget specifies a custom style priority using :attr:`~ignis.base_widget.BaseWidget.style_priority`.
+        More info about style priorities: :obj:`Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION`.
+
+        Default: ``"application"``.
+
+        .. warning::
+            Changing this property won't affect already initialized widgets!
+            If you want to set a custom global style priority for all widgets, do this before initializing them
+            (e.g., at the start of your configuration).
+
+        .. code-block:: python
+
+            from ignis.css_manager import CssManager
+
+            css_manager = CssManager.get_default()
+
+            css_manager.widgets_style_priority = "user"
+
+        """
+        return self._widgets_style_priority
+
+    @widgets_style_priority.setter
+    def widgets_style_priority(self, value: StylePriority) -> None:
+        self._widgets_style_priority = value
 
     def apply_css(self, info: CssInfoString | CssInfoPath) -> None:
         """

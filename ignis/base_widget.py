@@ -1,18 +1,16 @@
-from gi.repository import Gtk, GObject, GLib  # type: ignore
+from gi.repository import Gtk, GObject  # type: ignore
 from typing import Any
 from collections.abc import Callable
 from ignis.gobject import IgnisGObject, IgnisProperty
-from ignis.exceptions import CssParsingError
-from ignis.app import IgnisApp, StylePriority, GTK_STYLE_PRIORITIES
 from ignis._deprecation import ignore_deprecation_warnings
+from ignis.css_manager import (
+    CssManager,
+    StylePriority,
+    _raise_css_parsing_error,
+    GTK_STYLE_PRIORITIES,
+)
 
-app = IgnisApp.get_default()
-
-
-def raise_css_parsing_error(
-    css_provider: Gtk.CssProvider, section: Gtk.CssSection, gerror: GLib.Error
-) -> None:
-    raise CssParsingError(section, gerror)
+css_manager = CssManager.get_default()
 
 
 class BaseWidget(Gtk.Widget, IgnisGObject):
@@ -40,7 +38,9 @@ class BaseWidget(Gtk.Widget, IgnisGObject):
         self._style: str | None = None
         self._css_provider: Gtk.CssProvider | None = None
         self._style_priority: StylePriority = (
-            app.widgets_style_priority if style_priority is None else style_priority
+            css_manager.widgets_style_priority
+            if style_priority is None
+            else style_priority
         )
 
         self.vexpand = vexpand
@@ -69,7 +69,7 @@ class BaseWidget(Gtk.Widget, IgnisGObject):
             value = "* {" + value + "}"
 
         css_provider = Gtk.CssProvider()
-        css_provider.connect("parsing-error", raise_css_parsing_error)
+        css_provider.connect("parsing-error", _raise_css_parsing_error)
 
         css_provider.load_from_string(value)
 
