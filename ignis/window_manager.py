@@ -124,3 +124,12 @@ class WindowManager(IgnisGObjectSingleton):
         """
         window = self.get_window(window_name)
         window.set_visible(not window.get_visible())
+
+    def list_window_names(self) -> tuple[str, ...]:
+        """
+        List the names of windows.
+
+        Returns:
+            A tuple containing window names.
+        """
+        return tuple(self._windows.keys())

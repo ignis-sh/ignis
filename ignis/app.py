@@ -490,7 +490,7 @@ class IgnisApp(Gtk.Application, IgnisGObject):
         return self.__call_window_method("toggle", window_name)
 
     def __ListWindows(self, invocation) -> GLib.Variant:
-        return GLib.Variant("(as)", (tuple(self._windows),))
+        return GLib.Variant("(as)", (window_manager.list_window_names(),))
 
     def __RunPython(self, invocation, code: str) -> None:
         invocation.return_value(None)
