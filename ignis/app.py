@@ -345,7 +345,7 @@ class IgnisApp(Gtk.Application, IgnisGObject):
         Default: ``True``.
 
         .. deprecated:: 0.6
-            Use :attr:`~ignis.css_manager.CssInfoPath.autoreload` instead.
+            Use :attr:`ignis.css_manager.CssInfoPath.autoreload` instead.
 
         """
         deprecation_warning(
@@ -381,7 +381,7 @@ class IgnisApp(Gtk.Application, IgnisGObject):
                 # ... rest of config goes here
 
         .. deprecated:: 0.6
-            Use :attr:`~ignis.css_manager.CssManager.widgets_style_priority` instead.
+            Use :attr:`ignis.css_manager.CssManager.widgets_style_priority` instead.
         """
         deprecation_warning(
             "IgnisApp.widgets_style_priority is deprecated, use CssManager.widgets_style_priority instead."
@@ -421,7 +421,7 @@ class IgnisApp(Gtk.Application, IgnisGObject):
             CssParsingError: If an error occured while parsing the CSS/SCSS file. NOTE: If you compile a SASS/SCSS file, it will print the wrong section.
 
         .. deprecated:: 0.6
-            Use :func:`~ignis.css_manager.CssManager.apply_css` instead.
+            Use :func:`ignis.css_manager.CssManager.apply_css` instead.
         """
 
         if style_path.endswith((".scss", ".sass")):
@@ -459,7 +459,7 @@ class IgnisApp(Gtk.Application, IgnisGObject):
             DisplayNotFoundError
 
         .. deprecated:: 0.6
-            Use :func:`~ignis.css_manager.CssManager.remove` instead.
+            Use :func:`ignis.css_manager.CssManager.remove_css` instead.
         """
 
         try:
@@ -478,7 +478,7 @@ class IgnisApp(Gtk.Application, IgnisGObject):
             DisplayNotFoundError
 
         .. deprecated:: 0.6
-            Use :func:`~ignis.css_manager.CssManager.reset_css` instead.
+            Use :func:`ignis.css_manager.CssManager.reset_css` instead.
         """
         try:
             self._css_manager.reset_css()
@@ -496,8 +496,8 @@ class IgnisApp(Gtk.Application, IgnisGObject):
             DisplayNotFoundError
 
         .. deprecated:: 0.6
-            Use :func:`~ignis.css_manager.CssManager.reload_css` or
-            :func:`~ignis.css_manager.CssManager.reload_all_css` instead.
+            Use :func:`ignis.css_manager.CssManager.reload_css` or
+            :func:`ignis.css_manager.CssManager.reload_all_css` instead.
         """
         self._css_manager.reload_all_css()
 

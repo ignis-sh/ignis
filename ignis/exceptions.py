@@ -272,6 +272,9 @@ class StylePathNotFoundError(Exception):
 
     Args:
         style_path: Path to the .css/.scss/.sass file.
+
+    .. deprecated:: 0.6
+        Use the new :class:`~ignis.css_manager.CssManager` API and :class:`CssInfoNotFoundError`.
     """
 
     def __init__(self, style_path: str, *args: object) -> None:
@@ -295,6 +298,9 @@ class StylePathAppliedError(Exception):
 
     Args:
         style_path: Path to the .css/.scss/.sass file.
+
+    .. deprecated:: 0.6
+        Use the new :class:`~ignis.css_manager.CssManager` API and :class:`CssInfoAlreadyAppliedError`.
     """
 
     def __init__(self, style_path: str, *args: object) -> None:
