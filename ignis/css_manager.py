@@ -32,7 +32,7 @@ class CssInfoBase:
     """
     The base class for CSS infos.
 
-    You shouldn't use it, use :class:`CssInfoString` and :class:`CssInfoPath` instead.
+    You shouldn't use it, use :class:`CssInfoString` or :class:`CssInfoPath` instead.
     """
 
     #: The name of the info by which you will be able to use :class:`CssManager` functions.
@@ -46,38 +46,11 @@ class CssInfoBase:
     priority: StylePriority = "application"
 
     #: A custom compiler function. It should receive only one argument:
+    #:
     #: - :class:`CssInfoString` - the string
     #: - :class:`CssInfoPath` - the path
     #:
     #: It must return a string containing a valid CSS code.
-    #:
-    #: .. hint::
-    #:    You can use it to compile Sass/SCSS:
-    #:
-    #:    .. code-block::
-    #:
-    #:        from ignis.css_manager import CssManager, CssInfoString, CssInfoPath
-    #:        from ignis import utils
-    #:
-    #:        css_manager = CssManager.get_default()
-    #:
-    #:        # File
-    #:        css_manager.apply_css(
-    #:            CssInfoPath(
-    #:                name="main",
-    #:                path="PATH/TO/style.scss",
-    #:                compiler_function=lambda path: utils.sass_compile(path=path),
-    #:            )
-    #:        )
-    #:
-    #:        # String
-    #:        css_manager.apply_css(
-    #:            CssInfoString(
-    #:                name="some-name",
-    #:                string="some sass/scss string",
-    #:                compiler_function=lambda string: utils.sass_compile(string=string),
-    #:            )
-    #:        )
     compiler_function: Callable[[str], str] | None = None
 
     def _get_string(self) -> str:
@@ -133,8 +106,6 @@ class CssManager(IgnisGObjectSingleton):
     """
     The CSS manager. Provides convenient utilities to apply, remove, and reload CSS.
 
-    It also supports Sass/SCSS (see :attr:`CssInfoBase.compiler_function`).
-
     Example usage:
 
     .. code-block::
@@ -166,6 +137,35 @@ class CssManager(IgnisGObjectSingleton):
 
         # Reload an applied info
         css_manager.reload_css("main")
+
+    **Sass/SCSS compilation**
+
+    You can use :attr:`CssInfoBase.compiler_function` to compile Sass/SCSS:
+
+    .. code-block::
+
+        from ignis.css_manager import CssManager, CssInfoString, CssInfoPath
+        from ignis import utils
+
+        css_manager = CssManager.get_default()
+
+        # File
+        css_manager.apply_css(
+            CssInfoPath(
+                name="main",
+                path="PATH/TO/style.scss",
+                compiler_function=lambda path: utils.sass_compile(path=path),
+            )
+        )
+
+        # String
+        css_manager.apply_css(
+            CssInfoString(
+                name="some-name",
+                string="some sass/scss string",
+                compiler_function=lambda string: utils.sass_compile(string=string),
+            )
+        )
     """
 
     def __init__(self):
