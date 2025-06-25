@@ -441,28 +441,151 @@
                   
   <section id="cli">
 <h1>CLI<a class="headerlink" href="#cli" title="Link to this heading">#</a></h1>
-<p>I'm too lazy to describe everything in detail, so here's a help message for you</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>ignis<span class="w"> </span>--help
-
-Usage:<span class="w"> </span>ignis<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
-
-Options:
---version<span class="w">  </span>Print<span class="w"> </span>version<span class="w"> </span>and<span class="w"> </span><span class="nb">exit</span>
---help<span class="w">     </span>Show<span class="w"> </span>this<span class="w"> </span>message<span class="w"> </span>and<span class="w"> </span>exit.
-
-Commands:
-init<span class="w">          </span>Initialize<span class="w"> </span>Ignis
-open<span class="w">          </span>Open<span class="w"> </span>window
-close<span class="w">         </span>Close<span class="w"> </span>window
-toggle<span class="w">        </span>Toggle<span class="w"> </span>window
-list-windows<span class="w">  </span>List<span class="w"> </span>all<span class="w"> </span>windows
-run-python<span class="w">    </span>Execute<span class="w"> </span>python<span class="w"> </span>code
-run-file<span class="w">      </span>Execute<span class="w"> </span>python<span class="w"> </span>file
-inspector<span class="w">     </span>Open<span class="w"> </span>GTK<span class="w"> </span>Inspector
-reload<span class="w">        </span>Reload<span class="w"> </span>Ignis
-quit<span class="w">          </span>Quit<span class="w"> </span>Ignis
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Python is <strong>not</strong> the fastest language, particularly when it comes to <strong>startup time</strong>.</p>
+<p>You may notice a <strong>significant</strong> delay in the Ignis built-in CLI (around 160ms just to display the help message!).
+For better performance, there's an optional CLI written in <strong>Go</strong>: <a class="reference external" href="https://github.com/ignis-sh/goignis">goignis</a>, which offers excellent speed.</p>
+</div>
+<p>Run <code class="docutils literal notranslate"><span class="pre">ignis</span> <span class="pre">--help</span></code> to view the CLI usage help message.</p>
+<section id="ignis">
+<h2>ignis<a class="headerlink" href="#ignis" title="Link to this heading">#</a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ignis<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
 </pre></div>
 </div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ignis-version">
+<span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ignis-version" title="Link to this definition">#</a></dt>
+<dd><p>Print version and exit</p>
+</dd></dl>
+
+<section id="ignis-close">
+<h3>close<a class="headerlink" href="#ignis-close" title="Link to this heading">#</a></h3>
+<p>Close window</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ignis<span class="w"> </span>close<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>WINDOW
+</pre></div>
+</div>
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ignis-close-arg-WINDOW">
+<span class="sig-name descname"><span class="pre">WINDOW</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ignis-close-arg-WINDOW" title="Link to this definition">#</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="ignis-init">
+<h3>init<a class="headerlink" href="#ignis-init" title="Link to this heading">#</a></h3>
+<p>Initialize Ignis</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ignis<span class="w"> </span>init<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ignis-init-c">
+<span id="cmdoption-ignis-init-config"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--config</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;PATH&gt;</span></span><a class="headerlink" href="#cmdoption-ignis-init-c" title="Link to this definition">#</a></dt>
+<dd><p>Path to the configuration file (default: gi.repository.GLib.get_user_config_dir/ignis/config.py)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ignis-init-debug">
+<span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ignis-init-debug" title="Link to this definition">#</a></dt>
+<dd><p>Print debug information to terminal</p>
+</dd></dl>
+
+</section>
+<section id="ignis-inspector">
+<h3>inspector<a class="headerlink" href="#ignis-inspector" title="Link to this heading">#</a></h3>
+<p>Open GTK Inspector</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ignis<span class="w"> </span>inspector<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="ignis-list-windows">
+<h3>list-windows<a class="headerlink" href="#ignis-list-windows" title="Link to this heading">#</a></h3>
+<p>List all windows</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ignis<span class="w"> </span>list-windows<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="ignis-open">
+<h3>open<a class="headerlink" href="#ignis-open" title="Link to this heading">#</a></h3>
+<p>Open window</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ignis<span class="w"> </span>open<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>WINDOW
+</pre></div>
+</div>
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ignis-open-arg-WINDOW">
+<span class="sig-name descname"><span class="pre">WINDOW</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ignis-open-arg-WINDOW" title="Link to this definition">#</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="ignis-quit">
+<h3>quit<a class="headerlink" href="#ignis-quit" title="Link to this heading">#</a></h3>
+<p>Quit Ignis</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ignis<span class="w"> </span>quit<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="ignis-reload">
+<h3>reload<a class="headerlink" href="#ignis-reload" title="Link to this heading">#</a></h3>
+<p>Reload Ignis</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ignis<span class="w"> </span>reload<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="ignis-run-file">
+<h3>run-file<a class="headerlink" href="#ignis-run-file" title="Link to this heading">#</a></h3>
+<p>Execute python file</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ignis<span class="w"> </span>run-file<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>FILE
+</pre></div>
+</div>
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ignis-run-file-arg-FILE">
+<span class="sig-name descname"><span class="pre">FILE</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ignis-run-file-arg-FILE" title="Link to this definition">#</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="ignis-run-python">
+<h3>run-python<a class="headerlink" href="#ignis-run-python" title="Link to this heading">#</a></h3>
+<p>Execute python code</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ignis<span class="w"> </span>run-python<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>CODE
+</pre></div>
+</div>
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ignis-run-python-arg-CODE">
+<span class="sig-name descname"><span class="pre">CODE</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ignis-run-python-arg-CODE" title="Link to this definition">#</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="ignis-systeminfo">
+<h3>systeminfo<a class="headerlink" href="#ignis-systeminfo" title="Link to this heading">#</a></h3>
+<p>Print system information</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ignis<span class="w"> </span>systeminfo<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="ignis-toggle">
+<h3>toggle<a class="headerlink" href="#ignis-toggle" title="Link to this heading">#</a></h3>
+<p>Toggle window</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ignis<span class="w"> </span>toggle<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>WINDOW
+</pre></div>
+</div>
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ignis-toggle-arg-WINDOW">
+<span class="sig-name descname"><span class="pre">WINDOW</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ignis-toggle-arg-WINDOW" title="Link to this definition">#</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+</section>
 </section>
 
 
@@ -503,6 +626,31 @@ quit<span class="w">          </span>Quit<span class="w"> </span>Ignis
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis">ignis</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis-close">close</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis-init">init</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis-inspector">inspector</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis-list-windows">list-windows</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis-open">open</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis-quit">quit</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis-reload">reload</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis-run-file">run-file</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis-run-python">run-python</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis-systeminfo">systeminfo</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis-toggle">toggle</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
 

@@ -1,26 +1,14 @@
 CLI
 ==============
 
-I'm too lazy to describe everything in detail, so here's a help message for you
+.. important::
+   Python is **not** the fastest language, particularly when it comes to **startup time**.
 
-.. code-block:: bash
+   You may notice a **significant** delay in the Ignis built-in CLI (around 160ms just to display the help message!).
+   For better performance, there's an optional CLI written in **Go**: `goignis <https://github.com/ignis-sh/goignis>`_, which offers excellent speed.
 
-    $ ignis --help
+Run ``ignis --help`` to view the CLI usage help message.
 
-    Usage: ignis [OPTIONS] COMMAND [ARGS]...
-
-    Options:
-    --version  Print version and exit
-    --help     Show this message and exit.
-
-    Commands:
-    init          Initialize Ignis
-    open          Open window
-    close         Close window
-    toggle        Toggle window
-    list-windows  List all windows
-    run-python    Execute python code
-    run-file      Execute python file
-    inspector     Open GTK Inspector
-    reload        Reload Ignis
-    quit          Quit Ignis
+.. click:: ignis.cli:cli
+   :prog: ignis
+   :nested: full
