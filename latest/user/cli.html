@@ -441,6 +441,12 @@
                   
   <section id="cli">
 <h1>CLI<a class="headerlink" href="#cli" title="Link to this heading">#</a></h1>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Python is <strong>not</strong> the fastest language, particularly when it comes to <strong>startup time</strong>.</p>
+<p>You may notice a <strong>significant</strong> delay in the Ignis built-in CLI (around 160ms just to display the help message!).
+For better performance, there's an optional CLI written in <strong>Go</strong>: <a class="reference external" href="https://github.com/ignis-sh/goignis">goignis</a>, which offers excellent speed.</p>
+</div>
 <p>Run <code class="docutils literal notranslate"><span class="pre">ignis</span> <span class="pre">--help</span></code> to view the CLI usage help message.</p>
 <section id="ignis">
 <h2>ignis<a class="headerlink" href="#ignis" title="Link to this heading">#</a></h2>
