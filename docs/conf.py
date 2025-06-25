@@ -20,6 +20,7 @@ extensions = [
     "sphinx_design",
     "sphinx_copybutton",
     "sphinx_autodoc_typehints",
+    "sphinx_click",
     "_ext.ignis_directives",
 ]
 
