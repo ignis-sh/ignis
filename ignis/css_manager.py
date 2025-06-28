@@ -10,6 +10,7 @@ from ignis.exceptions import (
     CssInfoAlreadyAppliedError,
 )
 from ignis import utils
+from loguru import logger
 
 
 StylePriority = Literal["application", "fallback", "settings", "theme", "user"]
@@ -53,6 +54,9 @@ class CssInfoBase:
     #: It must return a string containing a valid CSS code.
     compiler_function: Callable[[str], str] | None = None
 
+    def _get_type(self) -> str:
+        raise NotImplementedError()
+
     def _get_string(self) -> str:
         raise NotImplementedError()
 
@@ -65,6 +69,9 @@ class CssInfoString(CssInfoBase):
 
     #: A string containing CSS code.
     string: str
+
+    def _get_type(self) -> str:
+        return "string"
 
     def _get_string(self) -> str:
         if self.compiler_function:
@@ -90,6 +97,9 @@ class CssInfoPath(CssInfoBase):
 
     #: Whether to watch the directory recursively.
     watch_recursively: bool = True
+
+    def _get_type(self) -> str:
+        return "path"
 
     def _get_string(self) -> str:
         if self.compiler_function:
@@ -267,6 +277,8 @@ class CssManager(IgnisGObjectSingleton):
         if isinstance(info, CssInfoPath) and info.autoreload:
             self.__start_watching(info)
 
+        logger.info(f'Applied CSS info: "{info.name}" | type: {info._get_type()}')
+
     def remove_css(self, name: str) -> None:
         """
         Remove CSS info by its name.
@@ -292,10 +304,14 @@ class CssManager(IgnisGObjectSingleton):
             provider,
         )
 
+        logger.info(f'Removed CSS info: "{name}"')
+
     def reset_css(self) -> None:
         """
         Remove **all** applied CSS infos.
         """
+        logger.info("Resetting all CSS infos...")
+
         for name in self._css_infos.copy().keys():
             self.remove_css(name)
 
@@ -306,6 +322,8 @@ class CssManager(IgnisGObjectSingleton):
         Args:
             name: The name of the CSS info to reload.
         """
+        logger.info(f'Reloading CSS info: "{name}"')
+
         info, _ = self._css_infos.get(name, (None, None))
 
         if not info:
@@ -318,5 +336,7 @@ class CssManager(IgnisGObjectSingleton):
         """
         Reload **all** applied CSS infos.
         """
+        logger.info("Reloading all CSS infos...")
+
         for name in self._css_infos.copy().keys():
             self.reload_css(name)
