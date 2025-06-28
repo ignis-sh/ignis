@@ -10,15 +10,10 @@
 , gtk4-layer-shell
 , gobject-introspection
 , librsvg
-, dart-sass
-, libpulseaudio
-, pipewire
-, networkmanager
-, gnome-bluetooth
-, python312Packages
-, gpu-screen-recorder
+, python313Packages
 , gvc
 , extraPackages ? []
+, serviceDependencies ? []
 , version ? "git"
 }:
   let
@@ -26,7 +21,7 @@
       licenses
       platforms
     ;
-    inherit (python312Packages)
+    inherit (python313Packages)
       buildPythonPackage
       pygobject3
       pycairo
@@ -51,18 +46,12 @@
     wrapGAppsHook4
   ];
 
-  dependencies = extraPackages ++ [
+  dependencies = extraPackages ++ serviceDependencies ++ [
     glib
     gtk4
     gtk4-layer-shell
     gobject-introspection
-    dart-sass
-    gpu-screen-recorder
     librsvg
-    libpulseaudio
-    pipewire
-    networkmanager
-    gnome-bluetooth
 
     pygobject3
     pycairo
