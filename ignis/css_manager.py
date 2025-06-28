@@ -246,9 +246,8 @@ class CssManager(IgnisGObjectSingleton):
 
         Raises:
             CssInfoAlreadyAppliedError
+            CssParsingError
         """
-        display = utils.get_gdk_display()
-
         if info.name in self._css_infos:
             raise CssInfoAlreadyAppliedError(info.name)
 
@@ -258,7 +257,7 @@ class CssManager(IgnisGObjectSingleton):
         provider.load_from_string(info._get_string())
 
         Gtk.StyleContext.add_provider_for_display(
-            display,
+            utils.get_gdk_display(),
             provider,
             GTK_STYLE_PRIORITIES[info.priority],
         )
