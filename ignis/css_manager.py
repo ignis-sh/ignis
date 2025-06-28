@@ -91,9 +91,6 @@ class CssInfoPath(CssInfoBase):
     #: Whether to watch the directory recursively.
     watch_recursively: bool = True
 
-    #: Custom paths to watch.
-    custom_watch_paths: list[str] | None = None
-
     def _get_string(self) -> str:
         if self.compiler_function:
             return self.compiler_function(self.path)
