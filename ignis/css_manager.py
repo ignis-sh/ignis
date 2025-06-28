@@ -340,3 +340,21 @@ class CssManager(IgnisGObjectSingleton):
 
         for name in self._css_infos.copy().keys():
             self.reload_css(name)
+
+    def list_css_infos(self) -> list[CssInfoString | CssInfoPath]:
+        """
+        List all applied CSS infos.
+
+        Returns:
+            A list of all applied CSS infos.
+        """
+        return [info for info, _ in self._css_infos.values()]
+
+    def list_css_info_names(self) -> list[str]:
+        """
+        List names of all applied CSS infos.
+
+        Returns:
+            A list of all applied CSS info names.
+        """
+        return list(self._css_infos.keys())
