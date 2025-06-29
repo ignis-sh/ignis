@@ -61,10 +61,10 @@ To add extra dependencies, use the ``<pkg>.override`` function and pass the ``ex
                   extraPackages = [
                     # Add extra dependencies here
                     # For example:
-                    pkgs.python312Packages.psutil
-                    pkgs.python312Packages.jinja2
-                    pkgs.python312Packages.pillow
-                    pkgs.python312Packages.materialyoucolor
+                    pkgs.python313Packages.psutil
+                    pkgs.python313Packages.jinja2
+                    pkgs.python313Packages.pillow
+                    pkgs.python313Packages.materialyoucolor
                   ];
                 })
               ];
@@ -80,10 +80,10 @@ To add extra dependencies, use the ``<pkg>.override`` function and pass the ``ex
                   extraPackages = [
                     # Add extra dependencies here
                     # For example:
-                    pkgs.python312Packages.psutil
-                    pkgs.python312Packages.jinja2
-                    pkgs.python312Packages.pillow
-                    pkgs.python312Packages.materialyoucolor
+                    pkgs.python313Packages.psutil
+                    pkgs.python313Packages.jinja2
+                    pkgs.python313Packages.pillow
+                    pkgs.python313Packages.materialyoucolor
                   ];
                 })
               ];
