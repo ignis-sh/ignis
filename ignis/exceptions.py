@@ -263,12 +263,18 @@ class DisplayNotFoundError(Exception):
         )
 
 
+@deprecated(
+    "StylePathNotFoundError is deprecated, use the new CssManager API and CssInfoNotFoundError."
+)
 class StylePathNotFoundError(Exception):
     """
     Raised when the style path is not found / not applied to the application.
 
     Args:
         style_path: Path to the .css/.scss/.sass file.
+
+    .. deprecated:: 0.6
+        Use the new :class:`~ignis.css_manager.CssManager` API and :class:`CssInfoNotFoundError`.
     """
 
     def __init__(self, style_path: str, *args: object) -> None:
@@ -283,12 +289,18 @@ class StylePathNotFoundError(Exception):
         return self._style_path
 
 
+@deprecated(
+    "StylePathAppliedError is deprecated, use the new CssManager API and CssInfoAlreadyAppliedError."
+)
 class StylePathAppliedError(Exception):
     """
     Raised when the style path is already applied to the application.
 
     Args:
         style_path: Path to the .css/.scss/.sass file.
+
+    .. deprecated:: 0.6
+        Use the new :class:`~ignis.css_manager.CssManager` API and :class:`CssInfoAlreadyAppliedError`.
     """
 
     def __init__(self, style_path: str, *args: object) -> None:
@@ -458,3 +470,39 @@ class RecorderPortalCaptureCanceled(Exception):
 
     def __init__(self, *args):
         super().__init__("The desktop portal capture was canceled by the user", *args)
+
+
+class CssInfoNotFoundError(Exception):
+    """
+    Raised when a CSS info with the given name is not found.
+    """
+
+    def __init__(self, name: str, *args: object) -> None:
+        self._name = name
+        super().__init__(f'CSS info with the given name is not found: "{name}"', *args)
+
+    @property
+    def name(self) -> str:
+        """
+        The name of the CSS info.
+        """
+        return self._name
+
+
+class CssInfoAlreadyAppliedError(Exception):
+    """
+    Raised when a CSS info with the given name is already applied.
+    """
+
+    def __init__(self, name: str, *args: object) -> None:
+        self._name = name
+        super().__init__(
+            f'CSS info with the given name is already applied: "{name}"', *args
+        )
+
+    @property
+    def name(self) -> str:
+        """
+        The name of the CSS info.
+        """
+        return self._name

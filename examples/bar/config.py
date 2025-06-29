@@ -1,9 +1,10 @@
+import os
 import datetime
 import asyncio
 from ignis.menu_model import IgnisMenuModel, IgnisMenuItem, IgnisMenuSeparator
 from ignis import widgets
 from ignis import utils
-from ignis.app import IgnisApp
+from ignis.css_manager import CssManager, CssInfoPath
 from ignis.services.audio import AudioService
 from ignis.services.system_tray import SystemTrayService, SystemTrayItem
 from ignis.services.hyprland import HyprlandService, HyprlandWorkspace
@@ -11,9 +12,15 @@ from ignis.services.niri import NiriService, NiriWorkspace
 from ignis.services.notifications import NotificationService
 from ignis.services.mpris import MprisService, MprisPlayer
 
-app = IgnisApp.get_default()
+css_manager = CssManager.get_default()
 
-app.apply_css(f"{utils.get_current_dir()}/style.scss")
+css_manager.apply_css(
+    CssInfoPath(
+        name="main",
+        compiler_function=lambda path: utils.sass_compile(path=path),
+        path=os.path.join(utils.get_current_dir(), "style.scss"),
+    )
+)
 
 
 audio = AudioService.get_default()
