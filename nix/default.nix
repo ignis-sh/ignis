@@ -15,7 +15,7 @@
 , pipewire
 , networkmanager
 , gnome-bluetooth
-, python312Packages
+, python313Packages
 , gpu-screen-recorder
 , gvc
 , extraPackages ? []
@@ -26,7 +26,7 @@
       licenses
       platforms
     ;
-    inherit (python312Packages)
+    inherit (python313Packages)
       buildPythonPackage
       pygobject3
       pycairo
