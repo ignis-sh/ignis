@@ -1,40 +1,42 @@
-{ self
-, lib
-, wrapGAppsHook4
-, pkg-config
-, meson
-, ninja
-, git
-, glib
-, gtk4
-, gtk4-layer-shell
-, gobject-introspection
-, librsvg
-, dart-sass
-, libpulseaudio
-, pipewire
-, networkmanager
-, gnome-bluetooth
-, python313Packages
-, gpu-screen-recorder
-, gvc
-, extraPackages ? []
-, version ? "git"
+{
+  self,
+  lib,
+  wrapGAppsHook4,
+  pkg-config,
+  meson,
+  ninja,
+  git,
+  glib,
+  gtk4,
+  gtk4-layer-shell,
+  gobject-introspection,
+  librsvg,
+  dart-sass,
+  libpulseaudio,
+  pipewire,
+  networkmanager,
+  gnome-bluetooth,
+  python313Packages,
+  gpu-screen-recorder,
+  gvc,
+  extraPackages ? [ ],
+  version ? "git",
 }:
-  let
-    inherit (lib)
-      licenses
-      platforms
+let
+  inherit (lib)
+    licenses
+    platforms
     ;
-    inherit (python313Packages)
-      buildPythonPackage
-      pygobject3
-      pycairo
-      click
-      loguru
-      rich
+  inherit (python313Packages)
+    buildPythonPackage
+    pygobject3
+    pycairo
+    click
+    loguru
+    rich
     ;
-  in buildPythonPackage {
+in
+buildPythonPackage {
 
   inherit version;
   pname = "ignis";
