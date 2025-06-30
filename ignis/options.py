@@ -10,11 +10,14 @@ OPTIONS_FILE = f"{DATA_DIR}/options.json"
 OLD_OPTIONS_FILE = f"{CACHE_DIR}/ignis_options.json"
 
 
-def get_recorder_default_file_location() -> str | None:
-    if not is_sphinx_build:
-        return GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_VIDEOS)
-    else:
+def get_recorder_default_file_location() -> str:
+    if is_sphinx_build:
         return "XDG Videos directory"
+
+    if xdg_video_dir := GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_VIDEOS):
+        return xdg_video_dir
+    else:
+        return os.path.expanduser("~")
 
 
 # FIXME: remove after v0.6 release
@@ -130,7 +133,10 @@ class Options(OptionsManager):
         bitrate: int = 8000
 
         #: The default location for saving recordings. Defaults to XDG Video directory. Has effect only if :attr:`default_path` is not overridden.
-        default_file_location: str | None = get_recorder_default_file_location()
+        #:
+        #: .. note::
+        #:    If XDG user dirs are not configured, it defaults to ``$HOME``.
+        default_file_location: str = get_recorder_default_file_location()
 
         #: The default filename for recordings. Supports time formating. Has effect only if :attr:`default_path` is not overridden.
         default_filename: str = "%Y-%m-%d_%H-%M-%S.mp4"
@@ -140,7 +146,7 @@ class Options(OptionsManager):
 
         #: The default output file path. By default equals to :attr:`default_file_location` / :attr:`default_filename`.
         default_path: recorder_arg_types.Path = os.path.join(
-            default_file_location,  # type: ignore
+            default_file_location,
             default_filename,
         )
 
