@@ -184,6 +184,8 @@ class CssManager(IgnisGObjectSingleton):
 
         self._widgets_style_priority: StylePriority = "application"
 
+        super().__init__()
+
     def __watch_css_files(self, path: str, event_type: str, name: str) -> None:
         if event_type != "changes_done_hint":
             return
