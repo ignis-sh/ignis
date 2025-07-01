@@ -43,5 +43,8 @@
 
         formatter = pkgs.nixfmt-rfc-style;
       }
-    );
+    )
+    // {
+      overlays.default = final: prev: { inherit (self.packages.${prev.system}) ignis; };
+    };
 }
