@@ -42,6 +42,19 @@
         };
 
         formatter = pkgs.nixfmt-rfc-style;
+
+        devShells = {
+          default = pkgs.mkShell {
+            inputsFrom = [ self.packages.${system}.ignis ];
+
+            packages = with pkgs; [
+              ruff
+              mypy
+            ];
+
+            LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [ pkgs.gtk4-layer-shell ];
+          };
+        };
       }
     );
 }

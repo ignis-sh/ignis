@@ -15,3 +15,4 @@ subprojects/gvc
 docs/tmp
 .artifacts
 result
+.direnv
