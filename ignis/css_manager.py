@@ -1,7 +1,7 @@
 import os
 from gi.repository import Gtk, GLib  # type: ignore
 from dataclasses import dataclass
-from ignis.gobject import IgnisGObjectSingleton, IgnisProperty
+from ignis.gobject import IgnisGObjectSingleton, IgnisProperty, IgnisSignal
 from collections.abc import Callable
 from typing import Literal
 from ignis.exceptions import (
@@ -220,6 +220,45 @@ class CssManager(IgnisGObjectSingleton):
 
         file_monitor.cancel()
 
+    @IgnisSignal
+    def applied_css(self, info: object):
+        """
+        Emitted when a CSS info has been applied.
+
+        Args:
+            info(CssInfoString | CssInfoPath): The applied CSS.
+        """
+
+    @IgnisSignal
+    def removed_css(self, info: object):
+        """
+        Emitted when a CSS info has been removed.
+
+        Args:
+            info(CssInfoString | CssInfoPath): The removed CSS.
+        """
+
+    @IgnisSignal
+    def resetted_css(self):
+        """
+        Emitted when all applied CSS infos have been resetted.
+        """
+
+    @IgnisSignal
+    def reloaded_css(self, info: object):
+        """
+        Emitted when a CSS info has been reloaded.
+
+        Args:
+            info(CssInfoString | CssInfoPath): The reloaded CSS.
+        """
+
+    @IgnisSignal
+    def reloaded_all_css(self):
+        """
+        Emitted when all applied CSS infos have been reloaded.
+        """
+
     @IgnisProperty
     def widgets_style_priority(self) -> StylePriority:
         """
@@ -279,6 +318,7 @@ class CssManager(IgnisGObjectSingleton):
         if isinstance(info, CssInfoPath) and info.autoreload:
             self.__start_watching(info)
 
+        self.emit("applied-css", info)
         logger.info(f'Applied CSS info: "{info.name}" | type: {info._get_type()}')
 
     def remove_css(self, name: str) -> None:
@@ -306,6 +346,7 @@ class CssManager(IgnisGObjectSingleton):
             provider,
         )
 
+        self.emit("removed-css", info)
         logger.info(f'Removed CSS info: "{name}"')
 
     def reset_css(self) -> None:
@@ -316,6 +357,8 @@ class CssManager(IgnisGObjectSingleton):
 
         for name in self._css_infos.copy().keys():
             self.remove_css(name)
+
+        self.emit("resetted-css")
 
     def reload_css(self, name: str) -> None:
         """
@@ -334,6 +377,8 @@ class CssManager(IgnisGObjectSingleton):
         self.remove_css(name)
         self.apply_css(info)
 
+        self.emit("reloaded-css", info)
+
     def reload_all_css(self) -> None:
         """
         Reload **all** applied CSS infos.
@@ -342,6 +387,8 @@ class CssManager(IgnisGObjectSingleton):
 
         for name in self._css_infos.copy().keys():
             self.reload_css(name)
+
+        self.emit("reloaded-all-css")
 
     def get_css_info_by_name(self, name: str) -> CssInfoPath | CssInfoString | None:
         """
