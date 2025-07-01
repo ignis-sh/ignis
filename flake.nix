@@ -17,27 +17,24 @@
     };
   };
 
-  outputs =
-    {
-      self,
-      nixpkgs,
-      flake-utils,
-      gvc,
-      ...
-    }:
+  outputs = {
+    self,
+    nixpkgs,
+    flake-utils,
+    gvc,
+    ...
+  }:
     flake-utils.lib.eachDefaultSystem (
-      system:
-      let
-        pkgs = import nixpkgs { inherit system; };
-        version = import ./nix/version.nix { inherit self; };
-      in
-      {
+      system: let
+        pkgs = import nixpkgs {inherit system;};
+        version = import ./nix/version.nix {inherit self;};
+      in {
         packages = rec {
-          ignis = pkgs.callPackage ./nix { inherit self gvc version; };
+          ignis = pkgs.callPackage ./nix {inherit self gvc version;};
           default = ignis;
         };
         apps = rec {
-          ignis = flake-utils.lib.mkApp { drv = self.packages.${system}.ignis; };
+          ignis = flake-utils.lib.mkApp {drv = self.packages.${system}.ignis;};
           default = ignis;
         };
 
@@ -45,16 +42,19 @@
 
         devShells = {
           default = pkgs.mkShell {
-            inputsFrom = [ self.packages.${system}.ignis ];
+            inputsFrom = [self.packages.${system}.ignis];
 
             packages = with pkgs; [
               ruff
               mypy
             ];
 
-            LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [ pkgs.gtk4-layer-shell ];
+            LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [pkgs.gtk4-layer-shell];
           };
         };
       }
-    );
+    )
+    // {
+      overlays.default = final: prev: {inherit (self.packages.${prev.system}) ignis;};
+    };
 }
