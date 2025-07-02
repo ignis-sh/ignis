@@ -441,52 +441,131 @@
                   
   <section id="styling">
 <h1>Styling<a class="headerlink" href="#styling" title="Link to this heading">#</a></h1>
-<p>Ignis supports both CSS and SCSS.</p>
-<section id="using-css-scss-file">
-<h2>Using CSS/SCSS file<a class="headerlink" href="#using-css-scss-file" title="Link to this heading">#</a></h2>
-<p>To get started, add the following to your config:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ignis.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">IgnisApp</span>
-
-<span class="n">app</span> <span class="o">=</span> <span class="n">IgnisApp</span><span class="o">.</span><span class="n">get_default</span><span class="p">()</span>
-
-<span class="n">app</span><span class="o">.</span><span class="n">apply_css</span><span class="p">(</span><span class="s2">&quot;PATH/TO/CSS_FILE&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>For example, we will use <code class="docutils literal notranslate"><span class="pre">~/.config/ignis/style.scss</span></code>:</p>
+<p>GTK uses CSS for styling widgets.
+Additionally, Ignis provides convenient utilities to easily apply, remove, and reload CSS.</p>
+<p>Sass/SCSS compilation is also supported.</p>
+<section id="css-manager">
+<h2>CSS Manager<a class="headerlink" href="#css-manager" title="Link to this heading">#</a></h2>
+<p>The main class for managing CSS is <a class="reference internal" href="../api/css_manager.html#ignis.css_manager.CssManager" title="ignis.css_manager.CssManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">CssManager</span></code></a>.</p>
+<p>It supports two types of sources:</p>
+<ul class="simple">
+<li><p>a string containing CSS</p></li>
+<li><p>a path to a CSS file</p></li>
+</ul>
+<section id="applying-from-a-file">
+<h3>Applying from a file<a class="headerlink" href="#applying-from-a-file" title="Link to this heading">#</a></h3>
+<p>To apply CSS from a file, create a file named <code class="docutils literal notranslate"><span class="pre">style.css</span></code> next to your <code class="docutils literal notranslate"><span class="pre">config.py</span></code>, and add the following to your configuration:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">ignis.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">IgnisApp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ignis</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ignis.css_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">CssManager</span><span class="p">,</span> <span class="n">CssInfoPath</span>
 
-<span class="n">app</span> <span class="o">=</span> <span class="n">IgnisApp</span><span class="o">.</span><span class="n">get_default</span><span class="p">()</span>
+<span class="n">css_manager</span> <span class="o">=</span> <span class="n">CssManager</span><span class="o">.</span><span class="n">get_default</span><span class="p">()</span>
 
-<span class="n">app</span><span class="o">.</span><span class="n">apply_css</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/.config/ignis/style.scss&quot;</span><span class="p">))</span>
+<span class="n">css_manager</span><span class="o">.</span><span class="n">apply_css</span><span class="p">(</span>
+    <span class="n">CssInfoPath</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;main&quot;</span><span class="p">,</span>
+        <span class="c1"># Adjust the path as needed</span>
+        <span class="n">path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">get_current_dir</span><span class="p">(),</span> <span class="s2">&quot;style.css&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
 </pre></div>
 </div>
-<p>Now, you can add a CSS class to any widget and style it in the CSS file.
-To add CSS classes to a widget, use the <code class="docutils literal notranslate"><span class="pre">css_classes</span></code> property.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">widgets</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>By default, CSS will be reapplied automatically when <code class="docutils literal notranslate"><span class="pre">style.css</span></code> or other CSS/Sass/SCSS files in the directory are modified.
+See <a class="reference internal" href="../api/css_manager.html#ignis.css_manager.CssInfoPath" title="ignis.css_manager.CssInfoPath"><code class="xref py py-class docutils literal notranslate"><span class="pre">CssInfoPath</span></code></a> for more information.</p>
+</div>
+</section>
+<section id="applying-from-a-string">
+<h3>Applying from a string<a class="headerlink" href="#applying-from-a-string" title="Link to this heading">#</a></h3>
+<p>To apply CSS from a string, use <a class="reference internal" href="../api/css_manager.html#ignis.css_manager.CssInfoString" title="ignis.css_manager.CssInfoString"><code class="xref py py-class docutils literal notranslate"><span class="pre">CssInfoString</span></code></a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ignis</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ignis.css_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">CssManager</span><span class="p">,</span> <span class="n">CssInfoString</span>
+
+<span class="n">css_manager</span> <span class="o">=</span> <span class="n">CssManager</span><span class="o">.</span><span class="n">get_default</span><span class="p">()</span>
+
+<span class="n">css_manager</span><span class="o">.</span><span class="n">apply_css</span><span class="p">(</span>
+    <span class="n">CssInfoString</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;main&quot;</span><span class="p">,</span>
+        <span class="n">string</span><span class="o">=</span><span class="s2">&quot;* { background-color: red; }&quot;</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="css-classes">
+<h2>CSS classes<a class="headerlink" href="#css-classes" title="Link to this heading">#</a></h2>
+<p>You can assign CSS classes to any widgets and style them in the CSS file (or string).</p>
+<p>To add CSS classes to a widget, use the <code class="docutils literal notranslate"><span class="pre">css_classes</span></code> property:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ignis</span><span class="w"> </span><span class="kn">import</span> <span class="n">widgets</span>
+
+<span class="n">widgets</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
     <span class="n">label</span><span class="o">=</span><span class="s2">&quot;hello&quot;</span><span class="p">,</span>
     <span class="n">css_classes</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;my-label&quot;</span><span class="p">]</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>In style.scss:</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">style.css</span></code> (or an applied string):</p>
 <div class="highlight-css notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="nc">my-label</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="kc">red</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </section>
-<section id="using-the-style-property">
-<h2>Using the <code class="docutils literal notranslate"><span class="pre">style</span></code> property<a class="headerlink" href="#using-the-style-property" title="Link to this heading">#</a></h2>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">style</span></code> property does not support SCSS features, only CSS.</p>
+<section id="sass-scss">
+<h2>Sass/SCSS<a class="headerlink" href="#sass-scss" title="Link to this heading">#</a></h2>
+<p><a class="reference external" href="https://sass-lang.com">Sass</a> is an extension to CSS that adds many useful features and utilities.</p>
+<p>You can use <code class="xref py py-attr docutils literal notranslate"><span class="pre">CssInfoBase.compiler_function</span></code> to compile Sass/SCSS:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ignis.css_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">CssManager</span><span class="p">,</span> <span class="n">CssInfoString</span><span class="p">,</span> <span class="n">CssInfoPath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ignis</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
+
+<span class="n">css_manager</span> <span class="o">=</span> <span class="n">CssManager</span><span class="o">.</span><span class="n">get_default</span><span class="p">()</span>
+
+<span class="c1"># From file</span>
+<span class="n">css_manager</span><span class="o">.</span><span class="n">apply_css</span><span class="p">(</span>
+    <span class="n">CssInfoPath</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;main&quot;</span><span class="p">,</span>
+        <span class="n">path</span><span class="o">=</span><span class="s2">&quot;PATH/TO/style.scss&quot;</span><span class="p">,</span>
+        <span class="n">compiler_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">path</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">sass_compile</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># From string</span>
+<span class="n">css_manager</span><span class="o">.</span><span class="n">apply_css</span><span class="p">(</span>
+    <span class="n">CssInfoString</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;some-name&quot;</span><span class="p">,</span>
+        <span class="n">string</span><span class="o">=</span><span class="s2">&quot;some Sass/SCSS string&quot;</span><span class="p">,</span>
+        <span class="n">compiler_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">string</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">sass_compile</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="n">string</span><span class="p">),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">widgets</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+</section>
+<section id="the-widget-s-style-property">
+<h2>The widget's <code class="docutils literal notranslate"><span class="pre">style</span></code> property<a class="headerlink" href="#the-widget-s-style-property" title="Link to this heading">#</a></h2>
+<p>You can style widgets directly without using CSS classes.</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">style</span></code> property to apply a CSS string specifically to a widget:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ignis</span><span class="w"> </span><span class="kn">import</span> <span class="n">widgets</span>
+
+<span class="n">widgets</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
     <span class="n">label</span><span class="o">=</span><span class="s2">&quot;hello&quot;</span><span class="p">,</span>
     <span class="n">style</span><span class="o">=</span><span class="s2">&quot;background-color: black;&quot;</span>
 <span class="p">)</span>
 </pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You can use <a class="reference internal" href="../api/utils/sass.html#ignis.utils.sass_compile" title="ignis.utils.sass_compile"><code class="xref py py-func docutils literal notranslate"><span class="pre">sass_compile()</span></code></a> to compile a Sass/SCSS string.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ignis</span><span class="w"> </span><span class="kn">import</span> <span class="n">widgets</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ignis</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
+
+<span class="n">widgets</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;hello&quot;</span><span class="p">,</span>
+    <span class="n">style</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">sass_compile</span><span class="p">(</span><span class="s2">&quot;some Sass/SCSS string&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </section>
 </section>
@@ -538,8 +617,14 @@ To add CSS classes to a widget, use the <code class="docutils literal notranslat
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-css-scss-file">Using CSS/SCSS file</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-style-property">Using the <code class="docutils literal notranslate"><span class="pre">style</span></code> property</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#css-manager">CSS Manager</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#applying-from-a-file">Applying from a file</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#applying-from-a-string">Applying from a string</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#css-classes">CSS classes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sass-scss">Sass/SCSS</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-widget-s-style-property">The widget's <code class="docutils literal notranslate"><span class="pre">style</span></code> property</a></li>
 </ul>
   </nav></div>
 

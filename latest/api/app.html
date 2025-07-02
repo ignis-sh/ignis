@@ -370,6 +370,7 @@
 <li class="toctree-l1"><a class="reference internal" href="toplevel.html">Toplevel package</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="window_manager.html">WindowManager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="css_manager.html">CSS Manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="singleton.html">Singleton</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gobject.html">GObject</a></li>
 <li class="toctree-l1"><a class="reference internal" href="variable.html">Variable</a></li>
@@ -583,16 +584,6 @@ Instead, use the already initialized instance as shown below.</p>
 </dd></dl>
 
 <dl class="py gproperty">
-<dt class="sig sig-object py" id="ignis.app.IgnisApp.autoreload_css">
-<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">autoreload_css</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ignis.app.IgnisApp.autoreload_css" title="Link to this definition">#</a></dt>
-<dd><ul class="simple">
-<li><p>read-write</p></li>
-</ul>
-<p>Whether to automatically reload the CSS style when it changes (only .css/.scss/.sass files).</p>
-<p>Default: <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
-</dd></dl>
-
-<dl class="py gproperty">
 <dt class="sig sig-object py" id="ignis.app.IgnisApp.reload_on_monitors_change">
 <em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reload_on_monitors_change</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ignis.app.IgnisApp.reload_on_monitors_change" title="Link to this definition">#</a></dt>
 <dd><ul class="simple">
@@ -600,114 +591,6 @@ Instead, use the already initialized instance as shown below.</p>
 </ul>
 <p>Whether to reload Ignis on monitors change (connect/disconnect).</p>
 <p>Default: <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
-</dd></dl>
-
-<dl class="py gproperty">
-<dt class="sig sig-object py" id="ignis.app.IgnisApp.widgets_style_priority">
-<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">widgets_style_priority</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'application'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'fallback'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'settings'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'theme'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'user'</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ignis.app.IgnisApp.widgets_style_priority" title="Link to this definition">#</a></dt>
-<dd><ul class="simple">
-<li><p>read-write</p></li>
-</ul>
-<p>The priority used for each widget style
-unless a widget specifies a custom style priority using <a class="reference internal" href="base_widget.html#ignis.base_widget.BaseWidget.style_priority" title="ignis.base_widget.BaseWidget.style_priority"><code class="xref py py-attr docutils literal notranslate"><span class="pre">style_priority</span></code></a>.
-More info about style priorities: <a class="reference external" href="https://lazka.github.io/pgi-docs/Gtk-4.0/constants.html#Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION" title="(in Gtk 4.0 v4.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION</span></code></a>.</p>
-<p>Default: <code class="docutils literal notranslate"><span class="pre">&quot;application&quot;</span></code>.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Changing this property won't affect already initialized widgets!
-If you want to set a custom global style priority for all widgets, do this at the start of the configuration.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ignis.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">IgnisApp</span>
-
-<span class="n">app</span> <span class="o">=</span> <span class="n">IgnisApp</span><span class="o">.</span><span class="n">get_default</span><span class="p">()</span>
-
-<span class="n">app</span><span class="o">.</span><span class="n">widgets_style_priority</span> <span class="o">=</span> <span class="s2">&quot;user&quot;</span>
-
-<span class="c1"># ... rest of config goes here</span>
-</pre></div>
-</div>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ignis.app.IgnisApp.apply_css">
-<span class="sig-name descname"><span class="pre">apply_css</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">style_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">style_priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'application'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'fallback'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'settings'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'theme'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'user'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'application'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compiler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'sass'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'grass'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.app.IgnisApp.apply_css" title="Link to this definition">#</a></dt>
-<dd><p>Apply a CSS/SCSS/SASS style from a path.
-If <code class="docutils literal notranslate"><span class="pre">style_path</span></code> has a <code class="docutils literal notranslate"><span class="pre">.sass</span></code> or <code class="docutils literal notranslate"><span class="pre">.scss</span></code> extension, it will be automatically compiled.
-Requires either <code class="docutils literal notranslate"><span class="pre">dart-sass</span></code> or <code class="docutils literal notranslate"><span class="pre">grass-sass</span></code> for SASS/SCSS compilation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>style_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- Path to the .css/.scss/.sass file.</p></li>
-<li><p><strong>style_priority</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'application'</span></code>, <code class="docutils literal notranslate"><span class="pre">'fallback'</span></code>, <code class="docutils literal notranslate"><span class="pre">'settings'</span></code>, <code class="docutils literal notranslate"><span class="pre">'theme'</span></code>, <code class="docutils literal notranslate"><span class="pre">'user'</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">'application'</span></code>) -- A priority of the CSS style. More info about style priorities: <a class="reference external" href="https://lazka.github.io/pgi-docs/Gtk-4.0/constants.html#Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION" title="(in Gtk 4.0 v4.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION</span></code></a>.</p></li>
-<li><p><strong>compiler</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'sass'</span></code>, <code class="docutils literal notranslate"><span class="pre">'grass'</span></code>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) -- The desired Sass compiler.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
-</dd>
-</dl>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p><code class="docutils literal notranslate"><span class="pre">style_priority</span></code> won't affect a style applied to widgets using the <code class="docutils literal notranslate"><span class="pre">style</span></code> property,
-for these purposes use <a class="reference internal" href="#ignis.app.IgnisApp.widgets_style_priority" title="ignis.app.IgnisApp.widgets_style_priority"><code class="xref py py-attr docutils literal notranslate"><span class="pre">widgets_style_priority</span></code></a> or <a class="reference internal" href="base_widget.html#ignis.base_widget.BaseWidget.style_priority" title="ignis.base_widget.BaseWidget.style_priority"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ignis.base_widget.BaseWidget.style_priority</span></code></a>.</p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="exceptions.html#ignis.exceptions.StylePathAppliedError" title="ignis.exceptions.StylePathAppliedError"><strong>StylePathAppliedError</strong></a> -- if the given style path is already to the application.</p></li>
-<li><p><a class="reference internal" href="exceptions.html#ignis.exceptions.DisplayNotFoundError" title="ignis.exceptions.DisplayNotFoundError"><strong>DisplayNotFoundError</strong></a> -- </p></li>
-<li><p><a class="reference internal" href="exceptions.html#ignis.exceptions.CssParsingError" title="ignis.exceptions.CssParsingError"><strong>CssParsingError</strong></a> -- If an error occured while parsing the CSS/SCSS file. NOTE: If you compile a SASS/SCSS file, it will print the wrong section.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ignis.app.IgnisApp.remove_css">
-<span class="sig-name descname"><span class="pre">remove_css</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">style_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.app.IgnisApp.remove_css" title="Link to this definition">#</a></dt>
-<dd><p>Remove the applied CSS/SCSS/SASS style by its path.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>style_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- Path to the applied .css/.scss/.sass file.</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="exceptions.html#ignis.exceptions.StylePathNotFoundError" title="ignis.exceptions.StylePathNotFoundError"><strong>StylePathNotFoundError</strong></a> -- if the given style path is not applied to the application.</p></li>
-<li><p><a class="reference internal" href="exceptions.html#ignis.exceptions.DisplayNotFoundError" title="ignis.exceptions.DisplayNotFoundError"><strong>DisplayNotFoundError</strong></a> -- </p></li>
-</ul>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ignis.app.IgnisApp.reset_css">
-<span class="sig-name descname"><span class="pre">reset_css</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.app.IgnisApp.reset_css" title="Link to this definition">#</a></dt>
-<dd><p>Reset all applied CSS/SCSS/SASS styles.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="exceptions.html#ignis.exceptions.DisplayNotFoundError" title="ignis.exceptions.DisplayNotFoundError"><strong>DisplayNotFoundError</strong></a> -- </p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ignis.app.IgnisApp.reload_css">
-<span class="sig-name descname"><span class="pre">reload_css</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.app.IgnisApp.reload_css" title="Link to this definition">#</a></dt>
-<dd><p>Reload all applied CSS/SCSS/SASS styles.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="exceptions.html#ignis.exceptions.DisplayNotFoundError" title="ignis.exceptions.DisplayNotFoundError"><strong>DisplayNotFoundError</strong></a> -- </p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -780,6 +663,143 @@ for these purposes use <a class="reference internal" href="#ignis.app.IgnisApp.w
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py gproperty">
+<dt class="sig sig-object py" id="ignis.app.IgnisApp.autoreload_css">
+<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">autoreload_css</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ignis.app.IgnisApp.autoreload_css" title="Link to this definition">#</a></dt>
+<dd><ul class="simple">
+<li><p>read-write</p></li>
+</ul>
+<p>Whether to automatically reload the CSS style when it changes (only .css/.scss/.sass files).</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.6: </span>Use <a class="reference internal" href="css_manager.html#ignis.css_manager.CssInfoPath.autoreload" title="ignis.css_manager.CssInfoPath.autoreload"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ignis.css_manager.CssInfoPath.autoreload</span></code></a> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py gproperty">
+<dt class="sig sig-object py" id="ignis.app.IgnisApp.widgets_style_priority">
+<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">widgets_style_priority</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'application'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'fallback'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'settings'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'theme'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'user'</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ignis.app.IgnisApp.widgets_style_priority" title="Link to this definition">#</a></dt>
+<dd><ul class="simple">
+<li><p>read-write</p></li>
+</ul>
+<p>The priority used for each widget style
+unless a widget specifies a custom style priority using <a class="reference internal" href="base_widget.html#ignis.base_widget.BaseWidget.style_priority" title="ignis.base_widget.BaseWidget.style_priority"><code class="xref py py-attr docutils literal notranslate"><span class="pre">style_priority</span></code></a>.
+More info about style priorities: <a class="reference external" href="https://lazka.github.io/pgi-docs/Gtk-4.0/constants.html#Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION" title="(in Gtk 4.0 v4.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION</span></code></a>.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">&quot;application&quot;</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Changing this property won't affect already initialized widgets!
+If you want to set a custom global style priority for all widgets, do this at the start of the configuration.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ignis.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">IgnisApp</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">IgnisApp</span><span class="o">.</span><span class="n">get_default</span><span class="p">()</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">widgets_style_priority</span> <span class="o">=</span> <span class="s2">&quot;user&quot;</span>
+
+<span class="c1"># ... rest of config goes here</span>
+</pre></div>
+</div>
+</div>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.6: </span>Use <a class="reference internal" href="css_manager.html#ignis.css_manager.CssManager.widgets_style_priority" title="ignis.css_manager.CssManager.widgets_style_priority"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ignis.css_manager.CssManager.widgets_style_priority</span></code></a> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ignis.app.IgnisApp.apply_css">
+<span class="sig-name descname"><span class="pre">apply_css</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">style_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">style_priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'application'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'fallback'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'settings'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'theme'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'user'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'application'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compiler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'sass'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'grass'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.app.IgnisApp.apply_css" title="Link to this definition">#</a></dt>
+<dd><p>Apply a CSS/SCSS/SASS style from a path.
+If <code class="docutils literal notranslate"><span class="pre">style_path</span></code> has a <code class="docutils literal notranslate"><span class="pre">.sass</span></code> or <code class="docutils literal notranslate"><span class="pre">.scss</span></code> extension, it will be automatically compiled.
+Requires either <code class="docutils literal notranslate"><span class="pre">dart-sass</span></code> or <code class="docutils literal notranslate"><span class="pre">grass-sass</span></code> for SASS/SCSS compilation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>style_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- Path to the .css/.scss/.sass file.</p></li>
+<li><p><strong>style_priority</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'application'</span></code>, <code class="docutils literal notranslate"><span class="pre">'fallback'</span></code>, <code class="docutils literal notranslate"><span class="pre">'settings'</span></code>, <code class="docutils literal notranslate"><span class="pre">'theme'</span></code>, <code class="docutils literal notranslate"><span class="pre">'user'</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">'application'</span></code>) -- A priority of the CSS style. More info about style priorities: <a class="reference external" href="https://lazka.github.io/pgi-docs/Gtk-4.0/constants.html#Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION" title="(in Gtk 4.0 v4.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION</span></code></a>.</p></li>
+<li><p><strong>compiler</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'sass'</span></code>, <code class="docutils literal notranslate"><span class="pre">'grass'</span></code>] | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) -- The desired Sass compiler.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code class="docutils literal notranslate"><span class="pre">style_priority</span></code> won't affect a style applied to widgets using the <code class="docutils literal notranslate"><span class="pre">style</span></code> property,
+for these purposes use <a class="reference internal" href="#ignis.app.IgnisApp.widgets_style_priority" title="ignis.app.IgnisApp.widgets_style_priority"><code class="xref py py-attr docutils literal notranslate"><span class="pre">widgets_style_priority</span></code></a> or <a class="reference internal" href="base_widget.html#ignis.base_widget.BaseWidget.style_priority" title="ignis.base_widget.BaseWidget.style_priority"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ignis.base_widget.BaseWidget.style_priority</span></code></a>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="exceptions.html#ignis.exceptions.StylePathAppliedError" title="ignis.exceptions.StylePathAppliedError"><strong>StylePathAppliedError</strong></a> -- if the given style path is already to the application.</p></li>
+<li><p><a class="reference internal" href="exceptions.html#ignis.exceptions.DisplayNotFoundError" title="ignis.exceptions.DisplayNotFoundError"><strong>DisplayNotFoundError</strong></a> -- </p></li>
+<li><p><a class="reference internal" href="exceptions.html#ignis.exceptions.CssParsingError" title="ignis.exceptions.CssParsingError"><strong>CssParsingError</strong></a> -- If an error occured while parsing the CSS/SCSS file. NOTE: If you compile a SASS/SCSS file, it will print the wrong section.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.6: </span>Use <a class="reference internal" href="css_manager.html#ignis.css_manager.CssManager.apply_css" title="ignis.css_manager.CssManager.apply_css"><code class="xref py py-func docutils literal notranslate"><span class="pre">ignis.css_manager.CssManager.apply_css()</span></code></a> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ignis.app.IgnisApp.remove_css">
+<span class="sig-name descname"><span class="pre">remove_css</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">style_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.app.IgnisApp.remove_css" title="Link to this definition">#</a></dt>
+<dd><p>Remove the applied CSS/SCSS/SASS style by its path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>style_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- Path to the applied .css/.scss/.sass file.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="exceptions.html#ignis.exceptions.StylePathNotFoundError" title="ignis.exceptions.StylePathNotFoundError"><strong>StylePathNotFoundError</strong></a> -- if the given style path is not applied to the application.</p></li>
+<li><p><a class="reference internal" href="exceptions.html#ignis.exceptions.DisplayNotFoundError" title="ignis.exceptions.DisplayNotFoundError"><strong>DisplayNotFoundError</strong></a> -- </p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.6: </span>Use <a class="reference internal" href="css_manager.html#ignis.css_manager.CssManager.remove_css" title="ignis.css_manager.CssManager.remove_css"><code class="xref py py-func docutils literal notranslate"><span class="pre">ignis.css_manager.CssManager.remove_css()</span></code></a> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ignis.app.IgnisApp.reset_css">
+<span class="sig-name descname"><span class="pre">reset_css</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.app.IgnisApp.reset_css" title="Link to this definition">#</a></dt>
+<dd><p>Reset all applied CSS/SCSS/SASS styles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="exceptions.html#ignis.exceptions.DisplayNotFoundError" title="ignis.exceptions.DisplayNotFoundError"><strong>DisplayNotFoundError</strong></a> -- </p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.6: </span>Use <a class="reference internal" href="css_manager.html#ignis.css_manager.CssManager.reset_css" title="ignis.css_manager.CssManager.reset_css"><code class="xref py py-func docutils literal notranslate"><span class="pre">ignis.css_manager.CssManager.reset_css()</span></code></a> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ignis.app.IgnisApp.reload_css">
+<span class="sig-name descname"><span class="pre">reload_css</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.app.IgnisApp.reload_css" title="Link to this definition">#</a></dt>
+<dd><p>Reload all applied CSS/SCSS/SASS styles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="exceptions.html#ignis.exceptions.DisplayNotFoundError" title="ignis.exceptions.DisplayNotFoundError"><strong>DisplayNotFoundError</strong></a> -- </p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.6: </span>Use <a class="reference internal" href="css_manager.html#ignis.css_manager.CssManager.reload_css" title="ignis.css_manager.CssManager.reload_css"><code class="xref py py-func docutils literal notranslate"><span class="pre">ignis.css_manager.CssManager.reload_css()</span></code></a> or
+<a class="reference internal" href="css_manager.html#ignis.css_manager.CssManager.reload_all_css" title="ignis.css_manager.CssManager.reload_all_css"><code class="xref py py-func docutils literal notranslate"><span class="pre">ignis.css_manager.CssManager.reload_all_css()</span></code></a> instead.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -917,17 +937,17 @@ for these purposes use <a class="reference internal" href="#ignis.app.IgnisApp.w
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.is_ready"><code class="docutils literal notranslate"><span class="pre">IgnisApp.is_ready</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.windows"><code class="docutils literal notranslate"><span class="pre">IgnisApp.windows</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.autoreload_config"><code class="docutils literal notranslate"><span class="pre">IgnisApp.autoreload_config</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.autoreload_css"><code class="docutils literal notranslate"><span class="pre">IgnisApp.autoreload_css</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.reload_on_monitors_change"><code class="docutils literal notranslate"><span class="pre">IgnisApp.reload_on_monitors_change</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.add_icons"><code class="docutils literal notranslate"><span class="pre">IgnisApp.add_icons()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.reload"><code class="docutils literal notranslate"><span class="pre">IgnisApp.reload()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.quit"><code class="docutils literal notranslate"><span class="pre">IgnisApp.quit()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.inspector"><code class="docutils literal notranslate"><span class="pre">IgnisApp.inspector()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.autoreload_css"><code class="docutils literal notranslate"><span class="pre">IgnisApp.autoreload_css</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.widgets_style_priority"><code class="docutils literal notranslate"><span class="pre">IgnisApp.widgets_style_priority</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.apply_css"><code class="docutils literal notranslate"><span class="pre">IgnisApp.apply_css()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.remove_css"><code class="docutils literal notranslate"><span class="pre">IgnisApp.remove_css()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.reset_css"><code class="docutils literal notranslate"><span class="pre">IgnisApp.reset_css()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.reload_css"><code class="docutils literal notranslate"><span class="pre">IgnisApp.reload_css()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.add_icons"><code class="docutils literal notranslate"><span class="pre">IgnisApp.add_icons()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.reload"><code class="docutils literal notranslate"><span class="pre">IgnisApp.reload()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.quit"><code class="docutils literal notranslate"><span class="pre">IgnisApp.quit()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.inspector"><code class="docutils literal notranslate"><span class="pre">IgnisApp.inspector()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.get_window"><code class="docutils literal notranslate"><span class="pre">IgnisApp.get_window()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.open_window"><code class="docutils literal notranslate"><span class="pre">IgnisApp.open_window()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.close_window"><code class="docutils literal notranslate"><span class="pre">IgnisApp.close_window()</span></code></a></li>

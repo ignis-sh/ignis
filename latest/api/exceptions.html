@@ -370,6 +370,7 @@
 <li class="toctree-l1"><a class="reference internal" href="toplevel.html">Toplevel package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app.html">Application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="window_manager.html">WindowManager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="css_manager.html">CSS Manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="singleton.html">Singleton</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gobject.html">GObject</a></li>
 <li class="toctree-l1"><a class="reference internal" href="variable.html">Variable</a></li>
@@ -713,6 +714,9 @@
 <dd class="field-odd"><p><strong>style_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- Path to the .css/.scss/.sass file.</p>
 </dd>
 </dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.6: </span>Use the new <a class="reference internal" href="css_manager.html#ignis.css_manager.CssManager" title="ignis.css_manager.CssManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">CssManager</span></code></a> API and <a class="reference internal" href="#ignis.exceptions.CssInfoNotFoundError" title="ignis.exceptions.CssInfoNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">CssInfoNotFoundError</span></code></a>.</p>
+</div>
 <dl class="py property">
 <dt class="sig sig-object py" id="ignis.exceptions.StylePathNotFoundError.style_path">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">style_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#ignis.exceptions.StylePathNotFoundError.style_path" title="Link to this definition">#</a></dt>
@@ -730,6 +734,9 @@
 <dd class="field-odd"><p><strong>style_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- Path to the .css/.scss/.sass file.</p>
 </dd>
 </dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.6: </span>Use the new <a class="reference internal" href="css_manager.html#ignis.css_manager.CssManager" title="ignis.css_manager.CssManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">CssManager</span></code></a> API and <a class="reference internal" href="#ignis.exceptions.CssInfoAlreadyAppliedError" title="ignis.exceptions.CssInfoAlreadyAppliedError"><code class="xref py py-class docutils literal notranslate"><span class="pre">CssInfoAlreadyAppliedError</span></code></a>.</p>
+</div>
 <dl class="py property">
 <dt class="sig sig-object py" id="ignis.exceptions.StylePathAppliedError.style_path">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">style_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#ignis.exceptions.StylePathAppliedError.style_path" title="Link to this definition">#</a></dt>
@@ -844,6 +851,30 @@
 <dt class="sig sig-object py" id="ignis.exceptions.RecorderPortalCaptureCanceled">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.exceptions.</span></span><span class="sig-name descname"><span class="pre">RecorderPortalCaptureCanceled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ignis.exceptions.RecorderPortalCaptureCanceled" title="Link to this definition">#</a></dt>
 <dd><p>Raised when the desktop portal capture is canceled by the user (e.g., by closing the “Select Sources” window).</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="ignis.exceptions.CssInfoNotFoundError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.exceptions.</span></span><span class="sig-name descname"><span class="pre">CssInfoNotFoundError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><span class="pre">object</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.exceptions.CssInfoNotFoundError" title="Link to this definition">#</a></dt>
+<dd><p>Raised when a CSS info with the given name is not found.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ignis.exceptions.CssInfoNotFoundError.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#ignis.exceptions.CssInfoNotFoundError.name" title="Link to this definition">#</a></dt>
+<dd><p>The name of the CSS info.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="ignis.exceptions.CssInfoAlreadyAppliedError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.exceptions.</span></span><span class="sig-name descname"><span class="pre">CssInfoAlreadyAppliedError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><span class="pre">object</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.exceptions.CssInfoAlreadyAppliedError" title="Link to this definition">#</a></dt>
+<dd><p>Raised when a CSS info with the given name is already applied.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ignis.exceptions.CssInfoAlreadyAppliedError.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#ignis.exceptions.CssInfoAlreadyAppliedError.name" title="Link to this definition">#</a></dt>
+<dd><p>The name of the CSS info.</p>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -964,6 +995,14 @@
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.exceptions.GpuScreenRecorderNotFoundError"><code class="docutils literal notranslate"><span class="pre">GpuScreenRecorderNotFoundError</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.exceptions.RecorderPortalCaptureCanceled"><code class="docutils literal notranslate"><span class="pre">RecorderPortalCaptureCanceled</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.exceptions.CssInfoNotFoundError"><code class="docutils literal notranslate"><span class="pre">CssInfoNotFoundError</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.exceptions.CssInfoNotFoundError.name"><code class="docutils literal notranslate"><span class="pre">CssInfoNotFoundError.name</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.exceptions.CssInfoAlreadyAppliedError"><code class="docutils literal notranslate"><span class="pre">CssInfoAlreadyAppliedError</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.exceptions.CssInfoAlreadyAppliedError.name"><code class="docutils literal notranslate"><span class="pre">CssInfoAlreadyAppliedError.name</span></code></a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 

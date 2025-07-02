@@ -523,6 +523,8 @@
 </li>
       <li><a href="api/services/bluetooth.html#ignis.services.bluetooth.BluetoothDevice.alias">alias (ignis.services.bluetooth.BluetoothDevice property)</a>
 </li>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssManager.all_css_reloaded">all_css_reloaded (ignis.css_manager.CssManager property)</a>
+</li>
       <li><a href="api/widgets/Window.html#ignis.widgets.Window.anchor">anchor (ignis.widgets.Window property)</a>
 </li>
       <li><a href="api/exceptions.html#ignis.exceptions.AnotherNotificationDaemonRunningError">AnotherNotificationDaemonRunningError</a>
@@ -556,7 +558,11 @@
       <li><a href="api/services/applications.html#ignis.services.applications.ApplicationsService">ApplicationsService (class in ignis.services.applications)</a>
 </li>
       <li><a href="api/app.html#ignis.app.IgnisApp.apply_css">apply_css() (ignis.app.IgnisApp method)</a>
+
+      <ul>
+        <li><a href="api/css_manager.html#ignis.css_manager.CssManager.apply_css">(ignis.css_manager.CssManager method)</a>
 </li>
+      </ul></li>
       <li><a href="api/options_manager.html#ignis.options_manager.OptionsGroup.apply_from_dict">apply_from_dict() (ignis.options_manager.OptionsGroup method)</a>
 </li>
       <li><a href="api/services/applications.html#ignis.services.applications.ApplicationsService.apps">apps (ignis.services.applications.ApplicationsService property)</a>
@@ -588,6 +594,8 @@
       <li><a href="api/services/recorder.html#ignis.services.recorder.AudioDevice">AudioDevice (class in ignis.services.recorder)</a>
 </li>
       <li><a href="api/services/audio.html#ignis.services.audio.AudioService">AudioService (class in ignis.services.audio)</a>
+</li>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssInfoPath.autoreload">autoreload (ignis.css_manager.CssInfoPath attribute)</a>
 </li>
       <li><a href="api/app.html#ignis.app.IgnisApp.autoreload_config">autoreload_config (ignis.app.IgnisApp property)</a>
 </li>
@@ -769,8 +777,6 @@
         <li><a href="api/window_manager.html#ignis.window_manager.WindowManager.close_window">(ignis.window_manager.WindowManager method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/services/hyprland.html#ignis.services.hyprland.HyprlandWindow.closed">closed (ignis.services.hyprland.HyprlandWindow property)</a>
 
       <ul>
@@ -786,11 +792,15 @@
         <li><a href="user/cli.html#cmdoption-ignis-run-python-arg-CODE">ignis-run-python command line option</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/services/recorder.html#ignis.services.recorder.RecorderConfig.color_range">color_range (ignis.services.recorder.RecorderConfig attribute)</a>
 </li>
       <li><a href="api/widgets/Grid.html#ignis.widgets.Grid.column_num">column_num (ignis.widgets.Grid property)</a>
 </li>
       <li><a href="api/services/network.html#ignis.services.network.WifiAccessPoint.commit_changes_async">commit_changes_async() (ignis.services.network.WifiAccessPoint method)</a>
+</li>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssInfoBase.compiler_function">compiler_function (ignis.css_manager.CssInfoBase attribute)</a>
 </li>
       <li><a href="api/connection_manager.html#ignis.connection_manager.ConnectionManager.connect">connect() (ignis.connection_manager.ConnectionManager method)</a>
 </li>
@@ -843,6 +853,26 @@
       <li><a href="api/services/fetch.html#ignis.services.fetch.FetchService.cpu_temp">cpu_temp (ignis.services.fetch.FetchService property)</a>
 </li>
       <li><a href="api/utils/pixbuf.html#ignis.utils.crop_pixbuf">crop_pixbuf() (in module ignis.utils)</a>
+</li>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssManager.css_applied">css_applied (ignis.css_manager.CssManager property)</a>
+</li>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssManager.css_reloaded">css_reloaded (ignis.css_manager.CssManager property)</a>
+</li>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssManager.css_removed">css_removed (ignis.css_manager.CssManager property)</a>
+</li>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssManager.css_resetted">css_resetted (ignis.css_manager.CssManager property)</a>
+</li>
+      <li><a href="api/exceptions.html#ignis.exceptions.CssInfoAlreadyAppliedError">CssInfoAlreadyAppliedError</a>
+</li>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssInfoBase">CssInfoBase (class in ignis.css_manager)</a>
+</li>
+      <li><a href="api/exceptions.html#ignis.exceptions.CssInfoNotFoundError">CssInfoNotFoundError</a>
+</li>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssInfoPath">CssInfoPath (class in ignis.css_manager)</a>
+</li>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssInfoString">CssInfoString (class in ignis.css_manager)</a>
+</li>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssManager">CssManager (class in ignis.css_manager)</a>
 </li>
       <li><a href="api/exceptions.html#ignis.exceptions.CssParsingError">CssParsingError</a>
 </li>
@@ -1131,6 +1161,8 @@
 </li>
       <li><a href="api/utils/icon.html#ignis.utils.get_app_icon_name">get_app_icon_name() (in module ignis.utils)</a>
 </li>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssManager.get_css_info_by_name">get_css_info_by_name() (ignis.css_manager.CssManager method)</a>
+</li>
       <li><a href="api/utils/misc.html#ignis.utils.get_current_dir">get_current_dir() (in module ignis.utils)</a>
 </li>
       <li><a href="api/dbus.html#ignis.dbus.DBusProxy.get_dbus_property">get_dbus_property() (ignis.dbus.DBusProxy method)</a>
@@ -1167,10 +1199,10 @@
 </li>
       <li><a href="api/utils/monitor.html#ignis.utils.get_n_monitors">get_n_monitors() (in module ignis.utils)</a>
 </li>
-      <li><a href="api/services/notifications.html#ignis.services.notifications.NotificationService.get_notification">get_notification() (ignis.services.notifications.NotificationService method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/services/notifications.html#ignis.services.notifications.NotificationService.get_notification">get_notification() (ignis.services.notifications.NotificationService method)</a>
+</li>
       <li><a href="api/utils/icon.html#ignis.utils.get_paintable">get_paintable() (in module ignis.utils)</a>
 </li>
       <li><a href="api/toplevel.html#ignis.get_temp_dir">get_temp_dir() (in module ignis)</a>
@@ -1582,10 +1614,10 @@
 </li>
       <li><a href="api/services/hyprland.html#ignis.services.hyprland.HyprlandKeyboard.layout">layout (ignis.services.hyprland.HyprlandKeyboard property)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/services/mpris.html#ignis.services.mpris.MprisPlayer.length">length (ignis.services.mpris.MprisPlayer property)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/services/recorder.html#ignis.services.recorder.RecorderService.list_application_audio">list_application_audio() (ignis.services.recorder.RecorderService method)</a>
 </li>
       <li><a href="api/services/recorder.html#ignis.services.recorder.RecorderService.list_application_audio_async">list_application_audio_async() (ignis.services.recorder.RecorderService method)</a>
@@ -1597,6 +1629,10 @@
       <li><a href="api/services/recorder.html#ignis.services.recorder.RecorderService.list_capture_options">list_capture_options() (ignis.services.recorder.RecorderService method)</a>
 </li>
       <li><a href="api/services/recorder.html#ignis.services.recorder.RecorderService.list_capture_options_async">list_capture_options_async() (ignis.services.recorder.RecorderService method)</a>
+</li>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssManager.list_css_info_names">list_css_info_names() (ignis.css_manager.CssManager method)</a>
+</li>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssManager.list_css_infos">list_css_infos() (ignis.css_manager.CssManager method)</a>
 </li>
       <li><a href="api/window_manager.html#ignis.window_manager.WindowManager.list_window_names">list_window_names() (ignis.window_manager.WindowManager method)</a>
 </li>
@@ -1745,9 +1781,11 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/dbus.html#ignis.dbus.DBusProxy.name">name (ignis.dbus.DBusProxy property)</a>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssInfoBase.name">name (ignis.css_manager.CssInfoBase attribute)</a>
 
       <ul>
+        <li><a href="api/dbus.html#ignis.dbus.DBusProxy.name">(ignis.dbus.DBusProxy property)</a>
+</li>
         <li><a href="api/dbus.html#ignis.dbus.DBusService.name">(ignis.dbus.DBusService property)</a>
 </li>
         <li><a href="api/dbus_menu.html#ignis.dbus_menu.DBusMenu.name">(ignis.dbus_menu.DBusMenu property)</a>
@@ -1755,6 +1793,10 @@
         <li><a href="api/exceptions.html#ignis.exceptions.AnotherNotificationDaemonRunningError.name">(ignis.exceptions.AnotherNotificationDaemonRunningError property)</a>
 </li>
         <li><a href="api/exceptions.html#ignis.exceptions.AnotherSystemTrayRunningError.name">(ignis.exceptions.AnotherSystemTrayRunningError property)</a>
+</li>
+        <li><a href="api/exceptions.html#ignis.exceptions.CssInfoAlreadyAppliedError.name">(ignis.exceptions.CssInfoAlreadyAppliedError property)</a>
+</li>
+        <li><a href="api/exceptions.html#ignis.exceptions.CssInfoNotFoundError.name">(ignis.exceptions.CssInfoNotFoundError property)</a>
 </li>
         <li><a href="api/services/applications.html#ignis.services.applications.Application.name">(ignis.services.applications.Application property)</a>
 </li>
@@ -1793,14 +1835,14 @@
 </li>
       <li><a href="api/services/network.html#ignis.services.network.NetworkService">NetworkService (class in ignis.services.network)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/dbus.html#ignis.dbus.DBusProxy.new">new() (ignis.dbus.DBusProxy class method)</a>
 
       <ul>
         <li><a href="api/dbus_menu.html#ignis.dbus_menu.DBusMenu.new">(ignis.dbus_menu.DBusMenu class method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/services/network.html#ignis.services.network.WifiDevice.new_access_point">new_access_point (ignis.services.network.WifiDevice property)</a>
 </li>
       <li><a href="api/services/network.html#ignis.services.network.Vpn.new_active_connection">new_active_connection (ignis.services.network.Vpn property)</a>
@@ -2011,9 +2053,11 @@
 </li>
       <li><a href="api/utils/str_cases.html#ignis.utils.pascal_to_snake">pascal_to_snake() (in module ignis.utils)</a>
 </li>
-      <li><a href="api/services/recorder.html#ignis.services.recorder.RecorderConfig.path">path (ignis.services.recorder.RecorderConfig attribute)</a>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssInfoPath.path">path (ignis.css_manager.CssInfoPath attribute)</a>
 
       <ul>
+        <li><a href="api/services/recorder.html#ignis.services.recorder.RecorderConfig.path">(ignis.services.recorder.RecorderConfig attribute)</a>
+</li>
         <li><a href="api/utils/FileMonitor.html#ignis.utils.FileMonitor.path">(ignis.utils.FileMonitor property)</a>
 </li>
       </ul></li>
@@ -2095,6 +2139,8 @@
 </li>
       <li><a href="api/services/mpris.html#ignis.services.mpris.MprisPlayer.previous_async">previous_async() (ignis.services.mpris.MprisPlayer method)</a>
 </li>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssInfoBase.priority">priority (ignis.css_manager.CssInfoBase attribute)</a>
+</li>
       <li><a href="api/dbus.html#ignis.dbus.DBusProxy.properties">properties (ignis.dbus.DBusProxy property)</a>
 
       <ul>
@@ -2169,12 +2215,22 @@
         <li><a href="api/client.html#ignis.client.IgnisClient.reload">(ignis.client.IgnisClient method)</a>
 </li>
       </ul></li>
-      <li><a href="api/app.html#ignis.app.IgnisApp.reload_css">reload_css() (ignis.app.IgnisApp method)</a>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssManager.reload_all_css">reload_all_css() (ignis.css_manager.CssManager method)</a>
 </li>
+      <li><a href="api/app.html#ignis.app.IgnisApp.reload_css">reload_css() (ignis.app.IgnisApp method)</a>
+
+      <ul>
+        <li><a href="api/css_manager.html#ignis.css_manager.CssManager.reload_css">(ignis.css_manager.CssManager method)</a>
+</li>
+      </ul></li>
       <li><a href="api/app.html#ignis.app.IgnisApp.reload_on_monitors_change">reload_on_monitors_change (ignis.app.IgnisApp property)</a>
 </li>
       <li><a href="api/app.html#ignis.app.IgnisApp.remove_css">remove_css() (ignis.app.IgnisApp method)</a>
+
+      <ul>
+        <li><a href="api/css_manager.html#ignis.css_manager.CssManager.remove_css">(ignis.css_manager.CssManager method)</a>
 </li>
+      </ul></li>
       <li><a href="api/app.html#ignis.app.IgnisApp.remove_window">remove_window() (ignis.app.IgnisApp method)</a>
 
       <ul>
@@ -2206,7 +2262,11 @@
       <li><a href="api/services/hyprland.html#ignis.services.hyprland.HyprlandMonitor.reserved">reserved (ignis.services.hyprland.HyprlandMonitor property)</a>
 </li>
       <li><a href="api/app.html#ignis.app.IgnisApp.reset_css">reset_css() (ignis.app.IgnisApp method)</a>
+
+      <ul>
+        <li><a href="api/css_manager.html#ignis.css_manager.CssManager.reset_css">(ignis.css_manager.CssManager method)</a>
 </li>
+      </ul></li>
       <li><a href="api/services/recorder.html#ignis.services.recorder.RecorderConfig.resolution_limit">resolution_limit (ignis.services.recorder.RecorderConfig attribute)</a>
 </li>
       <li><a href="api/services/systemd.html#ignis.services.systemd.SystemdUnit.restart">restart() (ignis.services.systemd.SystemdUnit method)</a>
@@ -2416,6 +2476,8 @@
       <li><a href="api/services/audio.html#ignis.services.audio.AudioService.streams">streams (ignis.services.audio.AudioService property)</a>
 </li>
       <li><a href="api/services/network.html#ignis.services.network.WifiAccessPoint.strength">strength (ignis.services.network.WifiAccessPoint property)</a>
+</li>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssInfoString.string">string (ignis.css_manager.CssInfoString attribute)</a>
 </li>
       <li><a href="api/exceptions.html#ignis.exceptions.StylePathAppliedError.style_path">style_path (ignis.exceptions.StylePathAppliedError property)</a>
 
@@ -2659,10 +2721,18 @@
 </li>
       <li><a href="api/services/wallpaper.html#ignis.services.wallpaper.WallpaperService">WallpaperService (class in ignis.services.wallpaper)</a>
 </li>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssInfoPath.watch_dir">watch_dir (ignis.css_manager.CssInfoPath attribute)</a>
+</li>
       <li><a href="api/dbus.html#ignis.dbus.DBusProxy.watch_name">watch_name() (ignis.dbus.DBusProxy method)</a>
 </li>
-      <li><a href="api/app.html#ignis.app.IgnisApp.widgets_style_priority">widgets_style_priority (ignis.app.IgnisApp property)</a>
+      <li><a href="api/css_manager.html#ignis.css_manager.CssInfoPath.watch_recursively">watch_recursively (ignis.css_manager.CssInfoPath attribute)</a>
 </li>
+      <li><a href="api/app.html#ignis.app.IgnisApp.widgets_style_priority">widgets_style_priority (ignis.app.IgnisApp property)</a>
+
+      <ul>
+        <li><a href="api/css_manager.html#ignis.css_manager.CssManager.widgets_style_priority">(ignis.css_manager.CssManager property)</a>
+</li>
+      </ul></li>
       <li><a href="api/services/hyprland.html#ignis.services.hyprland.HyprlandMonitor.width">width (ignis.services.hyprland.HyprlandMonitor property)</a>
 
       <ul>
@@ -2694,14 +2764,14 @@
         <li><a href="user/cli.html#cmdoption-ignis-toggle-window-arg-WINDOW_NAME">ignis-toggle-window command line option</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/exceptions.html#ignis.exceptions.WindowAddedError.window_name">window_name (ignis.exceptions.WindowAddedError property)</a>
 
       <ul>
         <li><a href="api/exceptions.html#ignis.exceptions.WindowNotFoundError.window_name">(ignis.exceptions.WindowNotFoundError property)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/exceptions.html#ignis.exceptions.WindowAddedError">WindowAddedError</a>
 </li>
       <li><a href="api/window_manager.html#ignis.window_manager.WindowManager">WindowManager (class in ignis.window_manager)</a>

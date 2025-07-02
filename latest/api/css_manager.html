@@ -1,0 +1,1016 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>CSS Manager &#8212; Ignis documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=fe5c0044" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/css_manager';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ignis-sh.github.io/ignis/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Singleton" href="singleton.html" />
+    <link rel="prev" title="WindowManager" href="window_manager.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Ignis</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ignis-sh/ignis" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../dev/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ignis-sh/ignis" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="toplevel.html">Toplevel package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app.html">Application</a></li>
+<li class="toctree-l1"><a class="reference internal" href="window_manager.html">WindowManager</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">CSS Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="singleton.html">Singleton</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gobject.html">GObject</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variable.html">Variable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">Client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="options_manager.html">Options Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dbus.html">D-Bus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dbus_menu.html">D-Bus menu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base_widget.html">BaseWidget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base_service.html">BaseService</a></li>
+<li class="toctree-l1"><a class="reference internal" href="connection_manager.html">Connection Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="menu_model.html">Menu Model</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="widgets/index.html">Widgets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="widgets/Arrow.html">Arrow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/ArrowButton.html">ArrowButton</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/Box.html">Box</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/Button.html">Button</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/Calendar.html">Calendar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/CenterBox.html">CenterBox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/CheckButton.html">CheckButton</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/DropDown.html">DropDown</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/Entry.html">Entry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/EventBox.html">EventBox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/FileChooserButton.html">FileChooserButton</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/FileDialog.html">FileDialog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/FileFilter.html">FileFilter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/Grid.html">Grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/HeaderBar.html">HeaderBar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/Icon.html">Icon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/Label.html">Label</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/ListBox.html">ListBox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/ListBoxRow.html">ListBoxRow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/Overlay.html">Overlay</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/Picture.html">Picture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/PopoverMenu.html">PopoverMenu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/RegularWindow.html">RegularWindow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/Revealer.html">Revealer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/RevealerWindow.html">RevealerWindow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/Scale.html">Scale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/Scroll.html">Scroll</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/Separator.html">Separator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/SpinButton.html">SpinButton</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/Stack.html">Stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/Switch.html">Switch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/ToggleButton.html">ToggleButton</a></li>
+<li class="toctree-l2"><a class="reference internal" href="widgets/Window.html">Window</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="services/index.html">Services</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="services/applications.html">Applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="services/audio.html">Audio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="services/backlight.html">Backlight</a></li>
+<li class="toctree-l2"><a class="reference internal" href="services/bluetooth.html">Bluetooth</a></li>
+<li class="toctree-l2"><a class="reference internal" href="services/fetch.html">Fetch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="services/hyprland.html">Hyprland</a></li>
+<li class="toctree-l2"><a class="reference internal" href="services/mpris.html">MPRIS (media)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="services/network.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="services/niri.html">Niri</a></li>
+<li class="toctree-l2"><a class="reference internal" href="services/notifications.html">Notifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="services/recorder.html">Recorder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="services/system_tray.html">System Tray</a></li>
+<li class="toctree-l2"><a class="reference internal" href="services/systemd.html">Systemd</a></li>
+<li class="toctree-l2"><a class="reference internal" href="services/upower.html">UPower</a></li>
+<li class="toctree-l2"><a class="reference internal" href="services/wallpaper.html">Wallpaper</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="utils/index.html">Utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="utils/FileMonitor.html">FileMonitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/Poll.html">Poll</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/Timeout.html">Timeout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/debounce.html">Debounce</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/file.html">File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/icon.html">Icon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/misc.html">Misc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/monitor.html">Monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/pixbuf.html">Pixbuf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/sass.html">Sass</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/sh.html">Shell Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/socket.html">Socket</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/str_cases.html">String Cases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/thread.html">Thread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/version.html">Version</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">API reference</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">CSS Manager</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="css-manager">
+<h1>CSS Manager<a class="headerlink" href="#css-manager" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ignis.css_manager.CssManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.css_manager.</span></span><span class="sig-name descname"><span class="pre">CssManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ignis.css_manager.CssManager" title="Link to this definition">#</a></dt>
+<dd><p>The CSS manager. Provides convenient utilities to apply, remove, and reload CSS.</p>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ignis.css_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">CssManager</span><span class="p">,</span> <span class="n">CssInfoString</span><span class="p">,</span> <span class="n">CssInfoPath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ignis</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
+
+<span class="n">css_manager</span> <span class="o">=</span> <span class="n">CssManager</span><span class="o">.</span><span class="n">get_default</span><span class="p">()</span>
+
+<span class="c1"># Apply from a path</span>
+<span class="n">css_manager</span><span class="o">.</span><span class="n">apply_css</span><span class="p">(</span>
+    <span class="n">CssInfoPath</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;main&quot;</span><span class="p">,</span>
+        <span class="n">path</span><span class="o">=</span><span class="s2">&quot;PATH/TO/style.css&quot;</span><span class="p">,</span> <span class="c1"># e.g., os.path.join(utils.get_current_dir(), &quot;style.css&quot;),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Apply from a string</span>
+<span class="n">css_manager</span><span class="o">.</span><span class="n">apply_css</span><span class="p">(</span>
+    <span class="n">CssInfoString</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;some-name&quot;</span><span class="p">,</span>
+        <span class="n">string</span><span class="o">=</span><span class="s2">&quot;* { background-color: red; }&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Remove an applied info</span>
+<span class="n">css_manager</span><span class="o">.</span><span class="n">remove_css</span><span class="p">(</span><span class="s2">&quot;some-name&quot;</span><span class="p">)</span>
+
+<span class="c1"># Reload an applied info</span>
+<span class="n">css_manager</span><span class="o">.</span><span class="n">reload_css</span><span class="p">(</span><span class="s2">&quot;main&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Sass/SCSS compilation</strong></p>
+<p>You can use <a class="reference internal" href="#ignis.css_manager.CssInfoBase.compiler_function" title="ignis.css_manager.CssInfoBase.compiler_function"><code class="xref py py-attr docutils literal notranslate"><span class="pre">CssInfoBase.compiler_function</span></code></a> to compile Sass/SCSS:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ignis.css_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">CssManager</span><span class="p">,</span> <span class="n">CssInfoString</span><span class="p">,</span> <span class="n">CssInfoPath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ignis</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
+
+<span class="n">css_manager</span> <span class="o">=</span> <span class="n">CssManager</span><span class="o">.</span><span class="n">get_default</span><span class="p">()</span>
+
+<span class="c1"># File</span>
+<span class="n">css_manager</span><span class="o">.</span><span class="n">apply_css</span><span class="p">(</span>
+    <span class="n">CssInfoPath</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;main&quot;</span><span class="p">,</span>
+        <span class="n">path</span><span class="o">=</span><span class="s2">&quot;PATH/TO/style.scss&quot;</span><span class="p">,</span>
+        <span class="n">compiler_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">path</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">sass_compile</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># String</span>
+<span class="n">css_manager</span><span class="o">.</span><span class="n">apply_css</span><span class="p">(</span>
+    <span class="n">CssInfoString</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;some-name&quot;</span><span class="p">,</span>
+        <span class="n">string</span><span class="o">=</span><span class="s2">&quot;some sass/scss string&quot;</span><span class="p">,</span>
+        <span class="n">compiler_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">string</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">sass_compile</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="n">string</span><span class="p">),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py signal">
+<dt class="sig sig-object py" id="ignis.css_manager.CssManager.css_applied">
+<em class="property"><span class="pre">signal</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">css_applied</span></span><a class="headerlink" href="#ignis.css_manager.CssManager.css_applied" title="Link to this definition">#</a></dt>
+<dd><p>Emitted when a CSS info has been applied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>info</strong> (<a class="reference internal" href="#ignis.css_manager.CssInfoString" title="ignis.css_manager.CssInfoString"><em>CssInfoString</em></a><em> | </em><a class="reference internal" href="#ignis.css_manager.CssInfoPath" title="ignis.css_manager.CssInfoPath"><em>CssInfoPath</em></a>) -- The applied CSS.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py signal">
+<dt class="sig sig-object py" id="ignis.css_manager.CssManager.css_removed">
+<em class="property"><span class="pre">signal</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">css_removed</span></span><a class="headerlink" href="#ignis.css_manager.CssManager.css_removed" title="Link to this definition">#</a></dt>
+<dd><p>Emitted when a CSS info has been removed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>info</strong> (<a class="reference internal" href="#ignis.css_manager.CssInfoString" title="ignis.css_manager.CssInfoString"><em>CssInfoString</em></a><em> | </em><a class="reference internal" href="#ignis.css_manager.CssInfoPath" title="ignis.css_manager.CssInfoPath"><em>CssInfoPath</em></a>) -- The removed CSS.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py signal">
+<dt class="sig sig-object py" id="ignis.css_manager.CssManager.css_resetted">
+<em class="property"><span class="pre">signal</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">css_resetted</span></span><a class="headerlink" href="#ignis.css_manager.CssManager.css_resetted" title="Link to this definition">#</a></dt>
+<dd><p>Emitted when all applied CSS infos have been resetted.</p>
+</dd></dl>
+
+<dl class="py signal">
+<dt class="sig sig-object py" id="ignis.css_manager.CssManager.css_reloaded">
+<em class="property"><span class="pre">signal</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">css_reloaded</span></span><a class="headerlink" href="#ignis.css_manager.CssManager.css_reloaded" title="Link to this definition">#</a></dt>
+<dd><p>Emitted when a CSS info has been reloaded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>info</strong> (<a class="reference internal" href="#ignis.css_manager.CssInfoString" title="ignis.css_manager.CssInfoString"><em>CssInfoString</em></a><em> | </em><a class="reference internal" href="#ignis.css_manager.CssInfoPath" title="ignis.css_manager.CssInfoPath"><em>CssInfoPath</em></a>) -- The reloaded CSS.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py signal">
+<dt class="sig sig-object py" id="ignis.css_manager.CssManager.all_css_reloaded">
+<em class="property"><span class="pre">signal</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">all_css_reloaded</span></span><a class="headerlink" href="#ignis.css_manager.CssManager.all_css_reloaded" title="Link to this definition">#</a></dt>
+<dd><p>Emitted when all applied CSS infos have been reloaded.</p>
+</dd></dl>
+
+<dl class="py gproperty">
+<dt class="sig sig-object py" id="ignis.css_manager.CssManager.widgets_style_priority">
+<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">widgets_style_priority</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'application'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'fallback'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'settings'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'theme'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'user'</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ignis.css_manager.CssManager.widgets_style_priority" title="Link to this definition">#</a></dt>
+<dd><ul class="simple">
+<li><p>read-write</p></li>
+</ul>
+<p>The priority used for each widget <code class="docutils literal notranslate"><span class="pre">style</span></code> property.
+unless a widget specifies a custom style priority using <a class="reference internal" href="base_widget.html#ignis.base_widget.BaseWidget.style_priority" title="ignis.base_widget.BaseWidget.style_priority"><code class="xref py py-attr docutils literal notranslate"><span class="pre">style_priority</span></code></a>.
+For more information about style priorities see <a class="reference external" href="https://lazka.github.io/pgi-docs/Gtk-4.0/constants.html#Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION" title="(in Gtk 4.0 v4.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION</span></code></a> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">CssInfoPath.priority</span></code>.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">&quot;application&quot;</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Changing this property won't affect already initialized widgets!
+If you want to set a custom global style priority for all widgets, do this before initializing them
+(e.g., at the start of your configuration).</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ignis.css_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">CssManager</span>
+
+<span class="n">css_manager</span> <span class="o">=</span> <span class="n">CssManager</span><span class="o">.</span><span class="n">get_default</span><span class="p">()</span>
+
+<span class="n">css_manager</span><span class="o">.</span><span class="n">widgets_style_priority</span> <span class="o">=</span> <span class="s2">&quot;user&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ignis.css_manager.CssManager.apply_css">
+<span class="sig-name descname"><span class="pre">apply_css</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ignis.css_manager.CssInfoString" title="ignis.css_manager.CssInfoString"><span class="pre">CssInfoString</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#ignis.css_manager.CssInfoPath" title="ignis.css_manager.CssInfoPath"><span class="pre">CssInfoPath</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.css_manager.CssManager.apply_css" title="Link to this definition">#</a></dt>
+<dd><p>Apply a CSS info.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>info</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#ignis.css_manager.CssInfoString" title="ignis.css_manager.CssInfoString"><code class="xref py py-class docutils literal notranslate"><span class="pre">CssInfoString</span></code></a> | <a class="reference internal" href="#ignis.css_manager.CssInfoPath" title="ignis.css_manager.CssInfoPath"><code class="xref py py-class docutils literal notranslate"><span class="pre">CssInfoPath</span></code></a></span>) -- The CSS info to apply.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="exceptions.html#ignis.exceptions.CssInfoAlreadyAppliedError" title="ignis.exceptions.CssInfoAlreadyAppliedError"><strong>CssInfoAlreadyAppliedError</strong></a> -- If CSS info with the given name is already applied.</p></li>
+<li><p><a class="reference internal" href="exceptions.html#ignis.exceptions.CssParsingError" title="ignis.exceptions.CssParsingError"><strong>CssParsingError</strong></a> -- If a CSS parsing error occurs, usually due to invalid CSS.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ignis.css_manager.CssManager.remove_css">
+<span class="sig-name descname"><span class="pre">remove_css</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.css_manager.CssManager.remove_css" title="Link to this definition">#</a></dt>
+<dd><p>Remove CSS info by its name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- The name of the CSS info to remove.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="exceptions.html#ignis.exceptions.CssInfoNotFoundError" title="ignis.exceptions.CssInfoNotFoundError"><strong>CssInfoNotFoundError</strong></a> -- If no CSS info with the given name is found.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ignis.css_manager.CssManager.reset_css">
+<span class="sig-name descname"><span class="pre">reset_css</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.css_manager.CssManager.reset_css" title="Link to this definition">#</a></dt>
+<dd><p>Remove <strong>all</strong> applied CSS infos.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ignis.css_manager.CssManager.reload_css">
+<span class="sig-name descname"><span class="pre">reload_css</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.css_manager.CssManager.reload_css" title="Link to this definition">#</a></dt>
+<dd><p>Reload a CSS info by its name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- The name of the CSS info to reload.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ignis.css_manager.CssManager.reload_all_css">
+<span class="sig-name descname"><span class="pre">reload_all_css</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.css_manager.CssManager.reload_all_css" title="Link to this definition">#</a></dt>
+<dd><p>Reload <strong>all</strong> applied CSS infos.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ignis.css_manager.CssManager.get_css_info_by_name">
+<span class="sig-name descname"><span class="pre">get_css_info_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ignis.css_manager.CssInfoPath" title="ignis.css_manager.CssInfoPath"><span class="pre">CssInfoPath</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#ignis.css_manager.CssInfoString" title="ignis.css_manager.CssInfoString"><span class="pre">CssInfoString</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.css_manager.CssManager.get_css_info_by_name" title="Link to this definition">#</a></dt>
+<dd><p>Get an applied CSS info by its name:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- The name of the CSS info to get.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#ignis.css_manager.CssInfoPath" title="ignis.css_manager.CssInfoPath"><code class="xref py py-class docutils literal notranslate"><span class="pre">CssInfoPath</span></code></a> | <a class="reference internal" href="#ignis.css_manager.CssInfoString" title="ignis.css_manager.CssInfoString"><code class="xref py py-class docutils literal notranslate"><span class="pre">CssInfoString</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The CSS info, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the CSS info with the given name is not applied.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ignis.css_manager.CssManager.list_css_infos">
+<span class="sig-name descname"><span class="pre">list_css_infos</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ignis.css_manager.CssInfoString" title="ignis.css_manager.CssInfoString"><span class="pre">CssInfoString</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#ignis.css_manager.CssInfoPath" title="ignis.css_manager.CssInfoPath"><span class="pre">CssInfoPath</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ignis.css_manager.CssManager.list_css_infos" title="Link to this definition">#</a></dt>
+<dd><p>List all applied CSS infos.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="#ignis.css_manager.CssInfoString" title="ignis.css_manager.CssInfoString"><code class="xref py py-class docutils literal notranslate"><span class="pre">CssInfoString</span></code></a> | <a class="reference internal" href="#ignis.css_manager.CssInfoPath" title="ignis.css_manager.CssInfoPath"><code class="xref py py-class docutils literal notranslate"><span class="pre">CssInfoPath</span></code></a>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of all applied CSS infos.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ignis.css_manager.CssManager.list_css_info_names">
+<span class="sig-name descname"><span class="pre">list_css_info_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ignis.css_manager.CssManager.list_css_info_names" title="Link to this definition">#</a></dt>
+<dd><p>List names of all applied CSS infos.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of all applied CSS info names.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ignis.css_manager.CssInfoBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.css_manager.</span></span><span class="sig-name descname"><span class="pre">CssInfoBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'application'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'fallback'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'settings'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'theme'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'user'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'application'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compiler_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.css_manager.CssInfoBase" title="Link to this definition">#</a></dt>
+<dd><p>The base class for CSS infos.</p>
+<p>You shouldn't use it, use <a class="reference internal" href="#ignis.css_manager.CssInfoString" title="ignis.css_manager.CssInfoString"><code class="xref py py-class docutils literal notranslate"><span class="pre">CssInfoString</span></code></a> or <a class="reference internal" href="#ignis.css_manager.CssInfoPath" title="ignis.css_manager.CssInfoPath"><code class="xref py py-class docutils literal notranslate"><span class="pre">CssInfoPath</span></code></a> instead.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ignis.css_manager.CssInfoBase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><a class="headerlink" href="#ignis.css_manager.CssInfoBase.name" title="Link to this definition">#</a></dt>
+<dd><p>The name of the info by which you will be able to use <a class="reference internal" href="#ignis.css_manager.CssManager" title="ignis.css_manager.CssManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">CssManager</span></code></a> functions.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ignis.css_manager.CssInfoBase.priority">
+<span class="sig-name descname"><span class="pre">priority</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a><span class="pre">[</span><code class="docutils literal notranslate"><span class="pre">'application'</span></code><span class="pre">,</span> <code class="docutils literal notranslate"><span class="pre">'fallback'</span></code><span class="pre">,</span> <code class="docutils literal notranslate"><span class="pre">'settings'</span></code><span class="pre">,</span> <code class="docutils literal notranslate"><span class="pre">'theme'</span></code><span class="pre">,</span> <code class="docutils literal notranslate"><span class="pre">'user'</span></code><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'application'</span></em><a class="headerlink" href="#ignis.css_manager.CssInfoBase.priority" title="Link to this definition">#</a></dt>
+<dd><p>The style priority.
+Most likely you should use either <code class="docutils literal notranslate"><span class="pre">&quot;application&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;user&quot;</span></code>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;user&quot;</span></code> - you want to override styles defined in <code class="docutils literal notranslate"><span class="pre">~/.config/gtk-4.0/gtk.css</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;application&quot;</span></code> (the default one) - you do <strong>not</strong> want to override it.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ignis.css_manager.CssInfoBase.compiler_function">
+<span class="sig-name descname"><span class="pre">compiler_function</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a><span class="pre">[[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a><span class="pre">],</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a><span class="pre">]</span> <span class="pre">|</span> <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#ignis.css_manager.CssInfoBase.compiler_function" title="Link to this definition">#</a></dt>
+<dd><p>A custom compiler function. It should receive only one argument:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#ignis.css_manager.CssInfoString" title="ignis.css_manager.CssInfoString"><code class="xref py py-class docutils literal notranslate"><span class="pre">CssInfoString</span></code></a> - the string</p></li>
+<li><p><a class="reference internal" href="#ignis.css_manager.CssInfoPath" title="ignis.css_manager.CssInfoPath"><code class="xref py py-class docutils literal notranslate"><span class="pre">CssInfoPath</span></code></a> - the path</p></li>
+</ul>
+<p>It must return a string containing a valid CSS code.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ignis.css_manager.CssInfoPath">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.css_manager.</span></span><span class="sig-name descname"><span class="pre">CssInfoPath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'application'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'fallback'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'settings'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'theme'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'user'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'application'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compiler_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">autoreload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">watch_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">watch_recursively</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.css_manager.CssInfoPath" title="Link to this definition">#</a></dt>
+<dd><p>CSS info for a path.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ignis.css_manager.CssInfoPath.path">
+<span class="sig-name descname"><span class="pre">path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><a class="headerlink" href="#ignis.css_manager.CssInfoPath.path" title="Link to this definition">#</a></dt>
+<dd><p>The path to the CSS file.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ignis.css_manager.CssInfoPath.autoreload">
+<span class="sig-name descname"><span class="pre">autoreload</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#ignis.css_manager.CssInfoPath.autoreload" title="Link to this definition">#</a></dt>
+<dd><p>Whether to automatically reload this info when the file changes.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ignis.css_manager.CssInfoPath.watch_dir">
+<span class="sig-name descname"><span class="pre">watch_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#ignis.css_manager.CssInfoPath.watch_dir" title="Link to this definition">#</a></dt>
+<dd><p>Whether to additionally watch for the changes of the directory where the file is placed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ignis.css_manager.CssInfoPath.watch_recursively">
+<span class="sig-name descname"><span class="pre">watch_recursively</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#ignis.css_manager.CssInfoPath.watch_recursively" title="Link to this definition">#</a></dt>
+<dd><p>Whether to watch the directory recursively.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ignis.css_manager.CssInfoString">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.css_manager.</span></span><span class="sig-name descname"><span class="pre">CssInfoString</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'application'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'fallback'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'settings'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'theme'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'user'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'application'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compiler_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.css_manager.CssInfoString" title="Link to this definition">#</a></dt>
+<dd><p>CSS info for a string.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ignis.css_manager.CssInfoString.string">
+<span class="sig-name descname"><span class="pre">string</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><a class="headerlink" href="#ignis.css_manager.CssInfoString.string" title="Link to this definition">#</a></dt>
+<dd><p>A string containing CSS code.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="window_manager.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">WindowManager</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="singleton.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Singleton</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssManager"><code class="docutils literal notranslate"><span class="pre">CssManager</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssManager.css_applied"><code class="docutils literal notranslate"><span class="pre">CssManager.css_applied</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssManager.css_removed"><code class="docutils literal notranslate"><span class="pre">CssManager.css_removed</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssManager.css_resetted"><code class="docutils literal notranslate"><span class="pre">CssManager.css_resetted</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssManager.css_reloaded"><code class="docutils literal notranslate"><span class="pre">CssManager.css_reloaded</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssManager.all_css_reloaded"><code class="docutils literal notranslate"><span class="pre">CssManager.all_css_reloaded</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssManager.widgets_style_priority"><code class="docutils literal notranslate"><span class="pre">CssManager.widgets_style_priority</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssManager.apply_css"><code class="docutils literal notranslate"><span class="pre">CssManager.apply_css()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssManager.remove_css"><code class="docutils literal notranslate"><span class="pre">CssManager.remove_css()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssManager.reset_css"><code class="docutils literal notranslate"><span class="pre">CssManager.reset_css()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssManager.reload_css"><code class="docutils literal notranslate"><span class="pre">CssManager.reload_css()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssManager.reload_all_css"><code class="docutils literal notranslate"><span class="pre">CssManager.reload_all_css()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssManager.get_css_info_by_name"><code class="docutils literal notranslate"><span class="pre">CssManager.get_css_info_by_name()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssManager.list_css_infos"><code class="docutils literal notranslate"><span class="pre">CssManager.list_css_infos()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssManager.list_css_info_names"><code class="docutils literal notranslate"><span class="pre">CssManager.list_css_info_names()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssInfoBase"><code class="docutils literal notranslate"><span class="pre">CssInfoBase</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssInfoBase.name"><code class="docutils literal notranslate"><span class="pre">CssInfoBase.name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssInfoBase.priority"><code class="docutils literal notranslate"><span class="pre">CssInfoBase.priority</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssInfoBase.compiler_function"><code class="docutils literal notranslate"><span class="pre">CssInfoBase.compiler_function</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssInfoPath"><code class="docutils literal notranslate"><span class="pre">CssInfoPath</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssInfoPath.path"><code class="docutils literal notranslate"><span class="pre">CssInfoPath.path</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssInfoPath.autoreload"><code class="docutils literal notranslate"><span class="pre">CssInfoPath.autoreload</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssInfoPath.watch_dir"><code class="docutils literal notranslate"><span class="pre">CssInfoPath.watch_dir</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssInfoPath.watch_recursively"><code class="docutils literal notranslate"><span class="pre">CssInfoPath.watch_recursively</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssInfoString"><code class="docutils literal notranslate"><span class="pre">CssInfoString</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.css_manager.CssInfoString.string"><code class="docutils literal notranslate"><span class="pre">CssInfoString.string</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/ignis-sh/ignis/edit/main/docs/api/css_manager.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/css_manager.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, linkfrg.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
