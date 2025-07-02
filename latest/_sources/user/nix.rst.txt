@@ -29,20 +29,18 @@ Add Ignis to the flake's inputs:
       };
     }
 
-Then, add the following to ``environment.systemPackages`` or ``home.packages``:
+Then, add the following to ``nixpkgs.overlays``:
 
 .. code-block:: nix
 
-    inputs.ignis.packages.${system}.ignis
+    ignis.overlays.default
 
 
-.. note::
+and the following to ``environment.systemPackages`` or ``home.packages``:
 
-    Remember to pass ``inputs`` 
-    to ``extraSpecialArgs`` for Home Manager
-    and ``specialArgs`` for the NixOS host configuration.
+.. code-block:: nix
 
-    See :ref:`basic-flake-example`.
+    pkgs.ignis
 
 Extra Dependencies
 ------------------
@@ -55,9 +53,9 @@ To add extra dependencies, use the ``<pkg>.override`` function and pass the ``ex
 
         .. code-block:: nix
 
-            { config, pkgs, lib, inputs, ... }: {
+            { config, pkgs, lib, ... }: {
               environment.systemPackages = [
-                (inputs.ignis.packages.${pkgs.stdenv.hostPlatform.system}.ignis.override {
+                (pkgs.ignis.override {
                   extraPackages = [
                     # Add extra dependencies here
                     # For example:
@@ -74,9 +72,9 @@ To add extra dependencies, use the ``<pkg>.override`` function and pass the ``ex
 
         .. code-block:: nix
 
-            { config, pkgs, lib, inputs, ... }: {
+            { config, pkgs, lib, ... }: {
               home.packages = [
-                (inputs.ignis.packages.${pkgs.stdenv.hostPlatform.system}.ignis.override {
+                (pkgs.ignis.override {
                   extraPackages = [
                     # Add extra dependencies here
                     # For example:
@@ -106,10 +104,10 @@ This is especially useful if the LSP server of your text editor is not able to f
 
         .. code-block:: nix
 
-          { config, pkgs, inputs, ... }: {
+          { config, pkgs, ... }: {
             home.packages = with pkgs; [
               (python3.withPackages(ps: with ps; [
-                (inputs.ignis.packages.${pkgs.stdenv.hostPlatform.system}.ignis.override {
+                (pkgs.ignis.override {
                   extraPackages = [
                     # Add extra packages if needed
                   ];
@@ -124,8 +122,6 @@ This is especially useful if the LSP server of your text editor is not able to f
     Do not add Ignis to the system Python if you have already added it as a package.
 
     Otherwise, Ignis may not be able to find extra dependencies.
-
-.. _basic-flake-example:
 
 The basic Flake example
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -149,20 +145,20 @@ The basic Flake example
               };
             };
 
-            outputs = { self, nixpkgs, home-manager, ... }@inputs: let
+            outputs = { self, nixpkgs, home-manager, ignis, ... }@inputs: let
               system = "x86_64-linux";
               lib = nixpkgs.lib;
-              extraSpecialArgs = { inherit system inputs; };  # <- passing inputs to the attribute set for home-manager
-              specialArgs = { inherit system inputs; };       # <- passing inputs to the attribute set for NixOS
             in {
               nixosConfigurations = {
                 dummy-hostname = lib.nixosSystem {
+                  specialArgs = { inherit system inputs; };
+
                   modules = [
-                    inherit specialArgs;  # <- this will make inputs available anywhere in the NixOS configuration
                     ./path/to/configuration.nix
+
                     home-manager.nixosModules.home-manager {
                       home-manager = {
-                        inherit extraSpecialArgs;  # <- this will make inputs available anywhere in the HM configuration
+                        extraSpecialArgs = { inherit system inputs; };
                         useGlobalPkgs = true;
                         useUserPackages = true;
                         users.yourUserName = import ./path/to/home.nix;

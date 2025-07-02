@@ -467,16 +467,13 @@ Please refer to the <a class="reference external" href="https://ignis-sh.github.
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Then, add the following to <code class="docutils literal notranslate"><span class="pre">environment.systemPackages</span></code> or <code class="docutils literal notranslate"><span class="pre">home.packages</span></code>:</p>
-<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span>inputs<span class="o">.</span>ignis<span class="o">.</span>packages<span class="o">.</span><span class="si">${</span>system<span class="si">}</span><span class="o">.</span>ignis
+<p>Then, add the following to <code class="docutils literal notranslate"><span class="pre">nixpkgs.overlays</span></code>:</p>
+<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span>ignis<span class="o">.</span>overlays<span class="o">.</span>default
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Remember to pass <code class="docutils literal notranslate"><span class="pre">inputs</span></code>
-to <code class="docutils literal notranslate"><span class="pre">extraSpecialArgs</span></code> for Home Manager
-and <code class="docutils literal notranslate"><span class="pre">specialArgs</span></code> for the NixOS host configuration.</p>
-<p>See <a class="reference internal" href="#basic-flake-example"><span class="std std-ref">The basic Flake example</span></a>.</p>
+<p>and the following to <code class="docutils literal notranslate"><span class="pre">environment.systemPackages</span></code> or <code class="docutils literal notranslate"><span class="pre">home.packages</span></code>:</p>
+<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span>pkgs<span class="o">.</span>ignis
+</pre></div>
 </div>
 </section>
 <section id="extra-dependencies">
@@ -486,9 +483,9 @@ and <code class="docutils literal notranslate"><span class="pre">specialArgs</sp
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
 <label class="sd-tab-label" for="sd-tab-item-0">
 configuration.nix</label><div class="sd-tab-content docutils">
-<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> config<span class="p">,</span> pkgs<span class="p">,</span> lib<span class="p">,</span> inputs<span class="p">,</span> <span class="o">...</span> <span class="p">}:</span> <span class="p">{</span>
+<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> config<span class="p">,</span> pkgs<span class="p">,</span> lib<span class="p">,</span> <span class="o">...</span> <span class="p">}:</span> <span class="p">{</span>
   environment<span class="o">.</span><span class="ss">systemPackages</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">(</span>inputs<span class="o">.</span>ignis<span class="o">.</span>packages<span class="o">.</span><span class="si">${</span>pkgs<span class="o">.</span>stdenv<span class="o">.</span>hostPlatform<span class="o">.</span>system<span class="si">}</span><span class="o">.</span>ignis<span class="o">.</span>override <span class="p">{</span>
+    <span class="p">(</span>pkgs<span class="o">.</span>ignis<span class="o">.</span>override <span class="p">{</span>
       <span class="ss">extraPackages</span> <span class="o">=</span> <span class="p">[</span>
         <span class="c1"># Add extra dependencies here</span>
         <span class="c1"># For example:</span>
@@ -506,9 +503,9 @@ configuration.nix</label><div class="sd-tab-content docutils">
 <input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
 <label class="sd-tab-label" for="sd-tab-item-1">
 home.nix</label><div class="sd-tab-content docutils">
-<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> config<span class="p">,</span> pkgs<span class="p">,</span> lib<span class="p">,</span> inputs<span class="p">,</span> <span class="o">...</span> <span class="p">}:</span> <span class="p">{</span>
+<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> config<span class="p">,</span> pkgs<span class="p">,</span> lib<span class="p">,</span> <span class="o">...</span> <span class="p">}:</span> <span class="p">{</span>
   home<span class="o">.</span><span class="ss">packages</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">(</span>inputs<span class="o">.</span>ignis<span class="o">.</span>packages<span class="o">.</span><span class="si">${</span>pkgs<span class="o">.</span>stdenv<span class="o">.</span>hostPlatform<span class="o">.</span>system<span class="si">}</span><span class="o">.</span>ignis<span class="o">.</span>override <span class="p">{</span>
+    <span class="p">(</span>pkgs<span class="o">.</span>ignis<span class="o">.</span>override <span class="p">{</span>
       <span class="ss">extraPackages</span> <span class="o">=</span> <span class="p">[</span>
         <span class="c1"># Add extra dependencies here</span>
         <span class="c1"># For example:</span>
@@ -535,10 +532,10 @@ This is especially useful if the LSP server of your text editor is not able to f
 <input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio">
 <label class="sd-tab-label" for="sd-tab-item-2">
 home.nix</label><div class="sd-tab-content docutils">
-<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> config<span class="p">,</span> pkgs<span class="p">,</span> inputs<span class="p">,</span> <span class="o">...</span> <span class="p">}:</span> <span class="p">{</span>
+<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> config<span class="p">,</span> pkgs<span class="p">,</span> <span class="o">...</span> <span class="p">}:</span> <span class="p">{</span>
   home<span class="o">.</span><span class="ss">packages</span> <span class="o">=</span> <span class="k">with</span> pkgs<span class="p">;</span> <span class="p">[</span>
     <span class="p">(</span>python3<span class="o">.</span>withPackages<span class="p">(</span>ps<span class="p">:</span> <span class="k">with</span> ps<span class="p">;</span> <span class="p">[</span>
-      <span class="p">(</span>inputs<span class="o">.</span>ignis<span class="o">.</span>packages<span class="o">.</span><span class="si">${</span>pkgs<span class="o">.</span>stdenv<span class="o">.</span>hostPlatform<span class="o">.</span>system<span class="si">}</span><span class="o">.</span>ignis<span class="o">.</span>override <span class="p">{</span>
+      <span class="p">(</span>pkgs<span class="o">.</span>ignis<span class="o">.</span>override <span class="p">{</span>
         <span class="ss">extraPackages</span> <span class="o">=</span> <span class="p">[</span>
           <span class="c1"># Add extra packages if needed</span>
         <span class="p">];</span>
@@ -558,7 +555,7 @@ Do not add Ignis to the system Python if you have already added it as a package.
 </div>
 </section>
 <section id="the-basic-flake-example">
-<span id="basic-flake-example"></span><h3>The basic Flake example<a class="headerlink" href="#the-basic-flake-example" title="Link to this heading">#</a></h3>
+<h3>The basic Flake example<a class="headerlink" href="#the-basic-flake-example" title="Link to this heading">#</a></h3>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-3" name="sd-tab-set-2" type="radio">
 <label class="sd-tab-label" for="sd-tab-item-3">
@@ -576,20 +573,20 @@ flake.nix</label><div class="sd-tab-content docutils">
     <span class="p">};</span>
   <span class="p">};</span>
 
-  <span class="ss">outputs</span> <span class="o">=</span> <span class="p">{</span> self<span class="p">,</span> nixpkgs<span class="p">,</span> home-manager<span class="p">,</span> <span class="o">...</span> <span class="p">}@</span>inputs<span class="p">:</span> <span class="k">let</span>
+  <span class="ss">outputs</span> <span class="o">=</span> <span class="p">{</span> self<span class="p">,</span> nixpkgs<span class="p">,</span> home-manager<span class="p">,</span> ignis<span class="p">,</span> <span class="o">...</span> <span class="p">}@</span>inputs<span class="p">:</span> <span class="k">let</span>
     <span class="ss">system</span> <span class="o">=</span> <span class="s2">&quot;x86_64-linux&quot;</span><span class="p">;</span>
     <span class="ss">lib</span> <span class="o">=</span> nixpkgs<span class="o">.</span>lib<span class="p">;</span>
-    <span class="ss">extraSpecialArgs</span> <span class="o">=</span> <span class="p">{</span> <span class="k">inherit</span> system inputs<span class="p">;</span> <span class="p">};</span>  <span class="c1"># &lt;- passing inputs to the attribute set for home-manager</span>
-    <span class="ss">specialArgs</span> <span class="o">=</span> <span class="p">{</span> <span class="k">inherit</span> system inputs<span class="p">;</span> <span class="p">};</span>       <span class="c1"># &lt;- passing inputs to the attribute set for NixOS</span>
   <span class="k">in</span> <span class="p">{</span>
     <span class="ss">nixosConfigurations</span> <span class="o">=</span> <span class="p">{</span>
       <span class="ss">dummy-hostname</span> <span class="o">=</span> lib<span class="o">.</span>nixosSystem <span class="p">{</span>
+        <span class="ss">specialArgs</span> <span class="o">=</span> <span class="p">{</span> <span class="k">inherit</span> system inputs<span class="p">;</span> <span class="p">};</span>
+
         <span class="ss">modules</span> <span class="o">=</span> <span class="p">[</span>
-          <span class="k">inherit</span> specialArgs<span class="p">;</span>  <span class="c1"># &lt;- this will make inputs available anywhere in the NixOS configuration</span>
           <span class="l">./path/to/configuration.nix</span>
+
           home-manager<span class="o">.</span>nixosModules<span class="o">.</span>home-manager <span class="p">{</span>
             <span class="ss">home-manager</span> <span class="o">=</span> <span class="p">{</span>
-              <span class="k">inherit</span> extraSpecialArgs<span class="p">;</span>  <span class="c1"># &lt;- this will make inputs available anywhere in the HM configuration</span>
+              <span class="ss">extraSpecialArgs</span> <span class="o">=</span> <span class="p">{</span> <span class="k">inherit</span> system inputs<span class="p">;</span> <span class="p">};</span>
               <span class="ss">useGlobalPkgs</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
               <span class="ss">useUserPackages</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
               users<span class="o">.</span><span class="ss">yourUserName</span> <span class="o">=</span> <span class="nb">import</span> <span class="l">./path/to/home.nix</span><span class="p">;</span>
