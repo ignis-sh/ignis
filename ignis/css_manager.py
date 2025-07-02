@@ -262,9 +262,9 @@ class CssManager(IgnisGObjectSingleton):
     @IgnisProperty
     def widgets_style_priority(self) -> StylePriority:
         """
-        The priority used for each widget style
+        The priority used for each widget ``style`` property.
         unless a widget specifies a custom style priority using :attr:`~ignis.base_widget.BaseWidget.style_priority`.
-        More info about style priorities: :obj:`Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION`.
+        For more information about style priorities see :obj:`Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION` and :attr:`CssInfoPath.priority`.
 
         Default: ``"application"``.
 
@@ -296,8 +296,8 @@ class CssManager(IgnisGObjectSingleton):
             info: The CSS info to apply.
 
         Raises:
-            CssInfoAlreadyAppliedError
-            CssParsingError
+            CssInfoAlreadyAppliedError: If CSS info with the given name is already applied.
+            CssParsingError: If a CSS parsing error occurs, usually due to invalid CSS.
         """
         if info.name in self._css_infos:
             raise CssInfoAlreadyAppliedError(info.name)
@@ -329,7 +329,7 @@ class CssManager(IgnisGObjectSingleton):
             name: The name of the CSS info to remove.
 
         Raises:
-            CssInfoNotFoundError
+            CssInfoNotFoundError: If no CSS info with the given name is found.
         """
         display = utils.get_gdk_display()
 
