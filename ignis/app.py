@@ -19,6 +19,7 @@ from ignis.exceptions import (
 )
 from ignis.log_utils import configure_logger
 from ignis.window_manager import WindowManager
+from ignis.icon_manager import IconManager
 from ignis.css_manager import CssManager, StylePriority, CssInfoPath
 from ignis._deprecation import (
     deprecated,
@@ -181,45 +182,6 @@ class IgnisApp(Gtk.Application, IgnisGObject):
         :meta private:
         """
         self._config_path = config_path
-
-    def add_icons(self, path: str) -> None:
-        """
-        Add custom SVG icons from a directory.
-
-        The directory must contain ``hicolor/scalable/actions`` directory, icons must be inside ``actions`` directory.
-
-        Args:
-            path: Path to the directory.
-
-        For example, place icons inside the Ignis config directory:
-
-        .. code-block:: bash
-
-            ~/.config/ignis
-            ├── config.py
-            ├── icons
-            │   └── hicolor
-            │       └── scalable
-            │           └── actions
-            │               ├── aaaa-symbolic.svg
-            │               └── some-icon.svg
-
-        .. note::
-            To apply a CSS color to an icon, its name and filename must end with ``-symbolic``.
-
-        then, add this to your ``config.py`` :
-
-        .. code-block:: python
-
-            from ignis import utils
-            from ignis.app import IgnisApp
-
-            app = IgnisApp.get_default()
-
-            app.add_icons(f"{utils.get_current_dir()}/icons")
-        """
-        icon_theme = Gtk.IconTheme.get_for_display(utils.get_gdk_display())
-        icon_theme.add_search_path(path)
 
     def do_activate(self) -> None:
         """
@@ -391,6 +353,16 @@ class IgnisApp(Gtk.Application, IgnisGObject):
     @widgets_style_priority.setter
     def widgets_style_priority(self, value: StylePriority) -> None:
         self._css_manager.widgets_style_priority = value
+
+    @deprecated(
+        "IgnisApp.add_icons() is deprecated, use IconManager.add_icons() instead."
+    )
+    def add_icons(self, path: str) -> None:
+        """
+        .. deprecated:: 0.6
+            Use :func:`ignis.icon_manager.IconManager.add_icons` instead.
+        """
+        IconManager.get_default().add_icons(path)
 
     @deprecated(
         "IgnisApp.apply_css() is deprecated, use CssManager.apply_css() instead."
