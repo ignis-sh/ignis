@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>BaseWidget &#8212; Ignis documentation</title>
+    <title>Icon Manager &#8212; Ignis documentation</title>
   
   
   
@@ -47,7 +47,7 @@
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'api/base_widget';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/icon_manager';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ignis-sh.github.io/ignis/latest/_static/switcher.json';
@@ -57,8 +57,8 @@
         </script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="BaseService" href="base_service.html" />
-    <link rel="prev" title="D-Bus menu" href="dbus_menu.html" />
+    <link rel="next" title="Singleton" href="singleton.html" />
+    <link rel="prev" title="CSS Manager" href="css_manager.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -371,7 +371,7 @@
 <li class="toctree-l1"><a class="reference internal" href="app.html">Application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="window_manager.html">WindowManager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="css_manager.html">CSS Manager</a></li>
-<li class="toctree-l1"><a class="reference internal" href="icon_manager.html">Icon Manager</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Icon Manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="singleton.html">Singleton</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gobject.html">GObject</a></li>
 <li class="toctree-l1"><a class="reference internal" href="variable.html">Variable</a></li>
@@ -381,7 +381,7 @@
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dbus.html">D-Bus</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dbus_menu.html">D-Bus menu</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">BaseWidget</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base_widget.html">BaseWidget</a></li>
 <li class="toctree-l1"><a class="reference internal" href="base_service.html">BaseService</a></li>
 <li class="toctree-l1"><a class="reference internal" href="connection_manager.html">Connection Manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="menu_model.html">Menu Model</a></li>
@@ -500,7 +500,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">API reference</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">BaseWidget</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Icon Manager</span></li>
   </ul>
 </nav>
 </div>
@@ -517,47 +517,90 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="basewidget">
-<h1>BaseWidget<a class="headerlink" href="#basewidget" title="Link to this heading">#</a></h1>
+  <section id="icon-manager">
+<h1>Icon Manager<a class="headerlink" href="#icon-manager" title="Link to this heading">#</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="ignis.base_widget.BaseWidget">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.base_widget.</span></span><span class="sig-name descname"><span class="pre">BaseWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">setup</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style_priority</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'application'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'fallback'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'settings'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'theme'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'user'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vexpand</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hexpand</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visible</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ignis.base_widget.BaseWidget" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="gobject.html#ignis.gobject.IgnisGObject" title="ignis.gobject.IgnisGObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">IgnisGObject</span></code></a>.</p>
-<p>The base class for all widgets.
-Provides <code class="docutils literal notranslate"><span class="pre">style</span></code> property and allows overriding enums.</p>
+<dt class="sig sig-object py" id="ignis.icon_manager.IconManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.icon_manager.</span></span><span class="sig-name descname"><span class="pre">IconManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ignis.icon_manager.IconManager" title="Link to this definition">#</a></dt>
+<dd><p>A simple class to add and remove custom icons.</p>
+<dl class="py signal">
+<dt class="sig sig-object py" id="ignis.icon_manager.IconManager.icons_added">
+<em class="property"><span class="pre">signal</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">icons_added</span></span><a class="headerlink" href="#ignis.icon_manager.IconManager.icons_added" title="Link to this definition">#</a></dt>
+<dd><p>Emitted when a custom icons path has been added.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- The path to icons.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py signal">
+<dt class="sig sig-object py" id="ignis.icon_manager.IconManager.icons_removed">
+<em class="property"><span class="pre">signal</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">icons_removed</span></span><a class="headerlink" href="#ignis.icon_manager.IconManager.icons_removed" title="Link to this definition">#</a></dt>
+<dd><p>Emitted when a custom icons path has been removed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- The path to icons.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py gproperty">
-<dt class="sig sig-object py" id="ignis.base_widget.BaseWidget.style_priority">
-<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">style_priority</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'application'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'fallback'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'settings'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'theme'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'user'</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ignis.base_widget.BaseWidget.style_priority" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="ignis.icon_manager.IconManager.added_icons">
+<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">added_icons</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ignis.icon_manager.IconManager.added_icons" title="Link to this definition">#</a></dt>
 <dd><ul class="simple">
-<li><p>read-write</p></li>
+<li><p>read-only</p></li>
 </ul>
-<p>The style priority for this widget.
-Overrides <a class="reference internal" href="app.html#ignis.app.IgnisApp.widgets_style_priority" title="ignis.app.IgnisApp.widgets_style_priority"><code class="xref py py-attr docutils literal notranslate"><span class="pre">widgets_style_priority</span></code></a>.</p>
-<p>More info about style priorities: <a class="reference external" href="https://lazka.github.io/pgi-docs/Gtk-4.0/constants.html#Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION" title="(in Gtk 4.0 v4.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION</span></code></a>.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Changing this property won't affect an already applied style!</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">some_widget</span> <span class="o">=</span> <span class="n">WIDGET_NAME</span><span class="p">(</span>
-    <span class="n">style</span><span class="o">=</span><span class="s2">&quot;some style&quot;</span><span class="p">,</span>
-    <span class="n">style_priority</span><span class="o">=</span><span class="s2">&quot;user&quot;</span>
-<span class="p">)</span>
-<span class="n">some_widget</span><span class="o">.</span><span class="n">style_priority</span> <span class="o">=</span> <span class="s2">&quot;application&quot;</span>  <span class="c1"># nothing change for current style</span>
-<span class="n">some_widget</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="s2">&quot;new style&quot;</span>  <span class="c1"># this style will have &quot;application&quot; priority</span>
+<p>The list of icon paths added via <a class="reference internal" href="#ignis.icon_manager.IconManager.add_icons" title="ignis.icon_manager.IconManager.add_icons"><code class="xref py py-func docutils literal notranslate"><span class="pre">add_icons()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ignis.icon_manager.IconManager.add_icons">
+<span class="sig-name descname"><span class="pre">add_icons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.icon_manager.IconManager.add_icons" title="Link to this definition">#</a></dt>
+<dd><p>Add custom SVG icons from a directory.</p>
+<p>The directory must contain <code class="docutils literal notranslate"><span class="pre">hicolor/scalable/actions</span></code> directory, icons must be inside <code class="docutils literal notranslate"><span class="pre">actions</span></code> directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- Path to the directory.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+<p>For example, place icons inside the Ignis config directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/.config/ignis
+├──<span class="w"> </span>config.py
+├──<span class="w"> </span>icons
+│<span class="w">   </span>└──<span class="w"> </span>hicolor
+│<span class="w">       </span>└──<span class="w"> </span>scalable
+│<span class="w">           </span>└──<span class="w"> </span>actions
+│<span class="w">               </span>├──<span class="w"> </span>aaaa-symbolic.svg
+│<span class="w">               </span>└──<span class="w"> </span>some-icon.svg
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To apply a CSS color to an icon, its name and filename must end with <code class="docutils literal notranslate"><span class="pre">-symbolic</span></code>.</p>
+</div>
+<p>then, add this to your <code class="docutils literal notranslate"><span class="pre">config.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ignis</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ignis.icon_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">IconManager</span>
+
+<span class="n">icon_manager</span> <span class="o">=</span> <span class="n">IconManager</span><span class="o">.</span><span class="n">get_default</span><span class="p">()</span>
+
+<span class="n">icon_manager</span><span class="o">.</span><span class="n">add_icons</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">get_current_dir</span><span class="p">(),</span> <span class="s2">&quot;icons&quot;</span><span class="p">))</span>
+</pre></div>
 </div>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ignis.base_widget.BaseWidget.override_enum">
-<span class="sig-name descname"><span class="pre">override_enum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">property_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">enum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.base_widget.BaseWidget.override_enum" title="Link to this definition">#</a></dt>
-<dd><p>Override an enum.</p>
+<dt class="sig sig-object py" id="ignis.icon_manager.IconManager.remove_icons">
+<span class="sig-name descname"><span class="pre">remove_icons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.icon_manager.IconManager.remove_icons" title="Link to this definition">#</a></dt>
+<dd><p>Remove added icons by their path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>property_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- The name of the property to override.</p></li>
-<li><p><strong>enum</strong> (<code class="docutils literal notranslate"><span class="pre">GObject.GEnum</span></code>) -- An enum that accepts the property to be overridden. For example, for <code class="docutils literal notranslate"><span class="pre">valign</span></code> it will be <code class="docutils literal notranslate"><span class="pre">Gtk.Align</span></code>.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- The path to the directory.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -580,20 +623,20 @@ Overrides <a class="reference internal" href="app.html#ignis.app.IgnisApp.widget
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="dbus_menu.html"
+       href="css_manager.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">D-Bus menu</p>
+        <p class="prev-next-title">CSS Manager</p>
       </div>
     </a>
     <a class="right-next"
-       href="base_service.html"
+       href="singleton.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">BaseService</p>
+        <p class="prev-next-title">Singleton</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -616,9 +659,12 @@ Overrides <a class="reference internal" href="app.html#ignis.app.IgnisApp.widget
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.base_widget.BaseWidget"><code class="docutils literal notranslate"><span class="pre">BaseWidget</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.base_widget.BaseWidget.style_priority"><code class="docutils literal notranslate"><span class="pre">BaseWidget.style_priority</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.base_widget.BaseWidget.override_enum"><code class="docutils literal notranslate"><span class="pre">BaseWidget.override_enum()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.icon_manager.IconManager"><code class="docutils literal notranslate"><span class="pre">IconManager</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.icon_manager.IconManager.icons_added"><code class="docutils literal notranslate"><span class="pre">IconManager.icons_added</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.icon_manager.IconManager.icons_removed"><code class="docutils literal notranslate"><span class="pre">IconManager.icons_removed</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.icon_manager.IconManager.added_icons"><code class="docutils literal notranslate"><span class="pre">IconManager.added_icons</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.icon_manager.IconManager.add_icons"><code class="docutils literal notranslate"><span class="pre">IconManager.add_icons()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.icon_manager.IconManager.remove_icons"><code class="docutils literal notranslate"><span class="pre">IconManager.remove_icons()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -628,7 +674,7 @@ Overrides <a class="reference internal" href="app.html#ignis.app.IgnisApp.widget
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/ignis-sh/ignis/edit/main/docs/api/base_widget.rst">
+    <a href="https://github.com/ignis-sh/ignis/edit/main/docs/api/icon_manager.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -644,7 +690,7 @@ Overrides <a class="reference internal" href="app.html#ignis.app.IgnisApp.widget
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/api/base_widget.rst.txt"
+      <li><a href="../_sources/api/icon_manager.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>

@@ -371,6 +371,7 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="window_manager.html">WindowManager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="css_manager.html">CSS Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="icon_manager.html">Icon Manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="singleton.html">Singleton</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gobject.html">GObject</a></li>
 <li class="toctree-l1"><a class="reference internal" href="variable.html">Variable</a></li>
@@ -594,45 +595,6 @@ Instead, use the already initialized instance as shown below.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ignis.app.IgnisApp.add_icons">
-<span class="sig-name descname"><span class="pre">add_icons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.app.IgnisApp.add_icons" title="Link to this definition">#</a></dt>
-<dd><p>Add custom SVG icons from a directory.</p>
-<p>The directory must contain <code class="docutils literal notranslate"><span class="pre">hicolor/scalable/actions</span></code> directory, icons must be inside <code class="docutils literal notranslate"><span class="pre">actions</span></code> directory.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- Path to the directory.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
-</dd>
-</dl>
-<p>For example, place icons inside the Ignis config directory:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/.config/ignis
-├──<span class="w"> </span>config.py
-├──<span class="w"> </span>icons
-│<span class="w">   </span>└──<span class="w"> </span>hicolor
-│<span class="w">       </span>└──<span class="w"> </span>scalable
-│<span class="w">           </span>└──<span class="w"> </span>actions
-│<span class="w">               </span>├──<span class="w"> </span>aaaa-symbolic.svg
-│<span class="w">               </span>└──<span class="w"> </span>some-icon.svg
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>To apply a CSS color to an icon, its name and filename must end with <code class="docutils literal notranslate"><span class="pre">-symbolic</span></code>.</p>
-</div>
-<p>then, add this to your <code class="docutils literal notranslate"><span class="pre">config.py</span></code> :</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ignis</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">ignis.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">IgnisApp</span>
-
-<span class="n">app</span> <span class="o">=</span> <span class="n">IgnisApp</span><span class="o">.</span><span class="n">get_default</span><span class="p">()</span>
-
-<span class="n">app</span><span class="o">.</span><span class="n">add_icons</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">utils</span><span class="o">.</span><span class="n">get_current_dir</span><span class="p">()</span><span class="si">}</span><span class="s2">/icons&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="ignis.app.IgnisApp.reload">
 <span class="sig-name descname"><span class="pre">reload</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.app.IgnisApp.reload" title="Link to this definition">#</a></dt>
 <dd><p>Reload Ignis.</p>
@@ -704,6 +666,19 @@ If you want to set a custom global style priority for all widgets, do this at th
 </div>
 <div class="deprecated">
 <p><span class="versionmodified deprecated">Deprecated since version 0.6: </span>Use <a class="reference internal" href="css_manager.html#ignis.css_manager.CssManager.widgets_style_priority" title="ignis.css_manager.CssManager.widgets_style_priority"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ignis.css_manager.CssManager.widgets_style_priority</span></code></a> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ignis.app.IgnisApp.add_icons">
+<span class="sig-name descname"><span class="pre">add_icons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.app.IgnisApp.add_icons" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.6: </span>Use <a class="reference internal" href="icon_manager.html#ignis.icon_manager.IconManager.add_icons" title="ignis.icon_manager.IconManager.add_icons"><code class="xref py py-func docutils literal notranslate"><span class="pre">ignis.icon_manager.IconManager.add_icons()</span></code></a> instead.</p>
 </div>
 </dd></dl>
 
@@ -938,12 +913,12 @@ for these purposes use <a class="reference internal" href="#ignis.app.IgnisApp.w
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.windows"><code class="docutils literal notranslate"><span class="pre">IgnisApp.windows</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.autoreload_config"><code class="docutils literal notranslate"><span class="pre">IgnisApp.autoreload_config</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.reload_on_monitors_change"><code class="docutils literal notranslate"><span class="pre">IgnisApp.reload_on_monitors_change</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.add_icons"><code class="docutils literal notranslate"><span class="pre">IgnisApp.add_icons()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.reload"><code class="docutils literal notranslate"><span class="pre">IgnisApp.reload()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.quit"><code class="docutils literal notranslate"><span class="pre">IgnisApp.quit()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.inspector"><code class="docutils literal notranslate"><span class="pre">IgnisApp.inspector()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.autoreload_css"><code class="docutils literal notranslate"><span class="pre">IgnisApp.autoreload_css</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.widgets_style_priority"><code class="docutils literal notranslate"><span class="pre">IgnisApp.widgets_style_priority</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.add_icons"><code class="docutils literal notranslate"><span class="pre">IgnisApp.add_icons()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.apply_css"><code class="docutils literal notranslate"><span class="pre">IgnisApp.apply_css()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.remove_css"><code class="docutils literal notranslate"><span class="pre">IgnisApp.remove_css()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.reset_css"><code class="docutils literal notranslate"><span class="pre">IgnisApp.reset_css()</span></code></a></li>
