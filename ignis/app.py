@@ -5,13 +5,11 @@ import datetime
 import ignis
 import shutil
 from typing import Literal
-from ignis.dbus import DBusService
 from ignis import utils
 from loguru import logger
-from gi.repository import Gtk, Gio, GLib  # type: ignore
+from gi.repository import Gtk, Gio  # type: ignore
 from ignis.gobject import IgnisGObject, IgnisProperty, IgnisSignal
 from ignis.exceptions import (
-    WindowNotFoundError,
     StylePathNotFoundError,
     StylePathAppliedError,
     CssInfoNotFoundError,
@@ -26,6 +24,7 @@ from ignis._deprecation import (
     deprecation_warning,
     _enable_deprecation_warnings,
 )
+from ignis._ignis_ipc import IgnisIpc
 
 window_manager = WindowManager.get_default()
 
@@ -66,23 +65,7 @@ class IgnisApp(Gtk.Application, IgnisGObject):
         )
         IgnisGObject.__init__(self)
 
-        self.__dbus = DBusService(
-            name="com.github.linkfrg.ignis",
-            object_path="/com/github/linkfrg/ignis",
-            info=utils.load_interface_xml("com.github.linkfrg.ignis"),
-        )
-
-        self.__dbus.register_dbus_method(name="OpenWindow", method=self.__OpenWindow)
-        self.__dbus.register_dbus_method(name="CloseWindow", method=self.__CloseWindow)
-        self.__dbus.register_dbus_method(
-            name="ToggleWindow", method=self.__ToggleWindow
-        )
-        self.__dbus.register_dbus_method(name="Quit", method=self.__Quit)
-        self.__dbus.register_dbus_method(name="Inspector", method=self.__Inspector)
-        self.__dbus.register_dbus_method(name="RunPython", method=self.__RunPython)
-        self.__dbus.register_dbus_method(name="RunFile", method=self.__RunFile)
-        self.__dbus.register_dbus_method(name="Reload", method=self.__Reload)
-        self.__dbus.register_dbus_method(name="ListWindows", method=self.__ListWindows)
+        IgnisIpc(name="com.github.linkfrg.ignis", app=self)
 
         self._config_path: str | None = None
         self._autoreload_config: bool = True
@@ -257,45 +240,6 @@ class IgnisApp(Gtk.Application, IgnisGObject):
         Open GTK Inspector.
         """
         Gtk.Window.set_interactive_debugging(True)
-
-    def __call_window_method(self, type_: str, window_name: str) -> GLib.Variant:
-        try:
-            getattr(window_manager, f"{type_}_window")(window_name)
-            return GLib.Variant("(b)", (True,))
-        except WindowNotFoundError:
-            return GLib.Variant("(b)", (False,))
-
-    def __OpenWindow(self, invocation, window_name: str) -> GLib.Variant:
-        return self.__call_window_method("open", window_name)
-
-    def __CloseWindow(self, invocation, window_name: str) -> GLib.Variant:
-        return self.__call_window_method("close", window_name)
-
-    def __ToggleWindow(self, invocation, window_name: str) -> GLib.Variant:
-        return self.__call_window_method("toggle", window_name)
-
-    def __ListWindows(self, invocation) -> GLib.Variant:
-        return GLib.Variant("(as)", (window_manager.list_window_names(),))
-
-    def __RunPython(self, invocation, code: str) -> None:
-        invocation.return_value(None)
-        exec(code)
-
-    def __RunFile(self, invocation, path: str) -> None:
-        invocation.return_value(None)
-        with open(path) as file:
-            code = file.read()
-            exec(code)
-
-    def __Inspector(self, invocation) -> None:
-        self.inspector()
-
-    def __Reload(self, invocation) -> None:
-        invocation.return_value(None)
-        self.reload()
-
-    def __Quit(self, invocation) -> None:
-        self.quit()
 
     # =========================== DEPRECATED ZONE START ===========================
 
