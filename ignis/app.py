@@ -235,12 +235,6 @@ class IgnisApp(Gtk.Application, IgnisGObject):
         super().quit()
         logger.info("Quitting.")
 
-    def inspector(self) -> None:
-        """
-        Open GTK Inspector.
-        """
-        Gtk.Window.set_interactive_debugging(True)
-
     # =========================== DEPRECATED ZONE START ===========================
 
     @IgnisProperty
@@ -464,6 +458,17 @@ class IgnisApp(Gtk.Application, IgnisGObject):
             Use :func:`~ignis.window_manager.WindowManager.remove_window` instead.
         """
         window_manager.remove_window(window_name)
+
+    @deprecated(
+        "IgnisApp.inspector() is deprecated, use utils.open_inspector() instead."
+    )
+    def inspector(self) -> None:
+        """
+        Open GTK Inspector.
+
+        .. deprecated:: 0.6
+        """
+        utils.open_inspector()
 
     # ============================ DEPRECATED ZONE END ============================
 

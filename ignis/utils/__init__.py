@@ -3,7 +3,7 @@ from .debounce import DebounceTask, debounce
 from .file_monitor import FileMonitor
 from .file import read_file, read_file_async, write_file, write_file_async
 from .icon import get_paintable, get_file_icon_name, get_app_icon_name
-from .misc import load_interface_xml, get_current_dir, get_gdk_display
+from .misc import load_interface_xml, get_current_dir, get_gdk_display, open_inspector
 from .monitor import get_monitor, get_n_monitors, get_monitors
 from .pixbuf import scale_pixbuf, crop_pixbuf
 from .poll import Poll
@@ -98,4 +98,5 @@ __all__ = [
     "thread",
     "write_file",
     "write_file_async",
+    "open_inspector",
 ]

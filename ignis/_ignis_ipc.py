@@ -67,7 +67,7 @@ class IgnisIpc(IgnisGObject):
             exec(code)
 
     def __Inspector(self, invocation) -> None:
-        self._app.inspector()
+        utils.open_inspector()
 
     def __Reload(self, invocation) -> None:
         invocation.return_value(None)

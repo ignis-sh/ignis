@@ -1,6 +1,6 @@
 import os
 import inspect
-from gi.repository import Gio, Gdk  # type: ignore
+from gi.repository import Gio, Gdk, Gtk  # type: ignore
 from ignis.exceptions import DisplayNotFoundError
 
 
@@ -67,3 +67,10 @@ def get_gdk_display() -> Gdk.Display:
         return display
     else:
         raise DisplayNotFoundError()
+
+
+def open_inspector() -> None:
+    """
+    Open GTK Inspector.
+    """
+    Gtk.Window.set_interactive_debugging(True)
