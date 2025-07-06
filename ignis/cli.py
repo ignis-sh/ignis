@@ -117,7 +117,10 @@ def cli():
 )
 @click.option("--debug", help="Print debug information to the terminal.", is_flag=True)
 def init(config: str, debug: bool) -> None:
-    from ignis.app import run_app
+    from ignis.app import IgnisApp
+    from ignis.log_utils import configure_logger
+    from ignis._deprecation import _enable_deprecation_warnings
+    from ignis.config_manager import ConfigManager
 
     client = IgnisClient()
 
@@ -126,7 +129,21 @@ def init(config: str, debug: bool) -> None:
         exit(1)
 
     config_path = get_full_path(config)
-    run_app(config_path, debug)
+
+    _enable_deprecation_warnings()
+    configure_logger(debug)
+
+    app = IgnisApp.get_default()
+
+    app.connect(
+        "activate",
+        lambda x: ConfigManager.get_default()._load_config(app=x, path=config_path),
+    )
+
+    try:
+        app.run(None)
+    except KeyboardInterrupt:
+        pass
 
 
 @cli.command(name="open-window", help="Open a window.")

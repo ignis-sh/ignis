@@ -1,7 +1,6 @@
 from __future__ import annotations
 import os
 import sys
-import datetime
 import ignis
 import shutil
 from typing import Literal
@@ -15,18 +14,18 @@ from ignis.exceptions import (
     CssInfoNotFoundError,
     CssInfoAlreadyAppliedError,
 )
-from ignis.log_utils import configure_logger
 from ignis.window_manager import WindowManager
 from ignis.icon_manager import IconManager
 from ignis.css_manager import CssManager, StylePriority, CssInfoPath
+from ignis.config_manager import ConfigManager
 from ignis._deprecation import (
     deprecated,
     deprecation_warning,
-    _enable_deprecation_warnings,
 )
 from ignis._ignis_ipc import IgnisIpc
 
 window_manager = WindowManager.get_default()
+config_manager = ConfigManager.get_default()
 
 
 def _get_wm_depr_msg(name: str):
@@ -67,27 +66,13 @@ class IgnisApp(Gtk.Application, IgnisGObject):
 
         IgnisIpc(name="com.github.linkfrg.ignis", app=self)
 
-        self._config_path: str | None = None
-        self._autoreload_config: bool = True
         self._reload_on_monitors_change: bool = True
-        self._is_ready = False
 
         # FIXME: deprecated
         self._autoreload_css: bool = True
 
         # Put here because sphinx complains (as always)
         self._css_manager = CssManager.get_default()
-
-    def __watch_config(
-        self, file_monitor: utils.FileMonitor, path: str, event_type: str
-    ) -> None:
-        if event_type != "changes_done_hint":
-            return
-
-        if not os.path.isdir(path) and "__pycache__" not in path:
-            extension = os.path.splitext(path)[1]
-            if extension == ".py" and self.autoreload_config:
-                self.reload()
 
     def __watch_monitors(self) -> None:
         def callback(*_) -> None:
@@ -107,46 +92,6 @@ class IgnisApp(Gtk.Application, IgnisGObject):
             cls._instance = cls()
         return cls._instance
 
-    @IgnisSignal
-    def ready(self):
-        """
-        Emitted when the configuration has been parsed.
-
-        .. hint::
-            To handle shutdown of the application use the ``shutdown`` signal.
-        """
-
-    @IgnisProperty
-    def is_ready(self) -> bool:
-        """
-        Whether configuration is parsed and app is ready.
-        """
-        return self._is_ready
-
-    @IgnisProperty
-    def windows(self) -> list[Gtk.Window]:
-        """
-        .. deprecated:: 0.6
-            Use :attr:`~ignis.window_manager.WindowManager.windows` instead.
-        """
-        deprecation_warning(
-            "IgnisApp.windows is deprecated, use WindowManager.windows instead."
-        )
-        return window_manager.windows
-
-    @IgnisProperty
-    def autoreload_config(self) -> bool:
-        """
-        Whether to automatically reload the configuration when it changes (only .py files).
-
-        Default: ``True``.
-        """
-        return self._autoreload_config
-
-    @autoreload_config.setter
-    def autoreload_config(self, value: bool) -> None:
-        self._autoreload_config = value
-
     @IgnisProperty
     def reload_on_monitors_change(self) -> bool:
         """
@@ -160,52 +105,12 @@ class IgnisApp(Gtk.Application, IgnisGObject):
     def reload_on_monitors_change(self, value: bool) -> None:
         self._reload_on_monitors_change = value
 
-    def _setup(self, config_path: str) -> None:
-        """
-        :meta private:
-        """
-        self._config_path = config_path
-
     def do_activate(self) -> None:
         """
         :meta private:
         """
         self.hold()
         self.__watch_monitors()
-
-        if not self._config_path:
-            raise ValueError("Set up config_path before trying to run application")
-
-        if not os.path.exists(self._config_path):
-            raise FileNotFoundError(
-                f"Provided config path doesn't exists: {self._config_path}"
-            )
-
-        config_dir = os.path.dirname(self._config_path)
-        config_filename = os.path.splitext(os.path.basename(self._config_path))[0]
-
-        logger.info(f"Using configuration file: {self._config_path}")
-
-        self._monitor = utils.FileMonitor(
-            path=config_dir, callback=self.__watch_config, recursive=True
-        )
-
-        sys.path.append(config_dir)
-        __import__(config_filename)
-
-        self._is_ready = True
-        self.emit("ready")
-        logger.info("Ready.")
-
-        date = datetime.datetime.now()
-
-        if date.month == 12 and date.day in [30, 31]:
-            self.__happy_new_year()
-        elif date.month == 1 and date.day in [1, 2]:
-            self.__happy_new_year()
-
-    def __happy_new_year(self) -> None:
-        logger.success("Happy New Year!")
 
     def reload(self) -> None:
         """
@@ -236,6 +141,58 @@ class IgnisApp(Gtk.Application, IgnisGObject):
         logger.info("Quitting.")
 
     # =========================== DEPRECATED ZONE START ===========================
+
+    @IgnisSignal
+    def ready(self):
+        """
+        Emitted when the configuration has been parsed.
+
+        .. hint::
+            To handle shutdown of the application use the ``shutdown`` signal.
+
+        .. deprecated:: 0.6
+            Use :attr:`ignis.config_manager.ConfigManager.config_parsed` instead.
+        """
+
+    @IgnisProperty
+    def is_ready(self) -> bool:
+        """
+        Whether configuration is parsed and app is ready.
+
+        .. deprecated:: 0.6
+            Use :attr:`ignis.config_manager.ConfigManager.is_ready` instead.
+        """
+        return config_manager.is_config_parsed
+
+    @IgnisProperty
+    def windows(self) -> list[Gtk.Window]:
+        """
+        .. deprecated:: 0.6
+            Use :attr:`~ignis.window_manager.WindowManager.windows` instead.
+        """
+        deprecation_warning(
+            "IgnisApp.windows is deprecated, use WindowManager.windows instead."
+        )
+        return window_manager.windows
+
+    @IgnisProperty
+    def autoreload_config(self) -> bool:
+        """
+        Whether to automatically reload the configuration when it changes (only .py files).
+
+        Default: ``True``.
+
+        .. deprecated:: 0.6
+            Use :attr:`ignis.config_manager.ConfigManager.autoreload_config` instead.
+        """
+        deprecation_warning(
+            "IgnisApp.autoreload_config is deprecated, use ConfigManager.autoreload_config instead."
+        )
+        return config_manager.autoreload_config
+
+    @autoreload_config.setter
+    def autoreload_config(self, value: bool) -> None:
+        config_manager.autoreload_config = value
 
     @IgnisProperty
     def autoreload_css(self) -> bool:
@@ -472,17 +429,3 @@ class IgnisApp(Gtk.Application, IgnisGObject):
         utils.open_inspector()
 
     # ============================ DEPRECATED ZONE END ============================
-
-
-def run_app(config_path: str, debug: bool) -> None:
-    _enable_deprecation_warnings()
-    configure_logger(debug)
-
-    app = IgnisApp.get_default()
-
-    app._setup(config_path)
-
-    try:
-        app.run(None)
-    except KeyboardInterrupt:
-        pass  # app.quit() will be called automatically
