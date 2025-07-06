@@ -4,7 +4,6 @@ from loguru import logger
 from ignis import utils
 from ignis.gobject import IgnisGObjectSingleton, IgnisProperty, IgnisSignal
 from typing import TYPE_CHECKING
-from ignis._deprecation import ignore_deprecation_warnings
 
 if TYPE_CHECKING:
     from ignis.app import IgnisApp
