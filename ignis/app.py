@@ -467,6 +467,7 @@ class IgnisApp(Gtk.Application, IgnisGObject):
         Open GTK Inspector.
 
         .. deprecated:: 0.6
+            Use :func:`ignis.utils.open_inspector` instead.
         """
         utils.open_inspector()
 
