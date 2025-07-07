@@ -523,28 +523,18 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="ignis.app.IgnisApp">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.app.</span></span><span class="sig-name descname"><span class="pre">IgnisApp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ignis.app.IgnisApp" title="Link to this definition">#</a></dt>
-<dd><p>Application class.</p>
+<dd><p>Bases: <a class="reference external" href="https://lazka.github.io/pgi-docs/Gtk-4.0/classes/Application.html#Gtk.Application" title="(in Gtk 4.0 v4.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Gtk.Application</span></code></a>.</p>
+<p>The application class.</p>
 <div class="admonition danger">
 <p class="admonition-title">Danger</p>
 <p>Do not initialize this class!
 Instead, use the already initialized instance as shown below.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ignis.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">IgnisApp</span>
 
-<span class="n">app</span> <span class="o">=</span> <span class="n">IgnisApp</span><span class="o">.</span><span class="n">get_default</span><span class="p">()</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">IgnisApp</span><span class="o">.</span><span class="n">get_initialized</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<dl class="py method">
-<dt class="sig sig-object py" id="ignis.app.IgnisApp.get_default">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_default</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ignis.app.IgnisApp" title="ignis.app.IgnisApp"><span class="pre">IgnisApp</span></a></span></span><a class="headerlink" href="#ignis.app.IgnisApp.get_default" title="Link to this definition">#</a></dt>
-<dd><p>Get the default Application object for this process.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#ignis.app.IgnisApp" title="ignis.app.IgnisApp"><code class="xref py py-class docutils literal notranslate"><span class="pre">IgnisApp</span></code></a></span></p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py gproperty">
 <dt class="sig sig-object py" id="ignis.app.IgnisApp.reload_on_monitors_change">
 <em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reload_on_monitors_change</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ignis.app.IgnisApp.reload_on_monitors_change" title="Link to this definition">#</a></dt>
@@ -553,6 +543,24 @@ Instead, use the already initialized instance as shown below.</p>
 </ul>
 <p>Whether to reload Ignis on monitors change (connect/disconnect).</p>
 <p>Default: <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ignis.app.IgnisApp.get_initialized">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_initialized</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ignis.app.IgnisApp" title="ignis.app.IgnisApp"><span class="pre">IgnisApp</span></a></span></span><a class="headerlink" href="#ignis.app.IgnisApp.get_initialized" title="Link to this definition">#</a></dt>
+<dd><p>Guaranteed to return the default instance of the application for this process.
+If the application is not initialized, raises <code class="xref py py-class docutils literal notranslate"><span class="pre">AppNotInitializedError</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="exceptions.html#ignis.exceptions.AppNotInitializedError" title="ignis.exceptions.AppNotInitializedError"><strong>AppNotInitializedError</strong></a> -- If the application is not initialized yet.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.13)"><strong>TypeError</strong></a> -- If the default application is not an instance of <a class="reference internal" href="#ignis.app.IgnisApp" title="ignis.app.IgnisApp"><code class="xref py py-class docutils literal notranslate"><span class="pre">IgnisApp</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#ignis.app.IgnisApp" title="ignis.app.IgnisApp"><code class="xref py py-class docutils literal notranslate"><span class="pre">IgnisApp</span></code></a></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -665,6 +673,18 @@ If you want to set a custom global style priority for all widgets, do this at th
 </div>
 <div class="deprecated">
 <p><span class="versionmodified deprecated">Deprecated since version 0.6: </span>Use <a class="reference internal" href="css_manager.html#ignis.css_manager.CssManager.widgets_style_priority" title="ignis.css_manager.CssManager.widgets_style_priority"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ignis.css_manager.CssManager.widgets_style_priority</span></code></a> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ignis.app.IgnisApp.get_default">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ignis.app.IgnisApp" title="ignis.app.IgnisApp"><span class="pre">IgnisApp</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ignis.app.IgnisApp" title="ignis.app.IgnisApp"><span class="pre">IgnisApp</span></a></span></span><a class="headerlink" href="#ignis.app.IgnisApp.get_default" title="Link to this definition">#</a></dt>
+<dd><p>Get the default Application object for this process.
+:rtype: <span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#ignis.app.IgnisApp" title="ignis.app.IgnisApp"><code class="xref py py-class docutils literal notranslate"><span class="pre">IgnisApp</span></code></a></span></p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version This: </span>function initializes the application if it hasn't been done already,
+which is not the intended behavior.
+Use <a class="reference internal" href="#ignis.app.IgnisApp.get_initialized" title="ignis.app.IgnisApp.get_initialized"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_initialized()</span></code></a> instead.</p>
 </div>
 </dd></dl>
 
@@ -916,8 +936,8 @@ for these purposes use <a class="reference internal" href="#ignis.app.IgnisApp.w
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp"><code class="docutils literal notranslate"><span class="pre">IgnisApp</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.get_default"><code class="docutils literal notranslate"><span class="pre">IgnisApp.get_default()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.reload_on_monitors_change"><code class="docutils literal notranslate"><span class="pre">IgnisApp.reload_on_monitors_change</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.get_initialized"><code class="docutils literal notranslate"><span class="pre">IgnisApp.get_initialized()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.reload"><code class="docutils literal notranslate"><span class="pre">IgnisApp.reload()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.quit"><code class="docutils literal notranslate"><span class="pre">IgnisApp.quit()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.ready"><code class="docutils literal notranslate"><span class="pre">IgnisApp.ready</span></code></a></li>
@@ -926,6 +946,7 @@ for these purposes use <a class="reference internal" href="#ignis.app.IgnisApp.w
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.autoreload_config"><code class="docutils literal notranslate"><span class="pre">IgnisApp.autoreload_config</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.autoreload_css"><code class="docutils literal notranslate"><span class="pre">IgnisApp.autoreload_css</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.widgets_style_priority"><code class="docutils literal notranslate"><span class="pre">IgnisApp.widgets_style_priority</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.get_default"><code class="docutils literal notranslate"><span class="pre">IgnisApp.get_default()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.add_icons"><code class="docutils literal notranslate"><span class="pre">IgnisApp.add_icons()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.apply_css"><code class="docutils literal notranslate"><span class="pre">IgnisApp.apply_css()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.remove_css"><code class="docutils literal notranslate"><span class="pre">IgnisApp.remove_css()</span></code></a></li>
