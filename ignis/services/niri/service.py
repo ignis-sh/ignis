@@ -11,8 +11,6 @@ from .keyboard import NiriKeyboardLayouts
 from .window import NiriWindow
 from .workspace import NiriWorkspace
 
-app = IgnisApp.get_default()
-
 
 class NiriService(BaseService):
     """
@@ -120,7 +118,7 @@ class NiriService(BaseService):
         sock.send(b'"EventStream"\n')
 
         # Close socket gracefully on app quit
-        app.connect("shutdown", lambda *_: sock.close())
+        IgnisApp.get_initialized().connect("shutdown", lambda *_: sock.close())
 
         # Launch an unthreaded event stream to ensure all variables get initialized
         # before returning from __init__ . OverviewOpenedOrClosed is the last

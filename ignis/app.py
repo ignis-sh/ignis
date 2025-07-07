@@ -13,6 +13,7 @@ from ignis.exceptions import (
     StylePathAppliedError,
     CssInfoNotFoundError,
     CssInfoAlreadyAppliedError,
+    AppNotInitializedError,
 )
 from ignis.window_manager import WindowManager
 from ignis.icon_manager import IconManager
@@ -40,7 +41,9 @@ def _is_elf_file(path: str) -> bool:
 
 class IgnisApp(Gtk.Application, IgnisGObject):
     """
-    Application class.
+    Bases: :class:`Gtk.Application`.
+
+    The application class.
 
     .. danger::
 
@@ -51,7 +54,7 @@ class IgnisApp(Gtk.Application, IgnisGObject):
 
             from ignis.app import IgnisApp
 
-            app = IgnisApp.get_default()
+            app = IgnisApp.get_initialized()
     """
 
     _instance: IgnisApp | None = None  # type: ignore
@@ -70,6 +73,7 @@ class IgnisApp(Gtk.Application, IgnisGObject):
 
         # FIXME: deprecated
         self._autoreload_css: bool = True
+        IgnisApp._instance = self
 
         # Put here because sphinx complains (as always)
         self._css_manager = CssManager.get_default()
@@ -83,15 +87,6 @@ class IgnisApp(Gtk.Application, IgnisGObject):
         monitors = utils.get_monitors()
         monitors.connect("items-changed", callback)
 
-    @classmethod
-    def get_default(cls: type[IgnisApp]) -> IgnisApp:
-        """
-        Get the default Application object for this process.
-        """
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
-
     @IgnisProperty
     def reload_on_monitors_change(self) -> bool:
         """
@@ -104,6 +99,28 @@ class IgnisApp(Gtk.Application, IgnisGObject):
     @reload_on_monitors_change.setter
     def reload_on_monitors_change(self, value: bool) -> None:
         self._reload_on_monitors_change = value
+
+    @classmethod
+    def get_initialized(cls) -> IgnisApp:
+        """
+        Guaranteed to return the default instance of the application for this process.
+        If the application is not initialized, raises :class:`AppNotInitializedError`.
+
+        Raises:
+            AppNotInitializedError: If the application is not initialized yet.
+            TypeError: If the default application is not an instance of :class:`IgnisApp`.
+        """
+        gapp = Gtk.Application.get_default()
+
+        if not gapp:
+            raise AppNotInitializedError()
+
+        if not isinstance(gapp, IgnisApp):
+            raise TypeError(
+                "The default Gtk.Application is not an instance of IgnisApp"
+            )
+
+        return gapp
 
     def do_activate(self) -> None:
         """
@@ -248,6 +265,23 @@ class IgnisApp(Gtk.Application, IgnisGObject):
     @widgets_style_priority.setter
     def widgets_style_priority(self, value: StylePriority) -> None:
         self._css_manager.widgets_style_priority = value
+
+    @classmethod
+    @deprecated(
+        "IgnisApp.get_default() is deprecated, use IgnisApp.get_initialized() instead."
+    )
+    def get_default(cls: type[IgnisApp]) -> IgnisApp:
+        """
+        Get the default Application object for this process.
+
+        .. deprecated::
+            This function initializes the application if it hasn't been done already,
+            which is not the intended behavior.
+            Use :func:`get_initialized` instead.
+        """
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
 
     @deprecated(
         "IgnisApp.add_icons() is deprecated, use IconManager.add_icons() instead."

@@ -506,3 +506,14 @@ class CssInfoAlreadyAppliedError(Exception):
         The name of the CSS info.
         """
         return self._name
+
+
+class AppNotInitializedError(Exception):
+    """
+    Raised when the application is not initialized.
+    """
+
+    def __init__(self, *args: object) -> None:
+        super().__init__(
+            "Called IgnisApp.get_initialized(), but IgnisApp is not initalized!", *args
+        )

@@ -133,7 +133,7 @@ def init(config: str, debug: bool) -> None:
     _enable_deprecation_warnings()
     configure_logger(debug)
 
-    app = IgnisApp.get_default()
+    app = IgnisApp()
 
     app.connect(
         "activate",

@@ -4,7 +4,6 @@ from collections.abc import Callable
 from ignis.app import IgnisApp
 from typing import TypeAlias
 
-app = IgnisApp.get_default()
 
 ItemsType: TypeAlias = "list[IgnisMenuItem | IgnisMenuModel | IgnisMenuSeparator]"
 
@@ -35,7 +34,7 @@ class IgnisMenuItem(IgnisGObject):
         self._action.set_enabled(enabled)
         self._activate_id = self._action.connect("activate", self.__on_activate)
 
-        app.add_action(self._action)
+        IgnisApp.get_initialized().add_action(self._action)
 
     @IgnisProperty
     def label(self) -> str:
@@ -81,7 +80,7 @@ class IgnisMenuItem(IgnisGObject):
             self.on_activate(self)
 
     def _destroy(self) -> None:
-        app.remove_action(self._uniq_name)
+        IgnisApp.get_initialized().remove_action(self._uniq_name)
         self._action.disconnect(self._activate_id)
         self._action = None  # type: ignore
 
