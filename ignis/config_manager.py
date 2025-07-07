@@ -12,6 +12,16 @@ if TYPE_CHECKING:
 class ConfigManager(IgnisGObjectSingleton):
     """
     A simple class to manage your configuration.
+
+    Example usage:
+    .. code-block:: python
+
+        from ignis.config_manager import ConfigManager
+
+        config_manager = ConfigManager.get_default()
+
+        # If you want to disable config autoreload
+        config_manager.autoreload_config = False
     """
 
     def __init__(self):
