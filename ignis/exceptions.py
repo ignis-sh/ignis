@@ -515,5 +515,5 @@ class AppNotInitializedError(Exception):
 
     def __init__(self, *args: object) -> None:
         super().__init__(
-            "Called IgnisApp.get_initialized(), but IgnisApp is not initalized!", *args
+            "Called IgnisApp.get_initialized(), but IgnisApp is not initialized!", *args
         )
