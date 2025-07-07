@@ -14,6 +14,7 @@ class ConfigManager(IgnisGObjectSingleton):
     A simple class to manage your configuration.
 
     Example usage:
+
     .. code-block:: python
 
         from ignis.config_manager import ConfigManager
