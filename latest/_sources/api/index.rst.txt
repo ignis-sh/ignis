@@ -11,6 +11,7 @@ This reference manual details functions, modules, and objects included in Ignis,
    window_manager
    css_manager
    icon_manager
+   config_manager
    singleton
    gobject
    variable

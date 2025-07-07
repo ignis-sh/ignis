@@ -372,6 +372,7 @@
 <li class="toctree-l1"><a class="reference internal" href="window_manager.html">WindowManager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="css_manager.html">CSS Manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="icon_manager.html">Icon Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config_manager.html">Config Manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="singleton.html">Singleton</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gobject.html">GObject</a></li>
 <li class="toctree-l1"><a class="reference internal" href="variable.html">Variable</a></li>
@@ -544,46 +545,6 @@ Instead, use the already initialized instance as shown below.</p>
 </dl>
 </dd></dl>
 
-<dl class="py signal">
-<dt class="sig sig-object py" id="ignis.app.IgnisApp.ready">
-<em class="property"><span class="pre">signal</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ready</span></span><a class="headerlink" href="#ignis.app.IgnisApp.ready" title="Link to this definition">#</a></dt>
-<dd><p>Emitted when the configuration has been parsed.</p>
-<div class="admonition hint">
-<p class="admonition-title">Hint</p>
-<p>To handle shutdown of the application use the <code class="docutils literal notranslate"><span class="pre">shutdown</span></code> signal.</p>
-</div>
-</dd></dl>
-
-<dl class="py gproperty">
-<dt class="sig sig-object py" id="ignis.app.IgnisApp.is_ready">
-<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_ready</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ignis.app.IgnisApp.is_ready" title="Link to this definition">#</a></dt>
-<dd><ul class="simple">
-<li><p>read-only</p></li>
-</ul>
-<p>Whether configuration is parsed and app is ready.</p>
-</dd></dl>
-
-<dl class="py gproperty">
-<dt class="sig sig-object py" id="ignis.app.IgnisApp.windows">
-<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">windows</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">gi.repository.Gtk.Window</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ignis.app.IgnisApp.windows" title="Link to this definition">#</a></dt>
-<dd><ul class="simple">
-<li><p>read-only</p></li>
-</ul>
-<div class="deprecated">
-<p><span class="versionmodified deprecated">Deprecated since version 0.6: </span>Use <a class="reference internal" href="window_manager.html#ignis.window_manager.WindowManager.windows" title="ignis.window_manager.WindowManager.windows"><code class="xref py py-attr docutils literal notranslate"><span class="pre">windows</span></code></a> instead.</p>
-</div>
-</dd></dl>
-
-<dl class="py gproperty">
-<dt class="sig sig-object py" id="ignis.app.IgnisApp.autoreload_config">
-<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">autoreload_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ignis.app.IgnisApp.autoreload_config" title="Link to this definition">#</a></dt>
-<dd><ul class="simple">
-<li><p>read-write</p></li>
-</ul>
-<p>Whether to automatically reload the configuration when it changes (only .py files).</p>
-<p>Default: <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
-</dd></dl>
-
 <dl class="py gproperty">
 <dt class="sig sig-object py" id="ignis.app.IgnisApp.reload_on_monitors_change">
 <em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reload_on_monitors_change</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ignis.app.IgnisApp.reload_on_monitors_change" title="Link to this definition">#</a></dt>
@@ -614,6 +575,55 @@ Instead, use the already initialized instance as shown below.</p>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py signal">
+<dt class="sig sig-object py" id="ignis.app.IgnisApp.ready">
+<em class="property"><span class="pre">signal</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ready</span></span><a class="headerlink" href="#ignis.app.IgnisApp.ready" title="Link to this definition">#</a></dt>
+<dd><p>Emitted when the configuration has been parsed.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>To handle shutdown of the application use the <code class="docutils literal notranslate"><span class="pre">shutdown</span></code> signal.</p>
+</div>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.6: </span>Use <a class="reference internal" href="config_manager.html#ignis.config_manager.ConfigManager.config_parsed" title="ignis.config_manager.ConfigManager.config_parsed"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ignis.config_manager.ConfigManager.config_parsed</span></code></a> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py gproperty">
+<dt class="sig sig-object py" id="ignis.app.IgnisApp.is_ready">
+<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_ready</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ignis.app.IgnisApp.is_ready" title="Link to this definition">#</a></dt>
+<dd><ul class="simple">
+<li><p>read-only</p></li>
+</ul>
+<p>Whether configuration is parsed and app is ready.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.6: </span>Use <a class="reference internal" href="config_manager.html#ignis.config_manager.ConfigManager.is_config_parsed" title="ignis.config_manager.ConfigManager.is_config_parsed"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ignis.config_manager.ConfigManager.is_config_parsed</span></code></a> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py gproperty">
+<dt class="sig sig-object py" id="ignis.app.IgnisApp.windows">
+<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">windows</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">gi.repository.Gtk.Window</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ignis.app.IgnisApp.windows" title="Link to this definition">#</a></dt>
+<dd><ul class="simple">
+<li><p>read-only</p></li>
+</ul>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.6: </span>Use <a class="reference internal" href="window_manager.html#ignis.window_manager.WindowManager.windows" title="ignis.window_manager.WindowManager.windows"><code class="xref py py-attr docutils literal notranslate"><span class="pre">windows</span></code></a> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py gproperty">
+<dt class="sig sig-object py" id="ignis.app.IgnisApp.autoreload_config">
+<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">autoreload_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ignis.app.IgnisApp.autoreload_config" title="Link to this definition">#</a></dt>
+<dd><ul class="simple">
+<li><p>read-write</p></li>
+</ul>
+<p>Whether to automatically reload the configuration when it changes (only .py files).</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.6: </span>Use <a class="reference internal" href="config_manager.html#ignis.config_manager.ConfigManager.autoreload_config" title="ignis.config_manager.ConfigManager.autoreload_config"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ignis.config_manager.ConfigManager.autoreload_config</span></code></a> instead.</p>
+</div>
 </dd></dl>
 
 <dl class="py gproperty">
@@ -907,13 +917,13 @@ for these purposes use <a class="reference internal" href="#ignis.app.IgnisApp.w
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp"><code class="docutils literal notranslate"><span class="pre">IgnisApp</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.get_default"><code class="docutils literal notranslate"><span class="pre">IgnisApp.get_default()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.reload_on_monitors_change"><code class="docutils literal notranslate"><span class="pre">IgnisApp.reload_on_monitors_change</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.reload"><code class="docutils literal notranslate"><span class="pre">IgnisApp.reload()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.quit"><code class="docutils literal notranslate"><span class="pre">IgnisApp.quit()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.ready"><code class="docutils literal notranslate"><span class="pre">IgnisApp.ready</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.is_ready"><code class="docutils literal notranslate"><span class="pre">IgnisApp.is_ready</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.windows"><code class="docutils literal notranslate"><span class="pre">IgnisApp.windows</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.autoreload_config"><code class="docutils literal notranslate"><span class="pre">IgnisApp.autoreload_config</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.reload_on_monitors_change"><code class="docutils literal notranslate"><span class="pre">IgnisApp.reload_on_monitors_change</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.reload"><code class="docutils literal notranslate"><span class="pre">IgnisApp.reload()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.quit"><code class="docutils literal notranslate"><span class="pre">IgnisApp.quit()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.autoreload_css"><code class="docutils literal notranslate"><span class="pre">IgnisApp.autoreload_css</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.widgets_style_priority"><code class="docutils literal notranslate"><span class="pre">IgnisApp.widgets_style_priority</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.app.IgnisApp.add_icons"><code class="docutils literal notranslate"><span class="pre">IgnisApp.add_icons()</span></code></a></li>
