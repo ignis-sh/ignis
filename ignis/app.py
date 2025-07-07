@@ -160,7 +160,7 @@ class IgnisApp(Gtk.Application, IgnisGObject):
         Whether configuration is parsed and app is ready.
 
         .. deprecated:: 0.6
-            Use :attr:`ignis.config_manager.ConfigManager.is_ready` instead.
+            Use :attr:`ignis.config_manager.ConfigManager.is_config_parsed` instead.
         """
         return config_manager.is_config_parsed
 
