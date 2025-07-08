@@ -4,7 +4,7 @@ import subprocess
 import collections
 from ignis.client import IgnisClient
 from ignis import utils
-from ignis.exceptions import WindowNotFoundError
+from ignis.exceptions import WindowNotFoundError, IgnisAlreadyRunningError
 from typing import Any
 from gi.repository import GLib  # type: ignore
 from ignis import is_editable_install
@@ -122,18 +122,16 @@ def init(config: str, debug: bool) -> None:
     from ignis._deprecation import _enable_deprecation_warnings
     from ignis.config_manager import ConfigManager
 
-    client = IgnisClient()
-
-    if client.has_owner:
-        print("Ignis is already running.")
-        exit(1)
-
     config_path = get_full_path(config)
 
     _enable_deprecation_warnings()
     configure_logger(debug)
 
-    app = IgnisApp()
+    try:
+        app = IgnisApp()
+    except IgnisAlreadyRunningError:
+        print("Ignis is already running.")
+        exit(1)
 
     app.connect(
         "activate",

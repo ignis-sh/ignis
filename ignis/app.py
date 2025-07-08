@@ -6,7 +6,7 @@ import shutil
 from typing import Literal
 from ignis import utils
 from loguru import logger
-from gi.repository import Gtk, Gio  # type: ignore
+from gi.repository import Gtk, Gio, GLib  # type: ignore
 from ignis.gobject import IgnisGObject, IgnisProperty, IgnisSignal
 from ignis.exceptions import (
     StylePathNotFoundError,
@@ -14,6 +14,7 @@ from ignis.exceptions import (
     CssInfoNotFoundError,
     CssInfoAlreadyAppliedError,
     AppNotInitializedError,
+    IgnisAlreadyRunningError,
 )
 from ignis.window_manager import WindowManager
 from ignis.icon_manager import IconManager
@@ -39,11 +40,34 @@ def _is_elf_file(path: str) -> bool:
         return magic == b"\x7fELF"
 
 
+# FIXME: Probably it's better to move it to utils
+def _name_has_owner(bus_name: str) -> bool:
+    bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
+    result = bus.call_sync(
+        "org.freedesktop.DBus",
+        "/org/freedesktop/DBus",
+        "org.freedesktop.DBus",
+        "NameHasOwner",
+        GLib.Variant("(s)", (bus_name,)),
+        GLib.VariantType.new("(b)"),
+        Gio.DBusCallFlags.NONE,
+        -1,
+        None,
+    )
+    return result.unpack()[0]
+
+
 class IgnisApp(Gtk.Application, IgnisGObject):
     """
     Bases: :class:`Gtk.Application`.
 
     The application class.
+
+    Args:
+        instance_id: The application ID and D-Bus name to own. Must be unique (there must not be another instance running with this ID).
+
+    Raises:
+        IgnisAlreadyRunningError: If an Ignis instance with the given ID is already running.
 
     .. danger::
 
@@ -59,15 +83,18 @@ class IgnisApp(Gtk.Application, IgnisGObject):
 
     _instance: IgnisApp | None = None  # type: ignore
 
-    def __init__(self):
+    def __init__(self, instance_id: str = "com.github.linkfrg.ignis"):
+        if _name_has_owner(instance_id):
+            raise IgnisAlreadyRunningError(instance_id=instance_id)
+
         Gtk.Application.__init__(
             self,
-            application_id="com.github.linkfrg.ignis",
+            application_id=instance_id,
             flags=Gio.ApplicationFlags.DEFAULT_FLAGS,
         )
         IgnisGObject.__init__(self)
 
-        IgnisIpc(name="com.github.linkfrg.ignis", app=self)
+        IgnisIpc(name=instance_id, app=self)
 
         self._reload_on_monitors_change: bool = True
 
