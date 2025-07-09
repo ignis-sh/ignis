@@ -29,9 +29,9 @@ class IgnisClient:
         client.reload()
     """
 
-    def __init__(self):
+    def __init__(self, instance_id: str = "com.github.linkfrg.ignis"):
         self.__dbus = DBusProxy.new(
-            name="com.github.linkfrg.ignis",
+            name=instance_id,
             object_path="/com/github/linkfrg/ignis",
             interface_name="com.github.linkfrg.ignis",
             info=utils.load_interface_xml("com.github.linkfrg.ignis"),
