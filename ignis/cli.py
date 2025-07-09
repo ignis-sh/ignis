@@ -156,27 +156,27 @@ def init(config: str, instance_id: str, debug: bool) -> None:
 @click.argument("window_name")
 @instance_id_opt
 def open_window(window_name: str, instance_id: str) -> None:
-    call_client_func(window_name, name="open_window", instance_id=instance_id)
+    call_client_func("open_window", instance_id, window_name)
 
 
 @cli.command(name="close-window", help="Close a window.")
 @click.argument("window_name")
 @instance_id_opt
 def close(window_name: str, instance_id: str) -> None:
-    call_client_func(window_name, name="close_window", instance_id=instance_id)
+    call_client_func("close_window", instance_id, window_name)
 
 
 @cli.command(name="toggle-window", help="Toggle a window.")
 @click.argument("window_name")
 @instance_id_opt
 def toggle(window_name: str, instance_id: str) -> None:
-    call_client_func(window_name, name="toggle_window", instance_id=instance_id)
+    call_client_func("toggle_window", instance_id, window_name)
 
 
 @cli.command(name="list-windows", help="List names of all windows.")
 @instance_id_opt
 def list_windows(instance_id: str) -> None:
-    window_list = call_client_func(name="list_windows", instance_id=instance_id)
+    window_list = call_client_func("list_windows", instance_id)
     print("\n".join(window_list))
 
 
@@ -186,7 +186,7 @@ def list_windows(instance_id: str) -> None:
 @click.argument("code")
 @instance_id_opt
 def run_python(code: str, instance_id: str) -> None:
-    call_client_func(code, name="run_python", instance_id=instance_id)
+    call_client_func("run_python", instance_id, code)
 
 
 @cli.command(
@@ -195,25 +195,25 @@ def run_python(code: str, instance_id: str) -> None:
 @click.argument("file")
 @instance_id_opt
 def run_file(file: str, instance_id: str) -> None:
-    call_client_func(get_full_path(file), name="run_file", instance_id=instance_id)
+    call_client_func("run_file", instance_id, get_full_path(file))
 
 
 @cli.command(name="inspector", help="Open GTK Inspector.")
 @instance_id_opt
 def inspector(instance_id: str) -> None:
-    call_client_func(name="inspector", instance_id=instance_id)
+    call_client_func("inspector", instance_id)
 
 
 @cli.command(name="reload", help="Reload Ignis.")
 @instance_id_opt
 def reload(instance_id: str) -> None:
-    call_client_func(name="reload", instance_id=instance_id)
+    call_client_func("reload", instance_id)
 
 
 @cli.command(name="quit", help="Quit Ignis.")
 @instance_id_opt
 def quit(instance_id: str) -> None:
-    call_client_func(name="quit", instance_id=instance_id)
+    call_client_func("quit", instance_id)
 
 
 @cli.command(name="systeminfo", help="Print system information.")
