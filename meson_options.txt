@@ -18,3 +18,10 @@ option(
     value: '',
     description: 'NOT PUBLIC OPTION: custom commit hash to configure ignis/__commit__.py.in'
 )
+
+option(
+    'wheel',
+    type: 'boolean',
+    value: false,
+    description: 'Build for a Python wheel'
+)

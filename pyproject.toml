@@ -24,6 +24,9 @@ Issues = "https://github.com/ignis-sh/ignis/issues"
 build-backend = 'mesonpy'
 requires = ['meson-python', 'setuptools']
 
+[tool.meson-python.args]
+setup = ['-Dwheel=true']
+
 [tool.mypy]
 python_version = "3.10"
 packages = ["ignis", "examples"]
@@ -61,3 +64,6 @@ ignore = [
 
 fixable = ["ALL"]
 unfixable = []
+
+[project.scripts]
+ignis = "ignis.main:main"

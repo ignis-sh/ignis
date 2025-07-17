@@ -53,11 +53,13 @@ config.set('COMMIT', commit_hash)
 config.set('BRANCH', run_command('git', 'branch', '--show-current', check: false).stdout().strip())
 config.set('COMMIT_MSG', run_command('git', 'log', '-1', '--pretty=%B', check: false).stdout().strip().replace('\\', '\\\\').replace('"', '\\"'))
 
+if not get_option('wheel')
 install_data(
     files('bin/ignis'),
     install_dir: bindir,
     install_mode: 'rwxr-xr-x',
 )
+endif
 
 configure_file(
     input: 'ignis/__commit__.py.in',
