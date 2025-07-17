@@ -3,7 +3,6 @@
   lib,
   wrapGAppsHook4,
   pkg-config,
-  meson,
   ninja,
   git,
   glib,
@@ -34,6 +33,8 @@ let
     click
     loguru
     rich
+    meson-python
+    setuptools
     ;
 in
 buildPythonPackage {
@@ -42,11 +43,12 @@ buildPythonPackage {
   pname = "ignis";
   src = "${self}";
 
-  format = "other";
+  pyproject = true;
+  build-system = [ meson-python ];
 
   nativeBuildInputs = [
     pkg-config
-    meson
+    setuptools
     ninja
     git
     gobject-introspection
@@ -89,6 +91,16 @@ buildPythonPackage {
       "''${gappsWrapperArgs[@]}"
       --set LD_LIBRARY_PATH "$out/lib:${gtk4-layer-shell}/lib:$LD_LIBRARY_PATH"
     )
+  '';
+
+  # NOTE: For some reason Gvc-1.0.gir points to "/usr/local/lib/python3.13/site-packages/ignis/libgvc.so"
+  # But it doesn't exist and GIR silently fails to load the shared library
+  # As a result, you will get a lot of strange errors when trying to use Gvc
+  # So, we patch .gir to replace the wrong path with the correct relative one: "libgvc.so"
+  # FIXME: Maybe there is a better way to handle this?
+  postInstall = ''
+    sed -i "s|/usr/local/lib/python3.13/site-packages/ignis/libgvc.so|libgvc.so|" \
+      $out/lib/python3.13/site-packages/ignis/Gvc-1.0.gir
   '';
 
   meta = {
