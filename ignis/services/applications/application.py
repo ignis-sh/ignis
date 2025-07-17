@@ -173,7 +173,6 @@ class Application(IgnisGObject):
         custom_env.pop("VIRTUAL_ENV", None)
         custom_env.pop("PYTHONHOME", None)
         custom_env.pop("PYTHONPATH", None)
-        custom_env["PATH"] = os.defpath
 
         cmd: str
 
@@ -184,6 +183,7 @@ class Application(IgnisGObject):
         else:
             cmd = exec_string
 
+        # FIXME: add logging for stdout & stderr
         asyncio.create_task(
             asyncio.create_subprocess_shell(
                 cmd,
