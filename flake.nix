@@ -45,12 +45,26 @@
 
         devShells = {
           default = pkgs.mkShell {
+            venvDir = "./venv";
             inputsFrom = [ self.packages.${system}.ignis ];
 
             packages = with pkgs; [
-              ruff
-              mypy
+              python3Packages.venvShellHook
+
+              (python3.withPackages (
+                ps: with ps; [
+                  python
+                  meson-python
+                  setuptools
+                  ruff
+                ]
+              ))
             ];
+
+            postVenvCreation = ''
+              pip install -r dev.txt
+              pip install -e . --no-build-isolation
+            '';
 
             LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [ pkgs.gtk4-layer-shell ];
           };
