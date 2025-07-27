@@ -77,7 +77,7 @@ def get_temp_dir() -> str:
     return _temp_dir
 
 
-def _prepend_to_repo(lib_path: str, search_path: str) -> None:
+def _prepend_to_repo(path: str) -> None:
     if is_girepository_2_0:
         # Hacky? yes
         # But getting GIRepository from gi.repository and using its prepend methods results in no effect
@@ -95,8 +95,8 @@ def _prepend_to_repo(lib_path: str, search_path: str) -> None:
 
         repo = GIRepository.Repository
 
-    repo.prepend_library_path(lib_path)
-    repo.prepend_search_path(search_path)
+    repo.prepend_library_path(path)
+    repo.prepend_search_path(path)
 
 
 def _init_asyncio() -> None:
@@ -126,14 +126,13 @@ def _require_versions() -> None:
 
 
 _GVC_LIB_DIR = "/usr/lib/ignis-gvc"
-_GVC_SEARCH_DIR = "/usr/share/ignis-gvc"
 
 
 def _prepend_gvc() -> None:
     if not os.path.exists(_GVC_LIB_DIR):
         return
 
-    _prepend_to_repo(lib_path=_GVC_LIB_DIR, search_path=_GVC_SEARCH_DIR)
+    _prepend_to_repo(path=_GVC_LIB_DIR)
 
 
 def _init() -> None:
