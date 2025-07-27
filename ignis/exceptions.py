@@ -49,7 +49,7 @@ class GvcNotFoundError(Exception):
 
     def __init__(self, *args) -> None:
         super().__init__(
-            "Gvc not found! To use the audio service, ensure that Ignis is installed correctly",
+            "Gvc not found! To use the audio service, install ignis-gvc",
             *args,
         )
 
