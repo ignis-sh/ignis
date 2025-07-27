@@ -9,6 +9,8 @@ class AudioService(BaseService):
     An audio service.
     Allows controlling audio devices.
 
+    Requires `ignis-gvc <https://github.com/ignis-sh/ignis-gvc>`_.
+
     .. warning::
         This service uses the PulseAudio backend.
         To use it with PipeWire, install ``pipewire-pulse``.
