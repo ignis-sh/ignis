@@ -11,9 +11,9 @@
       inputs.systems.follows = "systems";
     };
 
-    gvc = {
-      url = "github:ignis-sh/libgnome-volume-control-wheel";
-      flake = false;
+    ignis-gvc = {
+      url = "github:ignis-sh/ignis-gvc";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -22,7 +22,7 @@
       self,
       nixpkgs,
       flake-utils,
-      gvc,
+      ignis-gvc,
       ...
     }:
     flake-utils.lib.eachDefaultSystem (
@@ -30,10 +30,14 @@
       let
         pkgs = import nixpkgs { inherit system; };
         version = import ./nix/version.nix { inherit self; };
+        ignis-gvc-pkg = ignis-gvc.packages.${system}.ignis-gvc;
       in
       {
         packages = rec {
-          ignis = pkgs.callPackage ./nix { inherit self gvc version; };
+          ignis = pkgs.callPackage ./nix {
+            inherit self version;
+            ignis-gvc = ignis-gvc-pkg;
+          };
           default = ignis;
         };
         apps = rec {
@@ -64,6 +68,10 @@
             postVenvCreation = ''
               pip install -r dev.txt
               pip install -e . --no-build-isolation
+            '';
+
+            shellHook = ''
+              export GI_TYPELIB_PATH=${ignis-gvc-pkg}/lib/ignis-gvc:$GI_TYPELIB_PATH
             '';
 
             LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [ pkgs.gtk4-layer-shell ];

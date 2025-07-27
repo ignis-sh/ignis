@@ -17,7 +17,7 @@
   gnome-bluetooth,
   python313Packages,
   gpu-screen-recorder,
-  gvc,
+  ignis-gvc,
   extraPackages ? [ ],
   version ? "git",
 }:
@@ -38,7 +38,6 @@ let
     ;
 in
 buildPythonPackage {
-
   inherit version;
   pname = "ignis";
   src = "${self}";
@@ -58,6 +57,7 @@ buildPythonPackage {
   dependencies = extraPackages ++ [
     glib
     gtk4
+    ignis-gvc
     gtk4-layer-shell
     gobject-introspection
     dart-sass
@@ -75,11 +75,6 @@ buildPythonPackage {
     rich
   ];
 
-  patchPhase = ''
-    mkdir -p ./subprojects/gvc
-    cp -r ${gvc}/* ./subprojects/gvc
-  '';
-
   mesonFlags = [
     "-DCOMMITHASH=${self.rev or "dirty"}"
   ];
@@ -90,17 +85,8 @@ buildPythonPackage {
     makeWrapperArgs+=(
       "''${gappsWrapperArgs[@]}"
       --set LD_LIBRARY_PATH "$out/lib:${gtk4-layer-shell}/lib:$LD_LIBRARY_PATH"
+      --set GI_TYPELIB_PATH "$out/lib:${ignis-gvc}/lib/ignis-gvc:$GI_TYPELIB_PATH"
     )
-  '';
-
-  # NOTE: For some reason Gvc-1.0.gir points to "/usr/local/lib/python3.13/site-packages/ignis/libgvc.so"
-  # But it doesn't exist and GIR silently fails to load the shared library
-  # As a result, you will get a lot of strange errors when trying to use Gvc
-  # So, we patch .gir to replace the wrong path with the correct relative one: "libgvc.so"
-  # FIXME: Maybe there is a better way to handle this?
-  postInstall = ''
-    sed -i "s|/usr/local/lib/python3.13/site-packages/ignis/libgvc.so|libgvc.so|" \
-      $out/lib/python3.13/site-packages/ignis/Gvc-1.0.gir
   '';
 
   meta = {

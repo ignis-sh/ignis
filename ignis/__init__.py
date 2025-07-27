@@ -77,7 +77,7 @@ def get_temp_dir() -> str:
     return _temp_dir
 
 
-def _prepend_to_repo(path: str) -> None:
+def _prepend_to_repo(lib_path: str, search_path: str) -> None:
     if is_girepository_2_0:
         # Hacky? yes
         # But getting GIRepository from gi.repository and using its prepend methods results in no effect
@@ -95,8 +95,8 @@ def _prepend_to_repo(path: str) -> None:
 
         repo = GIRepository.Repository
 
-    repo.prepend_library_path(path)
-    repo.prepend_search_path(path)
+    repo.prepend_library_path(lib_path)
+    repo.prepend_search_path(search_path)
 
 
 def _init_asyncio() -> None:
@@ -124,22 +124,14 @@ def _require_versions() -> None:
     gi.require_version("Gtk4LayerShell", "1.0")
     gi.require_version("GdkPixbuf", "2.0")
 
+_GVC_LIB_DIR = "/usr/lib/ignis-gvc"
+_GVC_SEARCH_DIR = "/usr/share/ignis-gvc"
 
 def _prepend_gvc() -> None:
-    current_dir = os.path.dirname(os.path.abspath(__file__))
+    if not os.path.exists(_GVC_LIB_DIR):
+        return
 
-    if not is_editable_install:
-        _prepend_to_repo(current_dir)
-    else:
-        build_libdir = os.path.join(
-            os.path.abspath(os.path.join(current_dir, "..")),
-            "build",
-            f"cp{sys.version_info.major}{sys.version_info.minor}",
-            "subprojects",
-            "gvc",
-        )
-        _prepend_to_repo(build_libdir)
-
+    _prepend_to_repo(lib_path=_GVC_LIB_DIR, search_path=_GVC_SEARCH_DIR)
 
 def _init() -> None:
     _init_asyncio()
