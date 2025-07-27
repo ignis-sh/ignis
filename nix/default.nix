@@ -38,7 +38,6 @@ let
     ;
 in
 buildPythonPackage {
-
   inherit version;
   pname = "ignis";
   src = "${self}";
@@ -94,13 +93,17 @@ buildPythonPackage {
   '';
 
   # NOTE: For some reason Gvc-1.0.gir points to "/usr/local/lib/python3.13/site-packages/ignis/libgvc.so"
-  # But it doesn't exist and GIR silently fails to load the shared library
-  # As a result, you will get a lot of strange errors when trying to use Gvc
+  # But it doesn't exist and GIR fails to load the shared library
   # So, we patch .gir to replace the wrong path with the correct relative one: "libgvc.so"
+  # And recompile the typelib from patched GIR
   # FIXME: Maybe there is a better way to handle this?
   postInstall = ''
     sed -i "s|/usr/local/lib/python3.13/site-packages/ignis/libgvc.so|libgvc.so|" \
       $out/lib/python3.13/site-packages/ignis/Gvc-1.0.gir
+
+    g-ir-compiler \
+      $out/lib/python3.13/site-packages/ignis/Gvc-1.0.gir \
+      -o $out/lib/python3.13/site-packages/ignis/Gvc-1.0.typelib
   '';
 
   meta = {
