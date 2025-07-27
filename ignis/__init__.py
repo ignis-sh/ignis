@@ -124,14 +124,17 @@ def _require_versions() -> None:
     gi.require_version("Gtk4LayerShell", "1.0")
     gi.require_version("GdkPixbuf", "2.0")
 
+
 _GVC_LIB_DIR = "/usr/lib/ignis-gvc"
 _GVC_SEARCH_DIR = "/usr/share/ignis-gvc"
+
 
 def _prepend_gvc() -> None:
     if not os.path.exists(_GVC_LIB_DIR):
         return
 
     _prepend_to_repo(lib_path=_GVC_LIB_DIR, search_path=_GVC_SEARCH_DIR)
+
 
 def _init() -> None:
     _init_asyncio()
