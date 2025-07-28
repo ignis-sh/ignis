@@ -21,11 +21,17 @@ Repository = "https://github.com/ignis-sh/ignis"
 Issues = "https://github.com/ignis-sh/ignis/issues"
 
 [build-system]
-build-backend = 'mesonpy'
-requires = ['meson-python', 'setuptools']
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
 
-[tool.meson-python.args]
-setup = ['-Dwheel=true']
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.version.raw-options]
+version_scheme = "no-guess-dev"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "ignis/_version.py"
 
 [tool.mypy]
 python_version = "3.10"

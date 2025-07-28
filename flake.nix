@@ -58,8 +58,6 @@
               (python3.withPackages (
                 ps: with ps; [
                   python
-                  meson-python
-                  setuptools
                   ruff
                 ]
               ))
@@ -67,7 +65,7 @@
 
             postVenvCreation = ''
               pip install -r dev.txt
-              pip install -e . --no-build-isolation
+              pip install -e .
             '';
 
             shellHook = ''

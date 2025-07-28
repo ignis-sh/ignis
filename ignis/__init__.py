@@ -22,9 +22,6 @@ def _get_is_editable_install() -> bool:
     return False
 
 
-#: The Ignis version.
-__version__ = "0.5.dev0"
-
 #: Whether Ignis is imported during the Sphinx documentation build.
 is_sphinx_build: bool = "sphinx" in sys.modules
 

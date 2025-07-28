@@ -16,3 +16,4 @@ docs/tmp
 .artifacts
 result
 .direnv
+_version.py

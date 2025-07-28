@@ -2,16 +2,12 @@
   self,
   lib,
   wrapGAppsHook4,
-  pkg-config,
-  ninja,
-  git,
   glib,
   gtk4,
   gtk4-layer-shell,
   gobject-introspection,
   librsvg,
   dart-sass,
-  libpulseaudio,
   pipewire,
   networkmanager,
   gnome-bluetooth,
@@ -33,8 +29,8 @@ let
     click
     loguru
     rich
-    meson-python
-    setuptools
+    hatchling
+    hatch-vcs
     ;
 in
 buildPythonPackage {
@@ -43,16 +39,9 @@ buildPythonPackage {
   src = "${self}";
 
   pyproject = true;
-  build-system = [ meson-python ];
+  build-system = [ hatchling hatch-vcs ];
 
-  nativeBuildInputs = [
-    pkg-config
-    setuptools
-    ninja
-    git
-    gobject-introspection
-    wrapGAppsHook4
-  ];
+  nativeBuildInputs = [gobject-introspection wrapGAppsHook4];
 
   dependencies = extraPackages ++ [
     glib
@@ -63,7 +52,6 @@ buildPythonPackage {
     dart-sass
     gpu-screen-recorder
     librsvg
-    libpulseaudio
     pipewire
     networkmanager
     gnome-bluetooth
