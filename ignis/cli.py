@@ -7,7 +7,6 @@ from ignis.exceptions import WindowNotFoundError
 from typing import Any
 from gi.repository import GLib  # type: ignore
 from ignis import is_editable_install
-from ignis._version import __version__  # type: ignore
 
 DEFAULT_CONFIG_PATH = f"{GLib.get_user_config_dir()}/ignis/config.py"
 
@@ -37,6 +36,8 @@ def _run_git_cmd(args: str) -> str | None:
 
 
 def get_version_message() -> str:
+    from ignis._version import __version__  # type: ignore
+
     if not is_editable_install:
         return f"Ignis {__version__}"
     else:
