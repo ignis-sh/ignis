@@ -17,22 +17,19 @@
     };
   };
 
-  outputs =
-    {
-      self,
-      nixpkgs,
-      flake-utils,
-      ignis-gvc,
-      ...
-    }:
+  outputs = {
+    self,
+    nixpkgs,
+    flake-utils,
+    ignis-gvc,
+    ...
+  }:
     flake-utils.lib.eachDefaultSystem (
-      system:
-      let
-        pkgs = import nixpkgs { inherit system; };
-        version = import ./nix/version.nix { inherit self; };
+      system: let
+        pkgs = import nixpkgs {inherit system;};
+        version = import ./nix/version.nix {inherit self;};
         ignis-gvc-pkg = ignis-gvc.packages.${system}.ignis-gvc;
-      in
-      {
+      in {
         packages = rec {
           ignis = pkgs.callPackage ./nix {
             inherit self version;
@@ -41,25 +38,26 @@
           default = ignis;
         };
         apps = rec {
-          ignis = flake-utils.lib.mkApp { drv = self.packages.${system}.ignis; };
+          ignis = flake-utils.lib.mkApp {drv = self.packages.${system}.ignis;};
           default = ignis;
         };
 
-        formatter = pkgs.nixfmt-rfc-style;
+        formatter = pkgs.alejandra;
 
         devShells = {
           default = pkgs.mkShell {
             venvDir = "./venv";
-            inputsFrom = [ self.packages.${system}.ignis ];
+            inputsFrom = [self.packages.${system}.ignis];
 
             packages = with pkgs; [
               python3Packages.venvShellHook
 
               (python3.withPackages (
-                ps: with ps; [
-                  python
-                  ruff
-                ]
+                ps:
+                  with ps; [
+                    python
+                    ruff
+                  ]
               ))
             ];
 
@@ -68,16 +66,13 @@
               pip install -e .
             '';
 
-            shellHook = ''
-              export GI_TYPELIB_PATH=${ignis-gvc-pkg}/lib/ignis-gvc:$GI_TYPELIB_PATH
-            '';
-
-            LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [ pkgs.gtk4-layer-shell ];
+            GI_TYPELIB_PATH = "${ignis-gvc-pkg}/lib/ignis-gvc";
+            LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [pkgs.gtk4-layer-shell];
           };
         };
       }
     )
     // {
-      overlays.default = final: prev: { inherit (self.packages.${prev.system}) ignis; };
+      overlays.default = final: prev: {inherit (self.packages.${prev.system}) ignis;};
     };
 }

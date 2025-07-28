@@ -38,9 +38,9 @@ class CheckButton(Gtk.CheckButton, BaseWidget):
 
     def __init__(self, **kwargs):
         Gtk.CheckButton.__init__(self)
-        BaseWidget.__init__(self, **kwargs)
-
         self._on_toggled: Callable | None = None
+
+        BaseWidget.__init__(self, **kwargs)
 
         self.connect(
             "toggled",
