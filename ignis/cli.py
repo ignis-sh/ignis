@@ -3,12 +3,11 @@ import click
 import subprocess
 import collections
 from ignis.client import IgnisClient
-from ignis import utils
 from ignis.exceptions import WindowNotFoundError
 from typing import Any
 from gi.repository import GLib  # type: ignore
 from ignis import is_editable_install
-from ignis._version import __version__
+from ignis._version import __version__  # type: ignore
 
 DEFAULT_CONFIG_PATH = f"{GLib.get_user_config_dir()}/ignis/config.py"
 
