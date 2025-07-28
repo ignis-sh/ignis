@@ -68,10 +68,7 @@
               pip install -e . --no-build-isolation
             '';
 
-            shellHook = ''
-              export GI_TYPELIB_PATH=${ignis-gvc-pkg}/lib/ignis-gvc:$GI_TYPELIB_PATH
-            '';
-
+            GI_TYPELIB_PATH = "${ignis-gvc-pkg}/lib/ignis-gvc";
             LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [pkgs.gtk4-layer-shell];
           };
         };
