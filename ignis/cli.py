@@ -4,7 +4,7 @@ import subprocess
 import collections
 from ignis.client import IgnisClient
 from ignis import utils
-from ignis.exceptions import WindowNotFoundError
+from ignis.exceptions import WindowNotFoundError, IgnisAlreadyRunningError
 from typing import Any
 from gi.repository import GLib  # type: ignore
 from ignis import is_editable_install
@@ -73,8 +73,8 @@ def print_version(ctx, param, value):
         ctx.exit(print(get_version_message()))
 
 
-def call_client_func(name: str, *args) -> Any:
-    client = IgnisClient()
+def call_client_func(name: str, instance_id: str, *args) -> Any:
+    client = IgnisClient(instance_id=instance_id)
     if not client.has_owner:
         print("Ignis is not running.")
         exit(1)
@@ -106,6 +106,13 @@ def cli():
     pass
 
 
+instance_id_opt = click.option(
+    "--instance-id",
+    help="The Ignis instance ID. Default: com.github.linkfrg.ignis",
+    default="com.github.linkfrg.ignis",
+)
+
+
 @cli.command(name="init", help="Initialize Ignis.")
 @click.option(
     "--config",
@@ -115,25 +122,24 @@ def cli():
     type=str,
     metavar="PATH",
 )
+@instance_id_opt
 @click.option("--debug", help="Print debug information to the terminal.", is_flag=True)
-def init(config: str, debug: bool) -> None:
+def init(config: str, instance_id: str, debug: bool) -> None:
     from ignis.app import IgnisApp
     from ignis.log_utils import configure_logger
     from ignis._deprecation import _enable_deprecation_warnings
     from ignis.config_manager import ConfigManager
-
-    client = IgnisClient()
-
-    if client.has_owner:
-        print("Ignis is already running.")
-        exit(1)
 
     config_path = get_full_path(config)
 
     _enable_deprecation_warnings()
     configure_logger(debug)
 
-    app = IgnisApp()
+    try:
+        app = IgnisApp(instance_id=instance_id)
+    except IgnisAlreadyRunningError:
+        print(f'Ignis with the given instance ID is already running: "{instance_id}"')
+        exit(1)
 
     app.connect(
         "activate",
@@ -148,25 +154,29 @@ def init(config: str, debug: bool) -> None:
 
 @cli.command(name="open-window", help="Open a window.")
 @click.argument("window_name")
-def open_window(window_name: str) -> None:
-    call_client_func("open_window", window_name)
+@instance_id_opt
+def open_window(window_name: str, instance_id: str) -> None:
+    call_client_func("open_window", instance_id, window_name)
 
 
 @cli.command(name="close-window", help="Close a window.")
 @click.argument("window_name")
-def close(window_name: str) -> None:
-    call_client_func("close_window", window_name)
+@instance_id_opt
+def close(window_name: str, instance_id: str) -> None:
+    call_client_func("close_window", instance_id, window_name)
 
 
 @cli.command(name="toggle-window", help="Toggle a window.")
 @click.argument("window_name")
-def toggle(window_name: str) -> None:
-    call_client_func("toggle_window", window_name)
+@instance_id_opt
+def toggle(window_name: str, instance_id: str) -> None:
+    call_client_func("toggle_window", instance_id, window_name)
 
 
 @cli.command(name="list-windows", help="List names of all windows.")
-def list_windows() -> None:
-    window_list = call_client_func("list_windows")
+@instance_id_opt
+def list_windows(instance_id: str) -> None:
+    window_list = call_client_func("list_windows", instance_id)
     print("\n".join(window_list))
 
 
@@ -174,31 +184,36 @@ def list_windows() -> None:
     name="run-python", help="Execute a Python code inside the running Ignis process."
 )
 @click.argument("code")
-def run_python(code: str) -> None:
-    call_client_func("run_python", code)
+@instance_id_opt
+def run_python(code: str, instance_id: str) -> None:
+    call_client_func("run_python", instance_id, code)
 
 
 @cli.command(
     name="run-file", help="Execute a Python file inside the running Ignis process."
 )
 @click.argument("file")
-def run_file(file: str) -> None:
-    call_client_func("run_file", get_full_path(file))
+@instance_id_opt
+def run_file(file: str, instance_id: str) -> None:
+    call_client_func("run_file", instance_id, get_full_path(file))
 
 
 @cli.command(name="inspector", help="Open GTK Inspector.")
-def inspector() -> None:
-    call_client_func("inspector")
+@instance_id_opt
+def inspector(instance_id: str) -> None:
+    call_client_func("inspector", instance_id)
 
 
 @cli.command(name="reload", help="Reload Ignis.")
-def reload() -> None:
-    call_client_func("reload")
+@instance_id_opt
+def reload(instance_id: str) -> None:
+    call_client_func("reload", instance_id)
 
 
 @cli.command(name="quit", help="Quit Ignis.")
-def quit() -> None:
-    call_client_func("quit")
+@instance_id_opt
+def quit(instance_id: str) -> None:
+    call_client_func("quit", instance_id)
 
 
 @cli.command(name="systeminfo", help="Print system information.")

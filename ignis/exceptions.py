@@ -208,6 +208,18 @@ class IgnisNotRunningError(Exception):
         super().__init__("Ignis is not running", *args)
 
 
+class IgnisAlreadyRunningError(Exception):
+    """
+    Raised when an Ignis instance with the given ID is already running.
+    """
+
+    def __init__(self, instance_id: str, *args: object) -> None:
+        super().__init__(
+            f"An Ignis instance with the given ID is already running: {instance_id}",
+            *args,
+        )
+
+
 class DBusMethodNotFoundError(Exception):
     """
     Raised when a D-Bus method is not found or not registered.
