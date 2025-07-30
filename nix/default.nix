@@ -66,10 +66,6 @@ in
         rich
       ];
 
-    mesonFlags = [
-      "-DCOMMITHASH=${self.rev or "dirty"}"
-    ];
-
     #? avoid double wrapping. we manually pass args to wrapper
     dontWrapGApps = true;
     preFixup = ''
