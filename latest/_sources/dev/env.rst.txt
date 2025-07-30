@@ -27,26 +27,17 @@ It's always a good practice to work within a Python virtual environment.
 Editable install
 ----------------
 
-Ignis is build with Meson and meson-python. 
-In order to support editable installs, Meson-python, Meson, and Ninja should be installed in the virtual environment.
+Editable installs let you modify the source code directly in the repository
+and the changes take effect immediately without reinstalling the package.
 
-.. code-block:: python
-
-    pip install meson-python meson ninja
-
-Now, install Ignis in the local virtual environment with the ``--no-build-isolation`` and ``-e`` options for an editable install.
+You can install Ignis in editable mode using ``pip`` with ``-e`` flag:
 
 .. code-block:: bash
 
-    pip install --no-build-isolation -e .
+    pip install -e .
 
 Additionally, you can install useful development tools by running:
 
 .. code-block:: bash
 
     pip install -r dev.txt
-
-Done!
-
-You can now edit the ``ignis`` directory at the root of the repository,
-and the changes will be applied without the need to reinstall Ignis.

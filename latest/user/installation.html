@@ -503,35 +503,6 @@ pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com
 This allows you to easily switch between commits, versions, branches, or pull requests using <cite>git</cite>, without having to reinstall Ignis.</p>
 </div>
 </section>
-<section id="building-from-source">
-<h2>Building from source<a class="headerlink" href="#building-from-source" title="Link to this heading">#</a></h2>
-<p><strong>Dependencies:</strong></p>
-<ul class="simple">
-<li><p>ninja</p></li>
-<li><p>meson</p></li>
-<li><p>gtk4</p></li>
-<li><p>gtk4-layer-shell</p></li>
-<li><p>glib-mkenums (glib2-devel)</p></li>
-<li><p>pygobject &gt;= 3.50.0</p></li>
-<li><p>pycairo</p></li>
-<li><p>python-click</p></li>
-<li><p>python-loguru</p></li>
-<li><p>libpulse (if using PipeWire, install <code class="docutils literal notranslate"><span class="pre">pipewire-pulse</span></code>)</p></li>
-</ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/ignis-sh/ignis.git
-<span class="nb">cd</span><span class="w"> </span>ignis
-meson<span class="w"> </span>setup<span class="w"> </span>build<span class="w"> </span>--prefix<span class="o">=</span>/usr
-meson<span class="w"> </span>compile<span class="w"> </span>-C<span class="w"> </span>build
-meson<span class="w"> </span>install<span class="w"> </span>-C<span class="w"> </span>build
-</pre></div>
-</div>
-</section>
-<section id="running">
-<h2>Running<a class="headerlink" href="#running" title="Link to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ignis<span class="w"> </span>init
-</pre></div>
-</div>
-</section>
 </section>
 
 
@@ -585,8 +556,6 @@ meson<span class="w"> </span>install<span class="w"> </span>-C<span class="w"> <
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nix">Nix</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#void-linux">Void Linux</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pip">Pip</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-from-source">Building from source</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running">Running</a></li>
 </ul>
   </nav></div>
 
