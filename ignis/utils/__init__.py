@@ -13,6 +13,12 @@ from .socket import send_socket, listen_socket
 from .str_cases import snake_to_pascal, pascal_to_snake
 from .thread import thread, run_in_thread, ThreadTask
 from .timeout import Timeout
+from .version import (
+    get_ignis_version,
+    get_ignis_commit,
+    get_ignis_branch,
+    get_ignis_commit_msg,
+)
 from ignis._deprecation import deprecated_getattribute
 
 
@@ -32,12 +38,16 @@ class Utils:
     thread = thread
     run_in_thread = run_in_thread
     sass_compile = sass_compile
+    get_ignis_version = get_ignis_version
     scale_pixbuf = scale_pixbuf
     crop_pixbuf = crop_pixbuf
     get_paintable = get_paintable
     get_file_icon_name = get_file_icon_name
     ThreadTask: TypeAlias = ThreadTask
+    get_ignis_commit = get_ignis_commit
     get_current_dir = get_current_dir
+    get_ignis_branch = get_ignis_branch
+    get_ignis_commit_msg = get_ignis_commit_msg
     send_socket = send_socket
     listen_socket = listen_socket
     DebounceTask = DebounceTask
@@ -66,6 +76,10 @@ __all__ = [
     "get_app_icon_name",
     "get_current_dir",
     "get_file_icon_name",
+    "get_ignis_branch",
+    "get_ignis_commit",
+    "get_ignis_commit_msg",
+    "get_ignis_version",
     "get_monitor",
     "get_monitors",
     "get_n_monitors",
