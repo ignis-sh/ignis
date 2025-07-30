@@ -21,6 +21,7 @@ def _get_is_editable_install() -> bool:
 
     return False
 
+
 #: The Ignis version.
 # .. deprecated:: 0.6
 #     Use ignis._version module instead.

@@ -1,5 +1,6 @@
 from ignis._deprecation import deprecated
 
+
 @deprecated("It returns an empty string now, use ignis._version module instead.")
 def get_ignis_version() -> str:
     """
@@ -8,6 +9,7 @@ def get_ignis_version() -> str:
     """
     return ""
 
+
 @deprecated("It returns an empty string now, use ignis._version module instead.")
 def get_ignis_commit() -> str:
     """
@@ -15,6 +17,7 @@ def get_ignis_commit() -> str:
         It returns an empty string now, use ignis._version module instead.
     """
     return ""
+
 
 @deprecated("It returns an empty string now, use ignis._version module instead.")
 def get_ignis_branch() -> str:
