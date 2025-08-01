@@ -37,10 +37,6 @@
           };
           default = ignis;
         };
-        apps = rec {
-          ignis = flake-utils.lib.mkApp {drv = self.packages.${system}.ignis;};
-          default = ignis;
-        };
 
         formatter = pkgs.alejandra;
 
