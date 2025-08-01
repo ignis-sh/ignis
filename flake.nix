@@ -30,34 +30,12 @@
 
     formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
 
-    devShells = forAllSystems (system: let
-      pkgs = nixpkgs.legacyPackages.${system};
-    in {
-      default = pkgs.mkShell {
-        venvDir = "./venv";
-        inputsFrom = [self.packages.${system}.ignis];
-
-        packages = with pkgs; [
-          python3Packages.venvShellHook
-
-          (python3.withPackages (
-            ps:
-              with ps; [
-                python
-                ruff
-              ]
-          ))
-        ];
-
-        postVenvCreation = ''
-          pip install -r dev.txt
-          pip install -e .
-        '';
-
-        GI_TYPELIB_PATH = "${ignis-gvc.packages.${system}.ignis-gvc}/lib/ignis-gvc";
-        LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [pkgs.gtk4-layer-shell];
-      };
-    });
+    devShells = forAllSystems (system:
+      import ./nix/devshell.nix {
+        inherit self;
+        ignis-gvc = ignis-gvc.packages.${system}.ignis-gvc;
+        pkgs = nixpkgs.legacyPackages.${system};
+      });
 
     overlays.default = final: prev: {inherit (self.packages.${prev.system}) ignis;};
   };
