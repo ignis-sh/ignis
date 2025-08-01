@@ -22,7 +22,7 @@
   in {
     packages = forAllSystems (system: {
       ignis = nixpkgs.legacyPackages.${system}.callPackage ./nix {
-        inherit self version;
+        inherit version;
         ignis-gvc = ignis-gvc.packages.${system}.ignis-gvc;
       };
       default = self.packages.${system}.ignis;
