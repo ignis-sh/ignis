@@ -20,12 +20,12 @@
     forAllSystems = nixpkgs.lib.genAttrs systems;
     version = import ./nix/version.nix {inherit self;};
   in {
-    packages = forAllSystems (system: rec {
+    packages = forAllSystems (system: {
       ignis = nixpkgs.legacyPackages.${system}.callPackage ./nix {
         inherit self version;
         ignis-gvc = ignis-gvc.packages.${system}.ignis-gvc;
       };
-      default = ignis;
+      default = self.packages.${system}.ignis;
     });
 
     formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
