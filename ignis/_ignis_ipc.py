@@ -2,10 +2,12 @@ from gi.repository import GLib  # type: ignore
 from ignis import utils
 from ignis.dbus import DBusService
 from ignis.gobject import IgnisGObject
-from ignis.exceptions import WindowNotFoundError
+from ignis.exceptions import CommandNotFoundError, WindowNotFoundError
+from ignis.command_manager import CommandManager
 from ignis.window_manager import WindowManager
 from typing import TYPE_CHECKING
 
+command_manager = CommandManager.get_default()
 window_manager = WindowManager.get_default()
 
 if TYPE_CHECKING:
@@ -36,6 +38,10 @@ class IgnisIpc(IgnisGObject):
         self.__dbus.register_dbus_method(name="RunFile", method=self.__RunFile)
         self.__dbus.register_dbus_method(name="Reload", method=self.__Reload)
         self.__dbus.register_dbus_method(name="ListWindows", method=self.__ListWindows)
+        self.__dbus.register_dbus_method(name="RunCommand", method=self.__RunCommand)
+        self.__dbus.register_dbus_method(
+            name="ListCommands", method=self.__ListCommands
+        )
 
     def __call_window_method(self, type_: str, window_name: str) -> GLib.Variant:
         try:
@@ -55,6 +61,18 @@ class IgnisIpc(IgnisGObject):
 
     def __ListWindows(self, invocation) -> GLib.Variant:
         return GLib.Variant("(as)", (window_manager.list_window_names(),))
+
+    def __ListCommands(self, invocation) -> GLib.Variant:
+        return GLib.Variant("(as)", (command_manager.list_command_names(),))
+
+    def __RunCommand(
+        self, invocation, command_name: str, command_args: list[str]
+    ) -> GLib.Variant:
+        try:
+            output = command_manager.run_command(command_name, command_args)
+            return GLib.Variant("(bs)", (True, output))
+        except CommandNotFoundError:
+            return GLib.Variant("(bs)", (False, ""))
 
     def __RunPython(self, invocation, code: str) -> None:
         invocation.return_value(None)

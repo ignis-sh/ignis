@@ -1,6 +1,10 @@
 from ignis.dbus import DBusProxy
 from ignis import utils
-from ignis.exceptions import WindowNotFoundError, IgnisNotRunningError
+from ignis.exceptions import (
+    CommandNotFoundError,
+    WindowNotFoundError,
+    IgnisNotRunningError,
+)
 from typing import Any
 
 
@@ -81,6 +85,26 @@ class IgnisClient:
             list[str]: A list of all window names.
         """
         return self.__call_dbus_method("ListWindows")
+
+    def list_commands(self) -> list[str]:
+        """
+        Get a list of all command names.
+
+        Returns:
+            list[str]: A list of all command names.
+        """
+        return self.__call_dbus_method("ListCommands")
+
+    def run_command(self, command_name: str, command_args: list[str]) -> str:
+        """
+        Same as :func:`~ignis.command_manager.CommandManager.run_command`.
+        """
+        command_found, command_output = self.__call_dbus_method(
+            "RunCommand", "(sas)", command_name, command_args
+        )
+        if not command_found:
+            raise CommandNotFoundError(command_name)
+        return command_output
 
     def quit(self) -> None:
         """

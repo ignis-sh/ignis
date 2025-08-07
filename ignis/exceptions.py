@@ -2,6 +2,46 @@ from gi.repository import Gtk, GLib  # type: ignore
 from ignis._deprecation import deprecated
 
 
+class CommandNotFoundError(Exception):
+    """
+    Raised when a command is not found.
+
+    Args:
+        command_name: The name of the command.
+    """
+
+    def __init__(self, command_name: str, *args) -> None:
+        self._command_name = command_name
+        super().__init__(f'No such command: "{command_name}"', *args)
+
+    @property
+    def command_name(self) -> str:
+        """
+        The name of the command.
+        """
+        return self._command_name
+
+
+class CommandAddedError(Exception):
+    """
+    Raised when a command is already added.
+
+    Args:
+        command_name: The name of the command.
+    """
+
+    def __init__(self, command_name: str, *args) -> None:
+        self._command_name = command_name
+        super().__init__(f'Command already added: "{command_name}"', *args)
+
+    @property
+    def command_name(self) -> str:
+        """
+        The name of the command.
+        """
+        return self._command_name
+
+
 class WindowNotFoundError(Exception):
     """
     Raised when a window is not found.
