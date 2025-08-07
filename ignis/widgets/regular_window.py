@@ -11,7 +11,7 @@ class RegularWindow(Gtk.Window, BaseWidget):
     """
     Bases: :class:`Gtk.Window`
 
-    A standart application window.
+    A standard application window.
 
     Args:
         namespace: The name of the window, used for accessing it from the CLI and :class:`~ignis.app.IgnisApp`. It must be unique.
