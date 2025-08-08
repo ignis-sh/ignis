@@ -3,17 +3,17 @@ from ignis.gobject import IgnisGObjectSingleton
 from ignis.exceptions import CommandAddedError, CommandNotFoundError
 
 
-CommandCallback = Callable[[list[str]], str | None]
+CommandCallback = Callable[..., str | None]
 """
 Callback type of a custom command.
 
-Alias of ``Callable[[list[str]], str | None]``.
+Alias of ``Callable[..., str | None]``, whose arguments should be ``*args: str``.
 
 Example:
 
 .. code-block:: python
 
-    def callback(args: list[str]) -> str | None:
+    def callback(*args: str) -> str | None:
         return " ".join(args)
 """
 
@@ -21,7 +21,7 @@ Example:
 class CommandManager(IgnisGObjectSingleton):
     """
     A class for managing custom commands.
-    A command is a function that accepts a ``list[str]`` as args
+    A command is a function that accepts ``*args: str`` as args
     and optionally returns a ``str`` as output.
 
     Example usage:
@@ -33,13 +33,17 @@ class CommandManager(IgnisGObjectSingleton):
         command_manager = CommandManager.get_default()
 
         # Add or remove a command
-        command_manager.add_command("command-name", lambda _: "output message")
+        command_manager.add_command("command-name", lambda: "output message")
         command_manager.remove_command("command-name")
 
         # Run a command
         command_manager.run_command("command-name")
         # Run with args and output
-        output = command_manager.run_command("command-name", ["arg1", "arg2"])
+        output = command_manager.run_command("command-name", *["arg1", "arg2"])
+        output = command_manager.run_command("command-name", "arg1", "arg2")
+        # Run from the `ignis` CLI:
+        # $ ignis run-command command-name
+        # $ ignis run-command command-name arg1 arg2
 
         # Get the callback of a command
         callback = command_manager.get_command("command-name")
@@ -74,7 +78,7 @@ class CommandManager(IgnisGObjectSingleton):
 
         Args:
             command_name: The command's name.
-            callback: The command callback. It accepts an args list and optionally returns a string.
+            callback: The command callback. It accepts an ``*args: str`` and optionally returns a ``str``.
 
         Raises:
             CommandAddedError: If a command with the given name already exists.
@@ -84,8 +88,8 @@ class CommandManager(IgnisGObjectSingleton):
         .. code-block:: python
 
             command_manager = CommandManager.get_default()
-            command_manager.add_command("echo", lambda args: " ".join(args))
-            command_manager.add_command("ping", lambda _: "pong")
+            command_manager.add_command("echo", lambda *args: " ".join(args))
+            command_manager.add_command("ping", lambda: "pong")
         """
         if command_name in self._commands:
             raise CommandAddedError(command_name)
@@ -106,9 +110,7 @@ class CommandManager(IgnisGObjectSingleton):
         if not command:
             raise CommandNotFoundError(command_name)
 
-    def run_command(
-        self, command_name: str, command_args: list[str] | None = None
-    ) -> str | None:
+    def run_command(self, command_name: str, *command_args: str) -> str | None:
         """
         Run a command by its name.
 
@@ -120,7 +122,7 @@ class CommandManager(IgnisGObjectSingleton):
             CommandNotFoundError: If a command with the given name does not exist.
         """
         command = self.get_command(command_name)
-        return command(command_args or [])
+        return command(*command_args)
 
     def list_command_names(self) -> tuple[str, ...]:
         """
