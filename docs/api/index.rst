@@ -9,6 +9,7 @@ This reference manual details functions, modules, and objects included in Ignis,
    toplevel
    app
    window_manager
+   command_manager
    css_manager
    icon_manager
    config_manager

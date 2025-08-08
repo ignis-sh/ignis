@@ -3,6 +3,21 @@ from ignis.gobject import IgnisGObjectSingleton
 from ignis.exceptions import CommandAddedError, CommandNotFoundError
 
 
+CommandCallback = Callable[[list[str]], str | None]
+"""
+Callback type of a custom command.
+
+Alias of ``Callable[[list[str]], str | None]``.
+
+Example:
+
+.. code-block:: python
+
+    def callback(args: list[str]) -> str | None:
+        return " ".join(args)
+"""
+
+
 class CommandManager(IgnisGObjectSingleton):
     """
     A class for managing custom commands.
@@ -18,21 +33,23 @@ class CommandManager(IgnisGObjectSingleton):
         command_manager = CommandManager.get_default()
 
         # Add or remove a command
-        command_manager.add_command("command-name", lambda _: print("output message"))
+        command_manager.add_command("command-name", lambda _: "output message")
         command_manager.remove_command("command-name")
 
         # Run a command
         command_manager.run_command("command-name")
+        # Run with args and output
+        output = command_manager.run_command("command-name", ["arg1", "arg2"])
 
         # Get the callback of a command
         callback = command_manager.get_command("command-name")
     """
 
     def __init__(self):
-        self._commands: dict[str, Callable[[list[str]], str | None]] = {}
+        self._commands: dict[str, CommandCallback] = {}
         super().__init__()
 
-    def get_command(self, command_name: str) -> Callable[[list[str]], str | None]:
+    def get_command(self, command_name: str) -> CommandCallback:
         """
         Get a command by name.
 
@@ -51,9 +68,7 @@ class CommandManager(IgnisGObjectSingleton):
         else:
             raise CommandNotFoundError(command_name)
 
-    def add_command(
-        self, command_name: str, callback: Callable[[list[str]], str | None]
-    ) -> None:
+    def add_command(self, command_name: str, callback: CommandCallback) -> None:
         """
         Add a command.
 
@@ -91,7 +106,9 @@ class CommandManager(IgnisGObjectSingleton):
         if not command:
             raise CommandNotFoundError(command_name)
 
-    def run_command(self, command_name: str, command_args: list[str]) -> str:
+    def run_command(
+        self, command_name: str, command_args: list[str] | None = None
+    ) -> str | None:
         """
         Run a command by its name.
 
@@ -103,7 +120,7 @@ class CommandManager(IgnisGObjectSingleton):
             CommandNotFoundError: If a command with the given name does not exist.
         """
         command = self.get_command(command_name)
-        return command(command_args) or ""
+        return command(command_args or [])
 
     def list_command_names(self) -> tuple[str, ...]:
         """

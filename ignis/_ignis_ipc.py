@@ -70,7 +70,7 @@ class IgnisIpc(IgnisGObject):
     ) -> GLib.Variant:
         try:
             output = command_manager.run_command(command_name, command_args)
-            return GLib.Variant("(bs)", (True, output))
+            return GLib.Variant("(bs)", (True, output or ""))
         except CommandNotFoundError:
             return GLib.Variant("(bs)", (False, ""))
 
