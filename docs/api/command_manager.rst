@@ -1,7 +1,5 @@
-CommandManager
-==============
+Command Manager
+===============
 
 .. autoclass:: ignis.command_manager.CommandManager
     :members:
-
-.. autoclass:: ignis.command_manager.CommandCallback
