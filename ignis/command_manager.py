@@ -4,18 +4,6 @@ from ignis.exceptions import CommandAddedError, CommandNotFoundError
 
 
 CommandCallback = Callable[..., str | None]
-"""
-Callback type of a custom command.
-
-Alias of ``Callable[..., str | None]``, whose arguments should be ``*args: str``.
-
-Example:
-
-.. code-block:: python
-
-    def callback(*args: str) -> str | None:
-        return " ".join(args)
-"""
 
 
 class CommandManager(IgnisGObjectSingleton):
@@ -32,8 +20,27 @@ class CommandManager(IgnisGObjectSingleton):
 
         command_manager = CommandManager.get_default()
 
-        # Add or remove a command
-        command_manager.add_command("command-name", lambda: "output message")
+        # Add a command
+        command_manager.add_command("command-name", lambda *_: "output message")
+        command_manager.add_command(
+            "command-name", lambda fmt="%H:%M", *_: set_format(fmt)
+        )
+
+        # A regular form of callbacks
+        def regular_callback(
+            arg1: str, arg_optional: str | None = None, *args: str
+        ) -> str | None:
+            if arg1 == "Hello":
+                return "world!"
+
+            if arg_optional:
+                return f"arg_optional: {arg_optional}"
+
+            return None # Nothing will be printed in CLI
+
+        command_manager.add_command("regular-command", regular_callback)
+
+        # Remove a command by name
         command_manager.remove_command("command-name")
 
         # Run a command
@@ -82,14 +89,6 @@ class CommandManager(IgnisGObjectSingleton):
 
         Raises:
             CommandAddedError: If a command with the given name already exists.
-
-        Example usage:
-
-        .. code-block:: python
-
-            command_manager = CommandManager.get_default()
-            command_manager.add_command("echo", lambda *args: " ".join(args))
-            command_manager.add_command("ping", lambda: "pong")
         """
         if command_name in self._commands:
             raise CommandAddedError(command_name)
