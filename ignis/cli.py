@@ -3,7 +3,7 @@ import click
 import subprocess
 import collections
 from ignis.client import IgnisClient
-from ignis.exceptions import WindowNotFoundError
+from ignis.exceptions import CommandNotFoundError, WindowNotFoundError
 from typing import Any
 from gi.repository import GLib  # type: ignore
 from ignis import is_editable_install
@@ -78,6 +78,9 @@ def call_client_func(name: str, *args) -> Any:
         return getattr(client, name)(*args)
     except WindowNotFoundError:
         print(f"No such window: {args[0]}")
+        exit(1)
+    except CommandNotFoundError:
+        print(f"No such command: {args[0]}")
         exit(1)
 
 
@@ -163,6 +166,21 @@ def toggle(window_name: str) -> None:
 def list_windows() -> None:
     window_list = call_client_func("list_windows")
     print("\n".join(window_list))
+
+
+@cli.command(name="list-commands", help="List names of all custom commands.")
+def list_commands() -> None:
+    command_list = call_client_func("list_commands")
+    print("\n".join(command_list))
+
+
+@cli.command(name="run-command", help="Run a custom command.")
+@click.argument("command_name")
+@click.argument("command_args", nargs=-1)
+def run_command(command_name: str, command_args: tuple[str]) -> None:
+    command_output = call_client_func("run_command", command_name, list(command_args))
+    if command_output != "":
+        print(command_output)
 
 
 @cli.command(
