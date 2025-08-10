@@ -2,22 +2,32 @@
   self,
   pkgs,
   ignis-gvc,
-}: {
+}: let
+  pythonDeps = with pkgs; [
+    python3Packages.venvShellHook
+
+    (python3.withPackages (
+      ps:
+        with ps; [
+          python
+          ruff
+        ]
+    ))
+  ];
+
+  extraDeps = with pkgs; [
+    gnome-bluetooth
+    gpu-screen-recorder
+    ignis-gvc
+    networkmanager
+    dart-sass
+  ];
+in {
   default = pkgs.mkShell {
     venvDir = "./venv";
     inputsFrom = [self.packages.${pkgs.system}.ignis];
 
-    packages = with pkgs; [
-      python3Packages.venvShellHook
-
-      (python3.withPackages (
-        ps:
-          with ps; [
-            python
-            ruff
-          ]
-      ))
-    ];
+    packages = pythonDeps ++ extraDeps;
 
     postVenvCreation = ''
       pip install -r dev.txt

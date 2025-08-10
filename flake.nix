@@ -23,7 +23,6 @@
     packages = forAllSystems (system: {
       ignis = nixpkgs.legacyPackages.${system}.callPackage ./nix {
         inherit version;
-        ignis-gvc = ignis-gvc.packages.${system}.ignis-gvc;
       };
       default = self.packages.${system}.ignis;
     });
@@ -33,10 +32,15 @@
     devShells = forAllSystems (system:
       import ./nix/devshell.nix {
         inherit self;
-        ignis-gvc = ignis-gvc.packages.${system}.ignis-gvc;
         pkgs = nixpkgs.legacyPackages.${system};
+        ignis-gvc = ignis-gvc.packages.${system}.ignis-gvc;
       });
 
     overlays.default = final: prev: {inherit (self.packages.${prev.system}) ignis;};
+
+    homeManagerModules = {
+      ignis = import ./nix/hm-module.nix {inherit self ignis-gvc;};
+      default = self.homeManagerModules.ignis;
+    };
   };
 }

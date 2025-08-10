@@ -6,13 +6,7 @@
   gtk4-layer-shell,
   gobject-introspection,
   librsvg,
-  dart-sass,
-  pipewire,
-  networkmanager,
-  gnome-bluetooth,
   python313Packages,
-  gpu-screen-recorder,
-  ignis-gvc,
   extraPackages ? [],
   version ? "git",
 }:
@@ -31,15 +25,9 @@ python313Packages.buildPythonPackage {
     ++ [
       glib
       gtk4
-      ignis-gvc
       gtk4-layer-shell
       gobject-introspection
-      dart-sass
-      gpu-screen-recorder
       librsvg
-      pipewire
-      networkmanager
-      gnome-bluetooth
 
       python313Packages.pygobject3
       python313Packages.pycairo
@@ -54,7 +42,6 @@ python313Packages.buildPythonPackage {
     makeWrapperArgs+=(
       "''${gappsWrapperArgs[@]}"
       --set LD_LIBRARY_PATH "$out/lib:${gtk4-layer-shell}/lib:$LD_LIBRARY_PATH"
-      --set GI_TYPELIB_PATH "$out/lib:${ignis-gvc}/lib/ignis-gvc:$GI_TYPELIB_PATH"
     )
   '';
 
