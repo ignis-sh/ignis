@@ -589,7 +589,16 @@
 <dd><ul class="simple">
 <li><p>read-only</p></li>
 </ul>
-<p>The currenly focused window.</p>
+<p>The currently focused window.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If there is no window is focused, it will return an &quot;empty&quot; <a class="reference internal" href="#ignis.services.niri.NiriWindow" title="ignis.services.niri.NiriWindow"><code class="xref py py-class docutils literal notranslate"><span class="pre">NiriWindow</span></code></a>, where:</p>
+<ul class="simple">
+<li><p>all <code class="docutils literal notranslate"><span class="pre">int</span></code>-properties are <code class="docutils literal notranslate"><span class="pre">-1</span></code></p></li>
+<li><p>all <code class="docutils literal notranslate"><span class="pre">str</span></code>-properties are <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></li>
+<li><p>all <code class="docutils literal notranslate"><span class="pre">bool</span></code>-properties are <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+</ul>
+</div>
 </dd></dl>
 
 <dl class="py gproperty">
