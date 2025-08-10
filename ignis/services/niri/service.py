@@ -86,7 +86,14 @@ class NiriService(BaseService):
     @IgnisProperty
     def active_window(self) -> NiriWindow:
         """
-        The currenly focused window.
+        The currently focused window.
+
+        .. note::
+            If there is no window is focused, it will return an "empty" :class:`NiriWindow`, where:
+
+            - all ``int``-properties are ``-1``
+            - all ``str``-properties are ``""``
+            - all ``bool``-properties are ``False``.
         """
         return self._active_window
 
