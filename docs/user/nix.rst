@@ -1,171 +1,129 @@
 Nix
-============
+===
 
-Installation
-------------
+Ignis provides a Home Manager module, which is the recommended way to install Ignis on NixOS.
 
-.. warning::
-    This will install the latest (git) version of Ignis.
-    Please refer to the `latest documentation <https://ignis-sh.github.io/ignis/latest/index.html>`_.
+.. danger::
+    You **must** refer to the `latest Ignis documentation <https://ignis-sh.github.io/ignis/latest/index.html>`_.
 
-Add Ignis to the flake's inputs:
+Adding to flake
+---------------
+
+First, add Ignis to your flake's inputs:
 
 .. code-block:: nix
-
     {
       inputs = {
-        nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+        nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
         home-manager = {
           url = "github:nix-community/home-manager";
           inputs.nixpkgs.follows = "nixpkgs";
         };
+
+        # Add Ignis here
         ignis = {
           url = "github:ignis-sh/ignis";
-          # ! Important to override
-          # Nix will not allow overriding dependencies if the input
-          # doesn't follow your system pkgs
-          inputs.nixpkgs.follows = "nixpkgs";
+          inputs.nixpkgs.follows = "nixpkgs";  # you want this
         };
       };
     }
 
-Then, add the following to ``nixpkgs.overlays``:
+Home Manager
+------------
+
+The Home Manager module allows you to easily enable or disable optional features, symlink your Ignis config directory, and much more.
+
+Add the module to your Home Manager configuration:
 
 .. code-block:: nix
+    # home.nix
+    {inputs, pkgs, ...}: {
+        imports = [inputs.ignis.homeManagerModules.default];
+    }
 
-    ignis.overlays.default
-
-
-and the following to ``environment.systemPackages`` or ``home.packages``:
+Now you can easily configure Ignis using ``programs.ignis``:
 
 .. code-block:: nix
+    # home.nix
+    {inputs, pkgs, ...}: {
+      programs.ignis = {
+        enable = true;
 
-    pkgs.ignis
+        # Make your editor's LSP work
+        addToPythonEnv = true;
 
-Extra Dependencies
-------------------
+        # Symlink config dir from your flake to ~/.config/ignis
+        configDir = ./ignis;
 
-To add extra dependencies, use the ``<pkg>.override`` function and pass the ``extraPackages`` argument to it.
+        # Enable dependencies required by some services.
+        # NOTE: This won't affect your NixOS system configuration.
+        # For example, to use NetworkService, you must enable NetworkManager
+        # in your NixOS configuration using:
+        #   networking.networkmanager.enable = true;
+        services = {
+          bluetooth.enable = true;
+          recorder.enable = true;
+          audio.enable = true;
+          network.enable = true;
+        };
 
-.. tab-set::
+        # Enable Sass support
+        sass = {
+          enable = true;
+          useDartSass = true;
+        };
 
-    .. tab-item:: configuration.nix
-
-        .. code-block:: nix
-
-            { config, pkgs, lib, ... }: {
-              environment.systemPackages = [
-                (pkgs.ignis.override {
-                  extraPackages = [
-                    # Add extra dependencies here
-                    # For example:
-                    pkgs.python313Packages.psutil
-                    pkgs.python313Packages.jinja2
-                    pkgs.python313Packages.pillow
-                    pkgs.python313Packages.materialyoucolor
-                  ];
-                })
-              ];
-            }
-
-    .. tab-item:: home.nix
-
-        .. code-block:: nix
-
-            { config, pkgs, lib, ... }: {
-              home.packages = [
-                (pkgs.ignis.override {
-                  extraPackages = [
-                    # Add extra dependencies here
-                    # For example:
-                    pkgs.python313Packages.psutil
-                    pkgs.python313Packages.jinja2
-                    pkgs.python313Packages.pillow
-                    pkgs.python313Packages.materialyoucolor
-                  ];
-                })
-              ];
-            }
+        # Extra packages available at runtime
+        # These can be regular packages or Python packages
+        extraPackages = with pkgs; [
+          hello
+          python313Packages.jinja2
+          python313Packages.materialyoucolor
+          python313Packages.pillow
+        ];
+      };
+    }
 
 
-Tips and Tricks
----------------
 
-Adding Ignis to System Python
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+A simple Flake example
+^^^^^^^^^^^^^^^^^^^^^^
 
-You can make Ignis accessible to the system Python interpreter.
-This is especially useful if the LSP server of your text editor is not able to find Ignis.
+.. code-block:: nix
+    # flake.nix
+    {
+      inputs = {
+        nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+        home-manager = {
+          url = "github:nix-community/home-manager";
+          inputs.nixpkgs.follows = "nixpkgs";
+        };
 
-.. tab-set::
+        ignis = {
+          url = "github:ignis-sh/ignis";
+          inputs.nixpkgs.follows = "nixpkgs";
+        };
+      };
 
-    .. tab-item:: home.nix
-
-        .. code-block:: nix
-
-          { config, pkgs, ... }: {
-            home.packages = with pkgs; [
-              (python3.withPackages(ps: with ps; [
-                (pkgs.ignis.override {
-                  extraPackages = [
-                    # Add extra packages if needed
-                  ];
-                })
-              ]))
+      outputs = {
+        self,
+        nixpkgs,
+        home-manager,
+        ...
+      } @ inputs: let
+        system = "x86_64-linux";
+      in {
+        homeConfigurations = {
+          "user@hostname" = home-manager.lib.homeManagerConfiguration {
+            pkgs = nixpkgs.legacyPackages.${system};
+            # Make "inputs" accessible in home.nix
+            extraSpecialArgs = {inherit inputs;};
+            modules = [
+              ./path/to/home.nix
             ];
-          }
-
-
-.. danger::
-    You must choose only one of the described methods.
-    Do not add Ignis to the system Python if you have already added it as a package.
-
-    Otherwise, Ignis may not be able to find extra dependencies.
-
-The basic Flake example
-^^^^^^^^^^^^^^^^^^^^^^^
-
-.. tab-set::
-
-    .. tab-item:: flake.nix
-
-      .. code-block:: nix
-
-          {
-            inputs = {
-              nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-              home-manager = {
-                url = "github:nix-community/home-manager";
-                inputs.nixpkgs.follows = "nixpkgs";
-              };
-              ignis = {
-                url = "github:ignis-sh/ignis";
-                inputs.nixpkgs.follows = "nixpkgs";
-              };
-            };
-
-            outputs = { self, nixpkgs, home-manager, ignis, ... }@inputs: let
-              system = "x86_64-linux";
-              lib = nixpkgs.lib;
-            in {
-              nixosConfigurations = {
-                dummy-hostname = lib.nixosSystem {
-                  specialArgs = { inherit system inputs; };
-
-                  modules = [
-                    ./path/to/configuration.nix
-
-                    home-manager.nixosModules.home-manager {
-                      home-manager = {
-                        extraSpecialArgs = { inherit system inputs; };
-                        useGlobalPkgs = true;
-                        useUserPackages = true;
-                        users.yourUserName = import ./path/to/home.nix;
-                      };
-                    }
-                  ];
-                };
-              };
-            };
-          }
+          };
+        };
+      };
+    }
