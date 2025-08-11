@@ -90,6 +90,8 @@ Now you can easily configure Ignis using ``programs.ignis``:
       };
     }
 
+A list of all available options can be found `here <https://github.com/ignis-sh/ignis/blob/main/nix/hm-module-doc.md>`_
+
 A simple flake example
 ^^^^^^^^^^^^^^^^^^^^^^
 
