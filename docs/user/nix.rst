@@ -1,13 +1,13 @@
 Nix
 ===
 
-Ignis provides a Home Manager module, which is the recommended way to install Ignis on NixOS.
+Ignis provides a Home Manager module, which is the recommended way to install it on NixOS.
 
 .. danger::
     You **must** refer to the `latest Ignis documentation <https://ignis-sh.github.io/ignis/latest/index.html>`_.
 
-Adding to flake
----------------
+Adding Ignis to a flake
+-----------------------
 
 First, add Ignis to your flake's inputs:
 
@@ -25,7 +25,7 @@ First, add Ignis to your flake's inputs:
         # Add Ignis here
         ignis = {
           url = "github:ignis-sh/ignis";
-          inputs.nixpkgs.follows = "nixpkgs";  # you want this
+          inputs.nixpkgs.follows = "nixpkgs";  # recommended
         };
       };
     }
@@ -33,7 +33,7 @@ First, add Ignis to your flake's inputs:
 Home Manager
 ------------
 
-The Home Manager module allows you to easily enable or disable optional features, symlink your Ignis config directory, and much more.
+The Home Manager module allows you to easily enable or disable optional features, manage the Ignis config directory, and much more.
 
 Add the module to your Home Manager configuration:
 
@@ -41,7 +41,7 @@ Add the module to your Home Manager configuration:
 
     # home.nix
     {inputs, pkgs, ...}: {
-        imports = [inputs.ignis.homeManagerModules.default];
+      imports = [inputs.ignis.homeManagerModules.default];
     }
 
 Now you can easily configure Ignis using ``programs.ignis``:
@@ -53,16 +53,18 @@ Now you can easily configure Ignis using ``programs.ignis``:
       programs.ignis = {
         enable = true;
 
-        # Make your editor's LSP work
+        # Add Ignis to the Python environment (useful for LSP support)
         addToPythonEnv = true;
 
-        # Symlink config dir from your flake to ~/.config/ignis
+        # Put a config directory from your flake into ~/.config/ignis
+        # NOTE: Home Manager will copy this directory to /nix/store
+        # and create a symbolic link to the copy.
         configDir = ./ignis;
 
-        # Enable dependencies required by some services.
+        # Enable dependencies required by certain services.
         # NOTE: This won't affect your NixOS system configuration.
-        # For example, to use NetworkService, you must enable NetworkManager
-        # in your NixOS configuration using:
+        # For example, to use NetworkService, you must also enable
+        # NetworkManager in your NixOS configuration:
         #   networking.networkmanager.enable = true;
         services = {
           bluetooth.enable = true;
@@ -88,9 +90,7 @@ Now you can easily configure Ignis using ``programs.ignis``:
       };
     }
 
-
-
-A simple Flake example
+A simple flake example
 ^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: nix
