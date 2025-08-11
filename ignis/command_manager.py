@@ -119,6 +119,8 @@ class CommandManager(IgnisGObjectSingleton):
 
         Raises:
             CommandNotFoundError: If a command with the given name does not exist.
+            Exception: If the given arguments don't match the command's callback,
+                or if the callback raises an arbitrary Exception.
         """
         command = self.get_command(command_name)
         return command(*command_args)

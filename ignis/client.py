@@ -99,11 +99,13 @@ class IgnisClient:
         """
         Same as :func:`~ignis.command_manager.CommandManager.run_command`.
         """
-        command_found, command_output = self.__call_dbus_method(
+        command_error, command_output = self.__call_dbus_method(
             "RunCommand", "(sas)", command_name, command_args
         )
-        if not command_found:
+        if command_error == str(CommandNotFoundError(command_name)):
             raise CommandNotFoundError(command_name)
+        elif command_error != "":
+            raise Exception(command_error)
         return command_output
 
     def quit(self) -> None:

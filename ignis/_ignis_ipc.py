@@ -2,7 +2,7 @@ from gi.repository import GLib  # type: ignore
 from ignis import utils
 from ignis.dbus import DBusService
 from ignis.gobject import IgnisGObject
-from ignis.exceptions import CommandNotFoundError, WindowNotFoundError
+from ignis.exceptions import WindowNotFoundError
 from ignis.command_manager import CommandManager
 from ignis.window_manager import WindowManager
 from typing import TYPE_CHECKING
@@ -70,9 +70,9 @@ class IgnisIpc(IgnisGObject):
     ) -> GLib.Variant:
         try:
             output = command_manager.run_command(command_name, *command_args)
-            return GLib.Variant("(bs)", (True, output or ""))
-        except CommandNotFoundError:
-            return GLib.Variant("(bs)", (False, ""))
+            return GLib.Variant("(ss)", ("", output or ""))
+        except Exception as e:
+            return GLib.Variant("(ss)", (str(e), ""))
 
     def __RunPython(self, invocation, code: str) -> None:
         invocation.return_value(None)

@@ -24,7 +24,7 @@
         <method name="RunCommand">
             <arg direction="in" type="s" name="command-name"/>
             <arg direction="in" type="as" name="command-args"/>
-            <arg direction="out" type="b" name="command-found"/>
+            <arg direction="out" type="s" name="command-error"/>
             <arg direction="out" type="s" name="command-output"/>
         </method>
         <method name="RunPython">
