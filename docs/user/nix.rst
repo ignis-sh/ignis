@@ -38,6 +38,7 @@ The Home Manager module allows you to easily enable or disable optional features
 Add the module to your Home Manager configuration:
 
 .. code-block:: nix
+
     # home.nix
     {inputs, pkgs, ...}: {
         imports = [inputs.ignis.homeManagerModules.default];
@@ -46,6 +47,7 @@ Add the module to your Home Manager configuration:
 Now you can easily configure Ignis using ``programs.ignis``:
 
 .. code-block:: nix
+
     # home.nix
     {inputs, pkgs, ...}: {
       programs.ignis = {
@@ -92,6 +94,7 @@ A simple Flake example
 ^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: nix
+
     # flake.nix
     {
       inputs = {
