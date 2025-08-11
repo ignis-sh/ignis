@@ -441,165 +441,127 @@
                   
   <section id="nix">
 <h1>Nix<a class="headerlink" href="#nix" title="Link to this heading">#</a></h1>
-<section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>This will install the latest (git) version of Ignis.
-Please refer to the <a class="reference external" href="https://ignis-sh.github.io/ignis/latest/index.html">latest documentation</a>.</p>
-</div>
-<p>Add Ignis to the flake's inputs:</p>
-<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="ss">inputs</span> <span class="o">=</span> <span class="p">{</span>
-    nixpkgs<span class="o">.</span><span class="ss">url</span> <span class="o">=</span> <span class="s2">&quot;github:nixos/nixpkgs/nixos-unstable&quot;</span><span class="p">;</span>
-    <span class="ss">home-manager</span> <span class="o">=</span> <span class="p">{</span>
-      <span class="ss">url</span> <span class="o">=</span> <span class="s2">&quot;github:nix-community/home-manager&quot;</span><span class="p">;</span>
-      inputs<span class="o">.</span>nixpkgs<span class="o">.</span><span class="ss">follows</span> <span class="o">=</span> <span class="s2">&quot;nixpkgs&quot;</span><span class="p">;</span>
-    <span class="p">};</span>
-    <span class="ss">ignis</span> <span class="o">=</span> <span class="p">{</span>
-      <span class="ss">url</span> <span class="o">=</span> <span class="s2">&quot;github:ignis-sh/ignis&quot;</span><span class="p">;</span>
-      <span class="c1"># ! Important to override</span>
-      <span class="c1"># Nix will not allow overriding dependencies if the input</span>
-      <span class="c1"># doesn&#39;t follow your system pkgs</span>
-      inputs<span class="o">.</span>nixpkgs<span class="o">.</span><span class="ss">follows</span> <span class="o">=</span> <span class="s2">&quot;nixpkgs&quot;</span><span class="p">;</span>
-    <span class="p">};</span>
-  <span class="p">};</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>Then, add the following to <code class="docutils literal notranslate"><span class="pre">nixpkgs.overlays</span></code>:</p>
-<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span>ignis<span class="o">.</span>overlays<span class="o">.</span>default
-</pre></div>
-</div>
-<p>and the following to <code class="docutils literal notranslate"><span class="pre">environment.systemPackages</span></code> or <code class="docutils literal notranslate"><span class="pre">home.packages</span></code>:</p>
-<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span>pkgs<span class="o">.</span>ignis
-</pre></div>
-</div>
-</section>
-<section id="extra-dependencies">
-<h2>Extra Dependencies<a class="headerlink" href="#extra-dependencies" title="Link to this heading">#</a></h2>
-<p>To add extra dependencies, use the <code class="docutils literal notranslate"><span class="pre">&lt;pkg&gt;.override</span></code> function and pass the <code class="docutils literal notranslate"><span class="pre">extraPackages</span></code> argument to it.</p>
-<div class="sd-tab-set docutils">
-<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-0">
-configuration.nix</label><div class="sd-tab-content docutils">
-<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> config<span class="p">,</span> pkgs<span class="p">,</span> lib<span class="p">,</span> <span class="o">...</span> <span class="p">}:</span> <span class="p">{</span>
-  environment<span class="o">.</span><span class="ss">systemPackages</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">(</span>pkgs<span class="o">.</span>ignis<span class="o">.</span>override <span class="p">{</span>
-      <span class="ss">extraPackages</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="c1"># Add extra dependencies here</span>
-        <span class="c1"># For example:</span>
-        pkgs<span class="o">.</span>python313Packages<span class="o">.</span>psutil
-        pkgs<span class="o">.</span>python313Packages<span class="o">.</span>jinja2
-        pkgs<span class="o">.</span>python313Packages<span class="o">.</span>pillow
-        pkgs<span class="o">.</span>python313Packages<span class="o">.</span>materialyoucolor
-      <span class="p">];</span>
-    <span class="p">})</span>
-  <span class="p">];</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
-<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-1">
-home.nix</label><div class="sd-tab-content docutils">
-<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> config<span class="p">,</span> pkgs<span class="p">,</span> lib<span class="p">,</span> <span class="o">...</span> <span class="p">}:</span> <span class="p">{</span>
-  home<span class="o">.</span><span class="ss">packages</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">(</span>pkgs<span class="o">.</span>ignis<span class="o">.</span>override <span class="p">{</span>
-      <span class="ss">extraPackages</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="c1"># Add extra dependencies here</span>
-        <span class="c1"># For example:</span>
-        pkgs<span class="o">.</span>python313Packages<span class="o">.</span>psutil
-        pkgs<span class="o">.</span>python313Packages<span class="o">.</span>jinja2
-        pkgs<span class="o">.</span>python313Packages<span class="o">.</span>pillow
-        pkgs<span class="o">.</span>python313Packages<span class="o">.</span>materialyoucolor
-      <span class="p">];</span>
-    <span class="p">})</span>
-  <span class="p">];</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="tips-and-tricks">
-<h2>Tips and Tricks<a class="headerlink" href="#tips-and-tricks" title="Link to this heading">#</a></h2>
-<section id="adding-ignis-to-system-python">
-<h3>Adding Ignis to System Python<a class="headerlink" href="#adding-ignis-to-system-python" title="Link to this heading">#</a></h3>
-<p>You can make Ignis accessible to the system Python interpreter.
-This is especially useful if the LSP server of your text editor is not able to find Ignis.</p>
-<div class="sd-tab-set docutils">
-<input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-2">
-home.nix</label><div class="sd-tab-content docutils">
-<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> config<span class="p">,</span> pkgs<span class="p">,</span> <span class="o">...</span> <span class="p">}:</span> <span class="p">{</span>
-  home<span class="o">.</span><span class="ss">packages</span> <span class="o">=</span> <span class="k">with</span> pkgs<span class="p">;</span> <span class="p">[</span>
-    <span class="p">(</span>python3<span class="o">.</span>withPackages<span class="p">(</span>ps<span class="p">:</span> <span class="k">with</span> ps<span class="p">;</span> <span class="p">[</span>
-      <span class="p">(</span>pkgs<span class="o">.</span>ignis<span class="o">.</span>override <span class="p">{</span>
-        <span class="ss">extraPackages</span> <span class="o">=</span> <span class="p">[</span>
-          <span class="c1"># Add extra packages if needed</span>
-        <span class="p">];</span>
-      <span class="p">})</span>
-    <span class="p">]))</span>
-  <span class="p">];</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
-</div>
+<p>Ignis provides a Home Manager module, which is the recommended way to install it on NixOS.</p>
 <div class="admonition danger">
 <p class="admonition-title">Danger</p>
-<p>You must choose only one of the described methods.
-Do not add Ignis to the system Python if you have already added it as a package.</p>
-<p>Otherwise, Ignis may not be able to find extra dependencies.</p>
+<p>You <strong>must</strong> refer to the <a class="reference external" href="https://ignis-sh.github.io/ignis/latest/index.html">latest Ignis documentation</a>.</p>
 </div>
-</section>
-<section id="the-basic-flake-example">
-<h3>The basic Flake example<a class="headerlink" href="#the-basic-flake-example" title="Link to this heading">#</a></h3>
-<div class="sd-tab-set docutils">
-<input checked="checked" id="sd-tab-item-3" name="sd-tab-set-2" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-3">
-flake.nix</label><div class="sd-tab-content docutils">
+<section id="adding-ignis-to-a-flake">
+<h2>Adding Ignis to a flake<a class="headerlink" href="#adding-ignis-to-a-flake" title="Link to this heading">#</a></h2>
+<p>First, add Ignis to your flake's inputs:</p>
 <div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="ss">inputs</span> <span class="o">=</span> <span class="p">{</span>
-    nixpkgs<span class="o">.</span><span class="ss">url</span> <span class="o">=</span> <span class="s2">&quot;github:nixos/nixpkgs/nixos-unstable&quot;</span><span class="p">;</span>
+    nixpkgs<span class="o">.</span><span class="ss">url</span> <span class="o">=</span> <span class="s2">&quot;github:NixOS/nixpkgs/nixos-unstable&quot;</span><span class="p">;</span>
+
     <span class="ss">home-manager</span> <span class="o">=</span> <span class="p">{</span>
       <span class="ss">url</span> <span class="o">=</span> <span class="s2">&quot;github:nix-community/home-manager&quot;</span><span class="p">;</span>
       inputs<span class="o">.</span>nixpkgs<span class="o">.</span><span class="ss">follows</span> <span class="o">=</span> <span class="s2">&quot;nixpkgs&quot;</span><span class="p">;</span>
     <span class="p">};</span>
+
+    <span class="c1"># Add Ignis here</span>
+    <span class="ss">ignis</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="ss">url</span> <span class="o">=</span> <span class="s2">&quot;github:ignis-sh/ignis&quot;</span><span class="p">;</span>
+      inputs<span class="o">.</span>nixpkgs<span class="o">.</span><span class="ss">follows</span> <span class="o">=</span> <span class="s2">&quot;nixpkgs&quot;</span><span class="p">;</span>  <span class="c1"># recommended</span>
+    <span class="p">};</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="home-manager">
+<h2>Home Manager<a class="headerlink" href="#home-manager" title="Link to this heading">#</a></h2>
+<p>The Home Manager module allows you to easily enable or disable optional features, manage the Ignis config directory, and much more.</p>
+<p>Add the module to your Home Manager configuration:</p>
+<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="c1"># home.nix</span>
+<span class="p">{</span>inputs<span class="p">,</span> pkgs<span class="p">,</span> <span class="o">...</span><span class="p">}:</span> <span class="p">{</span>
+  <span class="ss">imports</span> <span class="o">=</span> <span class="p">[</span>inputs<span class="o">.</span>ignis<span class="o">.</span>homeManagerModules<span class="o">.</span>default<span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Now you can easily configure Ignis using <code class="docutils literal notranslate"><span class="pre">programs.ignis</span></code>:</p>
+<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="c1"># home.nix</span>
+<span class="p">{</span>inputs<span class="p">,</span> pkgs<span class="p">,</span> <span class="o">...</span><span class="p">}:</span> <span class="p">{</span>
+  programs<span class="o">.</span><span class="ss">ignis</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="ss">enable</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
+
+    <span class="c1"># Add Ignis to the Python environment (useful for LSP support)</span>
+    <span class="ss">addToPythonEnv</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
+
+    <span class="c1"># Put a config directory from your flake into ~/.config/ignis</span>
+    <span class="c1"># NOTE: Home Manager will copy this directory to /nix/store</span>
+    <span class="c1"># and create a symbolic link to the copy.</span>
+    <span class="ss">configDir</span> <span class="o">=</span> <span class="l">./ignis</span><span class="p">;</span>
+
+    <span class="c1"># Enable dependencies required by certain services.</span>
+    <span class="c1"># NOTE: This won&#39;t affect your NixOS system configuration.</span>
+    <span class="c1"># For example, to use NetworkService, you must also enable</span>
+    <span class="c1"># NetworkManager in your NixOS configuration:</span>
+    <span class="c1">#   networking.networkmanager.enable = true;</span>
+    <span class="ss">services</span> <span class="o">=</span> <span class="p">{</span>
+      bluetooth<span class="o">.</span><span class="ss">enable</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
+      recorder<span class="o">.</span><span class="ss">enable</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
+      audio<span class="o">.</span><span class="ss">enable</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
+      network<span class="o">.</span><span class="ss">enable</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="c1"># Enable Sass support</span>
+    <span class="ss">sass</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="ss">enable</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
+      <span class="ss">useDartSass</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="c1"># Extra packages available at runtime</span>
+    <span class="c1"># These can be regular packages or Python packages</span>
+    <span class="ss">extraPackages</span> <span class="o">=</span> <span class="k">with</span> pkgs<span class="p">;</span> <span class="p">[</span>
+      hello
+      python313Packages<span class="o">.</span>jinja2
+      python313Packages<span class="o">.</span>materialyoucolor
+      python313Packages<span class="o">.</span>pillow
+    <span class="p">];</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>A list of all available options can be found <a class="reference external" href="https://github.com/ignis-sh/ignis/blob/main/nix/hm-module-doc.md">here</a></p>
+<section id="a-simple-flake-example">
+<h3>A simple flake example<a class="headerlink" href="#a-simple-flake-example" title="Link to this heading">#</a></h3>
+<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="c1"># flake.nix</span>
+<span class="p">{</span>
+  <span class="ss">inputs</span> <span class="o">=</span> <span class="p">{</span>
+    nixpkgs<span class="o">.</span><span class="ss">url</span> <span class="o">=</span> <span class="s2">&quot;github:nixos/nixpkgs/nixos-unstable&quot;</span><span class="p">;</span>
+
+    <span class="ss">home-manager</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="ss">url</span> <span class="o">=</span> <span class="s2">&quot;github:nix-community/home-manager&quot;</span><span class="p">;</span>
+      inputs<span class="o">.</span>nixpkgs<span class="o">.</span><span class="ss">follows</span> <span class="o">=</span> <span class="s2">&quot;nixpkgs&quot;</span><span class="p">;</span>
+    <span class="p">};</span>
+
     <span class="ss">ignis</span> <span class="o">=</span> <span class="p">{</span>
       <span class="ss">url</span> <span class="o">=</span> <span class="s2">&quot;github:ignis-sh/ignis&quot;</span><span class="p">;</span>
       inputs<span class="o">.</span>nixpkgs<span class="o">.</span><span class="ss">follows</span> <span class="o">=</span> <span class="s2">&quot;nixpkgs&quot;</span><span class="p">;</span>
     <span class="p">};</span>
   <span class="p">};</span>
 
-  <span class="ss">outputs</span> <span class="o">=</span> <span class="p">{</span> self<span class="p">,</span> nixpkgs<span class="p">,</span> home-manager<span class="p">,</span> ignis<span class="p">,</span> <span class="o">...</span> <span class="p">}@</span>inputs<span class="p">:</span> <span class="k">let</span>
+  <span class="ss">outputs</span> <span class="o">=</span> <span class="p">{</span>
+    self<span class="p">,</span>
+    nixpkgs<span class="p">,</span>
+    home-manager<span class="p">,</span>
+    <span class="o">...</span>
+  <span class="p">}</span> <span class="p">@</span> inputs<span class="p">:</span> <span class="k">let</span>
     <span class="ss">system</span> <span class="o">=</span> <span class="s2">&quot;x86_64-linux&quot;</span><span class="p">;</span>
-    <span class="ss">lib</span> <span class="o">=</span> nixpkgs<span class="o">.</span>lib<span class="p">;</span>
   <span class="k">in</span> <span class="p">{</span>
-    <span class="ss">nixosConfigurations</span> <span class="o">=</span> <span class="p">{</span>
-      <span class="ss">dummy-hostname</span> <span class="o">=</span> lib<span class="o">.</span>nixosSystem <span class="p">{</span>
-        <span class="ss">specialArgs</span> <span class="o">=</span> <span class="p">{</span> <span class="k">inherit</span> system inputs<span class="p">;</span> <span class="p">};</span>
-
+    <span class="ss">homeConfigurations</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="s2">&quot;user@hostname&quot;</span> <span class="o">=</span> home-manager<span class="o">.</span>lib<span class="o">.</span>homeManagerConfiguration <span class="p">{</span>
+        <span class="ss">pkgs</span> <span class="o">=</span> nixpkgs<span class="o">.</span>legacyPackages<span class="o">.</span><span class="si">${</span>system<span class="si">}</span><span class="p">;</span>
+        <span class="c1"># Make &quot;inputs&quot; accessible in home.nix</span>
+        <span class="ss">extraSpecialArgs</span> <span class="o">=</span> <span class="p">{</span><span class="k">inherit</span> inputs<span class="p">;};</span>
         <span class="ss">modules</span> <span class="o">=</span> <span class="p">[</span>
-          <span class="l">./path/to/configuration.nix</span>
-
-          home-manager<span class="o">.</span>nixosModules<span class="o">.</span>home-manager <span class="p">{</span>
-            <span class="ss">home-manager</span> <span class="o">=</span> <span class="p">{</span>
-              <span class="ss">extraSpecialArgs</span> <span class="o">=</span> <span class="p">{</span> <span class="k">inherit</span> system inputs<span class="p">;</span> <span class="p">};</span>
-              <span class="ss">useGlobalPkgs</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
-              <span class="ss">useUserPackages</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
-              users<span class="o">.</span><span class="ss">yourUserName</span> <span class="o">=</span> <span class="nb">import</span> <span class="l">./path/to/home.nix</span><span class="p">;</span>
-            <span class="p">};</span>
-          <span class="p">}</span>
+          <span class="l">./path/to/home.nix</span>
         <span class="p">];</span>
       <span class="p">};</span>
     <span class="p">};</span>
   <span class="p">};</span>
 <span class="p">}</span>
 </pre></div>
-</div>
-</div>
 </div>
 </section>
 </section>
@@ -652,11 +614,9 @@ flake.nix</label><div class="sd-tab-content docutils">
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extra-dependencies">Extra Dependencies</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tips-and-tricks">Tips and Tricks</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-ignis-to-system-python">Adding Ignis to System Python</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-basic-flake-example">The basic Flake example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-ignis-to-a-flake">Adding Ignis to a flake</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#home-manager">Home Manager</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-simple-flake-example">A simple flake example</a></li>
 </ul>
 </li>
 </ul>
