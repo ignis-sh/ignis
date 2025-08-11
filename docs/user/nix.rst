@@ -12,6 +12,7 @@ Adding to flake
 First, add Ignis to your flake's inputs:
 
 .. code-block:: nix
+
     {
       inputs = {
         nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
