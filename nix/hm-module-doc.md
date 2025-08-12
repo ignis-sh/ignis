@@ -19,7 +19,13 @@ The Ignis package to use
 
 **Default:** `self.packages.${pkgs.stdenv.hostPlatform.system}.default`
 
-## [`options.programs.ignis.addToPythonEnv`](#L24)
+## [`options.programs.ignis.finalPackage`](#L24)
+
+The final package after applying module modifications
+
+**Type:** `lib.types.package`
+
+## [`options.programs.ignis.addToPythonEnv`](#L30)
 
 
 Wrap the package with python3.withPackages to include it in the global Python environment
@@ -31,7 +37,7 @@ Wrap the package with python3.withPackages to include it in the global Python en
 
 **Example:** `true`
 
-## [`options.programs.ignis.configDir`](#L28)
+## [`options.programs.ignis.configDir`](#L34)
 
 The config directory to use
 
@@ -41,7 +47,7 @@ The config directory to use
 
 **Example:** `./ignis`
 
-## [`options.programs.ignis.services.audio.enable`](#L37)
+## [`options.programs.ignis.services.audio.enable`](#L43)
 
 Enable Audio service
 
@@ -51,7 +57,7 @@ Enable Audio service
 
 **Example:** `true`
 
-## [`options.programs.ignis.services.network.enable`](#L40)
+## [`options.programs.ignis.services.network.enable`](#L46)
 
 Enable Network service
 
@@ -61,7 +67,7 @@ Enable Network service
 
 **Example:** `true`
 
-## [`options.programs.ignis.services.recorder.enable`](#L43)
+## [`options.programs.ignis.services.recorder.enable`](#L49)
 
 Enable Recorder service
 
@@ -71,7 +77,7 @@ Enable Recorder service
 
 **Example:** `true`
 
-## [`options.programs.ignis.services.bluetooth.enable`](#L46)
+## [`options.programs.ignis.services.bluetooth.enable`](#L52)
 
 Enable Bluetooth service
 
@@ -81,7 +87,7 @@ Enable Bluetooth service
 
 **Example:** `true`
 
-## [`options.programs.ignis.sass.enable`](#L51)
+## [`options.programs.ignis.sass.enable`](#L57)
 
 Enable Sass compilation support
 
@@ -91,7 +97,7 @@ Enable Sass compilation support
 
 **Example:** `true`
 
-## [`options.programs.ignis.sass.useDartSass`](#L52)
+## [`options.programs.ignis.sass.useDartSass`](#L58)
 
 Use dart-sass for Sass compilation (you probably want this)
 
@@ -101,7 +107,7 @@ Use dart-sass for Sass compilation (you probably want this)
 
 **Example:** `true`
 
-## [`options.programs.ignis.sass.useGrassSass`](#L53)
+## [`options.programs.ignis.sass.useGrassSass`](#L59)
 
 
 Use grass-sass for Sass compilation.
@@ -114,7 +120,7 @@ NOTE: You can set both useDartSass and useGrassSass to true. In this case, both 
 
 **Example:** `true`
 
-## [`options.programs.ignis.extraPackages`](#L59)
+## [`options.programs.ignis.extraPackages`](#L65)
 
 
 Extra packages to add to the PATH.

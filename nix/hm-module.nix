@@ -21,6 +21,12 @@ in {
       description = "The Ignis package to use";
     };
 
+    finalPackage = lib.mkOption {
+      type = lib.types.package;
+      readOnly = true;
+      description = "The final package after applying module modifications";
+    };
+
     addToPythonEnv = lib.mkEnableOption ''
       Wrap the package with python3.withPackages to include it in the global Python environment
     '';
@@ -97,6 +103,7 @@ in {
             );
         };
       in {
+        programs.ignis.finalPackage = pkg;
         home.packages = [
           (
             if cfg.addToPythonEnv
