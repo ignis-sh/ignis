@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>WindowManager &#8212; Ignis documentation</title>
+    <title>Command Manager &#8212; Ignis documentation</title>
   
   
   
@@ -47,7 +47,7 @@
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'api/window_manager';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/command_manager';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ignis-sh.github.io/ignis/latest/_static/switcher.json';
@@ -57,8 +57,8 @@
         </script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Command Manager" href="command_manager.html" />
-    <link rel="prev" title="Application" href="app.html" />
+    <link rel="next" title="CSS Manager" href="css_manager.html" />
+    <link rel="prev" title="WindowManager" href="window_manager.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -369,8 +369,8 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="toplevel.html">Toplevel package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app.html">Application</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">WindowManager</a></li>
-<li class="toctree-l1"><a class="reference internal" href="command_manager.html">Command Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="window_manager.html">WindowManager</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Command Manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="css_manager.html">CSS Manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="icon_manager.html">Icon Manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config_manager.html">Config Manager</a></li>
@@ -502,7 +502,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">API reference</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">WindowManager</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Command Manager</span></li>
   </ul>
 </nav>
 </div>
@@ -519,69 +519,93 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="windowmanager">
-<h1>WindowManager<a class="headerlink" href="#windowmanager" title="Link to this heading">#</a></h1>
+  <section id="command-manager">
+<h1>Command Manager<a class="headerlink" href="#command-manager" title="Link to this heading">#</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="ignis.window_manager.WindowManager">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.window_manager.</span></span><span class="sig-name descname"><span class="pre">WindowManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ignis.window_manager.WindowManager" title="Link to this definition">#</a></dt>
-<dd><p>A class for managing window objects.</p>
+<dt class="sig sig-object py" id="ignis.command_manager.CommandManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.command_manager.</span></span><span class="sig-name descname"><span class="pre">CommandManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ignis.command_manager.CommandManager" title="Link to this definition">#</a></dt>
+<dd><p>A class for managing custom commands.
+A command is a function that accepts <code class="docutils literal notranslate"><span class="pre">*args:</span> <span class="pre">str</span></code> as args
+and optionally returns a <code class="docutils literal notranslate"><span class="pre">str</span></code> as output.</p>
 <p>Example usage:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ignis.window_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">WindowManager</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ignis.command_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">CommandManager</span>
 
-<span class="n">window_manager</span> <span class="o">=</span> <span class="n">WindowManager</span><span class="o">.</span><span class="n">get_default</span><span class="p">()</span>
+<span class="n">command_manager</span> <span class="o">=</span> <span class="n">CommandManager</span><span class="o">.</span><span class="n">get_default</span><span class="p">()</span>
 
-<span class="c1"># Open, close, or toggle a window</span>
-<span class="n">window_manager</span><span class="o">.</span><span class="n">open_window</span><span class="p">(</span><span class="s2">&quot;window-name&quot;</span><span class="p">)</span>
-<span class="n">window_manager</span><span class="o">.</span><span class="n">close_window</span><span class="p">(</span><span class="s2">&quot;window-name&quot;</span><span class="p">)</span>
-<span class="n">window_manager</span><span class="o">.</span><span class="n">toggle_window</span><span class="p">(</span><span class="s2">&quot;window-name&quot;</span><span class="p">)</span>
+<span class="c1"># Add a command</span>
+<span class="n">command_manager</span><span class="o">.</span><span class="n">add_command</span><span class="p">(</span><span class="s2">&quot;command-name&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="s2">&quot;output message&quot;</span><span class="p">)</span>
+<span class="n">command_manager</span><span class="o">.</span><span class="n">add_command</span><span class="p">(</span>
+    <span class="s2">&quot;command-name&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;%H:%M&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">set_format</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
+<span class="p">)</span>
 
-<span class="c1"># Get an instance of a window</span>
-<span class="n">some_window</span> <span class="o">=</span> <span class="n">window_manager</span><span class="o">.</span><span class="n">get_window</span><span class="p">(</span><span class="s2">&quot;window-name&quot;</span><span class="p">)</span>
+<span class="c1"># Add a command by decorator.</span>
+<span class="c1"># &quot;name&quot; is optional, defaults to the function name.</span>
+<span class="nd">@command_manager</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;foobar&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">foo_bar</span><span class="p">(</span><span class="o">*</span><span class="n">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="c1"># A regular form of callbacks</span>
+<span class="nd">@command_manager</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;regular-command&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">regular_callback</span><span class="p">(</span>
+    <span class="n">arg1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">arg_optional</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">arg1</span> <span class="o">==</span> <span class="s2">&quot;Hello&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;world!&quot;</span>
+
+    <span class="k">if</span> <span class="n">arg_optional</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;arg_optional: </span><span class="si">{</span><span class="n">arg_optional</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">return</span> <span class="kc">None</span> <span class="c1"># Nothing will be printed in CLI</span>
+
+<span class="c1"># Remove a command by name</span>
+<span class="n">command_manager</span><span class="o">.</span><span class="n">remove_command</span><span class="p">(</span><span class="s2">&quot;command-name&quot;</span><span class="p">)</span>
+
+<span class="c1"># Run a command</span>
+<span class="n">command_manager</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;command-name&quot;</span><span class="p">)</span>
+<span class="c1"># Run with args and output</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">command_manager</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;command-name&quot;</span><span class="p">,</span> <span class="o">*</span><span class="p">[</span><span class="s2">&quot;arg1&quot;</span><span class="p">,</span> <span class="s2">&quot;arg2&quot;</span><span class="p">])</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">command_manager</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;command-name&quot;</span><span class="p">,</span> <span class="s2">&quot;arg1&quot;</span><span class="p">,</span> <span class="s2">&quot;arg2&quot;</span><span class="p">)</span>
+<span class="c1"># Run from the `ignis` CLI:</span>
+<span class="c1"># $ ignis run-command command-name</span>
+<span class="c1"># $ ignis run-command command-name arg1 arg2</span>
+
+<span class="c1"># Get the callback of a command</span>
+<span class="n">callback</span> <span class="o">=</span> <span class="n">command_manager</span><span class="o">.</span><span class="n">get_command</span><span class="p">(</span><span class="s2">&quot;command-name&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<dl class="py gproperty">
-<dt class="sig sig-object py" id="ignis.window_manager.WindowManager.windows">
-<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">windows</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">gi.repository.Gtk.Window</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ignis.window_manager.WindowManager.windows" title="Link to this definition">#</a></dt>
-<dd><ul class="simple">
-<li><p>read-only</p></li>
-</ul>
-<p>A list of added windows.</p>
-</dd></dl>
-
 <dl class="py method">
-<dt class="sig sig-object py" id="ignis.window_manager.WindowManager.get_window">
-<span class="sig-name descname"><span class="pre">get_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">gi.repository.Gtk.Window</span></span></span><a class="headerlink" href="#ignis.window_manager.WindowManager.get_window" title="Link to this definition">#</a></dt>
-<dd><p>Get a window by name.</p>
+<dt class="sig sig-object py" id="ignis.command_manager.CommandManager.get_command">
+<span class="sig-name descname"><span class="pre">get_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ignis.command_manager.CommandManager.get_command" title="Link to this definition">#</a></dt>
+<dd><p>Get a command by name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>window_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- The window's namespace.</p>
+<dd class="field-odd"><p><strong>command_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- The command's name.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Window</span></code></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The window object.</p>
+<dd class="field-odd"><p>The command callback.</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="exceptions.html#ignis.exceptions.WindowNotFoundError" title="ignis.exceptions.WindowNotFoundError"><strong>WindowNotFoundError</strong></a> -- If a window with the given namespace does not exist.</p>
+<dd class="field-even"><p><a class="reference internal" href="exceptions.html#ignis.exceptions.CommandNotFoundError" title="ignis.exceptions.CommandNotFoundError"><strong>CommandNotFoundError</strong></a> -- If a command with the given name does not exist.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ignis.window_manager.WindowManager.add_window">
-<span class="sig-name descname"><span class="pre">add_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">gi.repository.Gtk.Window</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.window_manager.WindowManager.add_window" title="Link to this definition">#</a></dt>
-<dd><p>Add a window.
-You typically shouldn't use this method, as windows are added automatically.</p>
+<dt class="sig sig-object py" id="ignis.command_manager.CommandManager.add_command">
+<span class="sig-name descname"><span class="pre">add_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.command_manager.CommandManager.add_command" title="Link to this definition">#</a></dt>
+<dd><p>Add a command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>window_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- The window's namespace.</p></li>
-<li><p><strong>window</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Window</span></code></span>) -- The window instance.</p></li>
+<li><p><strong>command_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- The command's name.</p></li>
+<li><p><strong>callback</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) -- The command callback. It accepts an <code class="docutils literal notranslate"><span class="pre">*args:</span> <span class="pre">str</span></code> and optionally returns a <code class="docutils literal notranslate"><span class="pre">str</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="exceptions.html#ignis.exceptions.WindowAddedError" title="ignis.exceptions.WindowAddedError"><strong>WindowAddedError</strong></a> -- If a window with the given namespace already exists.</p>
+<dd class="field-even"><p><a class="reference internal" href="exceptions.html#ignis.exceptions.CommandAddedError" title="ignis.exceptions.CommandAddedError"><strong>CommandAddedError</strong></a> -- If a command with the given name already exists.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -590,33 +614,26 @@ You typically shouldn't use this method, as windows are added automatically.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ignis.window_manager.WindowManager.remove_window">
-<span class="sig-name descname"><span class="pre">remove_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.window_manager.WindowManager.remove_window" title="Link to this definition">#</a></dt>
-<dd><p>Remove a window by its name.
-This will <strong>not</strong> destroy the window.</p>
+<dt class="sig sig-object py" id="ignis.command_manager.CommandManager.command">
+<span class="sig-name descname"><span class="pre">command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ignis.command_manager.CommandManager.command" title="Link to this definition">#</a></dt>
+<dd><p>Returns a decorator to add a command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>window_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- The window's namespace.</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="exceptions.html#ignis.exceptions.WindowNotFoundError" title="ignis.exceptions.WindowNotFoundError"><strong>WindowNotFoundError</strong></a> -- If a window with the given namespace does not exist.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) -- The command's name. If not provided, the callback's name is used.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ignis.window_manager.WindowManager.open_window">
-<span class="sig-name descname"><span class="pre">open_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.window_manager.WindowManager.open_window" title="Link to this definition">#</a></dt>
-<dd><p>Open (show) a window by its name.</p>
+<dt class="sig sig-object py" id="ignis.command_manager.CommandManager.remove_command">
+<span class="sig-name descname"><span class="pre">remove_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.command_manager.CommandManager.remove_command" title="Link to this definition">#</a></dt>
+<dd><p>Remove a command by its name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>window_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- The window's namespace.</p>
+<dd class="field-odd"><p><strong>command_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- The command's name.</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="exceptions.html#ignis.exceptions.WindowNotFoundError" title="ignis.exceptions.WindowNotFoundError"><strong>WindowNotFoundError</strong></a> -- If a window with the given namespace does not exist.</p>
+<dd class="field-even"><p><a class="reference internal" href="exceptions.html#ignis.exceptions.CommandNotFoundError" title="ignis.exceptions.CommandNotFoundError"><strong>CommandNotFoundError</strong></a> -- If a command with the given name does not exist.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -625,49 +642,39 @@ This will <strong>not</strong> destroy the window.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ignis.window_manager.WindowManager.close_window">
-<span class="sig-name descname"><span class="pre">close_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.window_manager.WindowManager.close_window" title="Link to this definition">#</a></dt>
-<dd><p>Close (hide) a window by its name.</p>
+<dt class="sig sig-object py" id="ignis.command_manager.CommandManager.run_command">
+<span class="sig-name descname"><span class="pre">run_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">command_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.command_manager.CommandManager.run_command" title="Link to this definition">#</a></dt>
+<dd><p>Run a command by its name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>window_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- The window's namespace.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>command_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- The command's name.</p></li>
+<li><p><strong>command_args</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- The args list to pass to the command.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="exceptions.html#ignis.exceptions.WindowNotFoundError" title="ignis.exceptions.WindowNotFoundError"><strong>WindowNotFoundError</strong></a> -- If a window with the given namespace does not exist.</p>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="exceptions.html#ignis.exceptions.CommandNotFoundError" title="ignis.exceptions.CommandNotFoundError"><strong>CommandNotFoundError</strong></a> -- If a command with the given name does not exist.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.13)"><strong>Exception</strong></a> -- If the given arguments don't match the command's callback,
+    or if the callback raises an arbitrary Exception.</p></li>
+</ul>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ignis.window_manager.WindowManager.toggle_window">
-<span class="sig-name descname"><span class="pre">toggle_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.window_manager.WindowManager.toggle_window" title="Link to this definition">#</a></dt>
-<dd><p>Toggle (change visibility to opposite state) a window by its name.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>window_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) -- The window's namespace.</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="exceptions.html#ignis.exceptions.WindowNotFoundError" title="ignis.exceptions.WindowNotFoundError"><strong>WindowNotFoundError</strong></a> -- If a window with the given namespace does not exist.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ignis.window_manager.WindowManager.list_window_names">
-<span class="sig-name descname"><span class="pre">list_window_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ignis.window_manager.WindowManager.list_window_names" title="Link to this definition">#</a></dt>
-<dd><p>List the names of windows.</p>
+<dt class="sig sig-object py" id="ignis.command_manager.CommandManager.list_command_names">
+<span class="sig-name descname"><span class="pre">list_command_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ignis.command_manager.CommandManager.list_command_names" title="Link to this definition">#</a></dt>
+<dd><p>List the names of commands.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code></a>]</span></p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A tuple containing window names.</p>
+<dd class="field-even"><p>A tuple containing command names.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -687,20 +694,20 @@ This will <strong>not</strong> destroy the window.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="app.html"
+       href="window_manager.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Application</p>
+        <p class="prev-next-title">WindowManager</p>
       </div>
     </a>
     <a class="right-next"
-       href="command_manager.html"
+       href="css_manager.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Command Manager</p>
+        <p class="prev-next-title">CSS Manager</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -723,15 +730,13 @@ This will <strong>not</strong> destroy the window.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.window_manager.WindowManager"><code class="docutils literal notranslate"><span class="pre">WindowManager</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.window_manager.WindowManager.windows"><code class="docutils literal notranslate"><span class="pre">WindowManager.windows</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.window_manager.WindowManager.get_window"><code class="docutils literal notranslate"><span class="pre">WindowManager.get_window()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.window_manager.WindowManager.add_window"><code class="docutils literal notranslate"><span class="pre">WindowManager.add_window()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.window_manager.WindowManager.remove_window"><code class="docutils literal notranslate"><span class="pre">WindowManager.remove_window()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.window_manager.WindowManager.open_window"><code class="docutils literal notranslate"><span class="pre">WindowManager.open_window()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.window_manager.WindowManager.close_window"><code class="docutils literal notranslate"><span class="pre">WindowManager.close_window()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.window_manager.WindowManager.toggle_window"><code class="docutils literal notranslate"><span class="pre">WindowManager.toggle_window()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.window_manager.WindowManager.list_window_names"><code class="docutils literal notranslate"><span class="pre">WindowManager.list_window_names()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.command_manager.CommandManager"><code class="docutils literal notranslate"><span class="pre">CommandManager</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.command_manager.CommandManager.get_command"><code class="docutils literal notranslate"><span class="pre">CommandManager.get_command()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.command_manager.CommandManager.add_command"><code class="docutils literal notranslate"><span class="pre">CommandManager.add_command()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.command_manager.CommandManager.command"><code class="docutils literal notranslate"><span class="pre">CommandManager.command()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.command_manager.CommandManager.remove_command"><code class="docutils literal notranslate"><span class="pre">CommandManager.remove_command()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.command_manager.CommandManager.run_command"><code class="docutils literal notranslate"><span class="pre">CommandManager.run_command()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.command_manager.CommandManager.list_command_names"><code class="docutils literal notranslate"><span class="pre">CommandManager.list_command_names()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -741,7 +746,7 @@ This will <strong>not</strong> destroy the window.</p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/ignis-sh/ignis/edit/main/docs/api/window_manager.rst">
+    <a href="https://github.com/ignis-sh/ignis/edit/main/docs/api/command_manager.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -757,7 +762,7 @@ This will <strong>not</strong> destroy the window.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/api/window_manager.rst.txt"
+      <li><a href="../_sources/api/command_manager.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>

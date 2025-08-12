@@ -370,6 +370,7 @@
 <li class="toctree-l1"><a class="reference internal" href="toplevel.html">Toplevel package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app.html">Application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="window_manager.html">WindowManager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="command_manager.html">Command Manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="css_manager.html">CSS Manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="icon_manager.html">Icon Manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config_manager.html">Config Manager</a></li>
@@ -595,6 +596,31 @@ It's unnecessary; use <a class="reference internal" href="app.html#ignis.app.Ign
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ignis.client.IgnisClient.list_commands">
+<span class="sig-name descname"><span class="pre">list_commands</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ignis.client.IgnisClient.list_commands" title="Link to this definition">#</a></dt>
+<dd><p>Get a list of all command names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of all command names.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ignis.client.IgnisClient.run_command">
+<span class="sig-name descname"><span class="pre">run_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">command_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#ignis.client.IgnisClient.run_command" title="Link to this definition">#</a></dt>
+<dd><p>Same as <a class="reference internal" href="command_manager.html#ignis.command_manager.CommandManager.run_command" title="ignis.command_manager.CommandManager.run_command"><code class="xref py py-func docutils literal notranslate"><span class="pre">run_command()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ignis.client.IgnisClient.quit">
 <span class="sig-name descname"><span class="pre">quit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.client.IgnisClient.quit" title="Link to this definition">#</a></dt>
 <dd><p>Same as <a class="reference internal" href="app.html#ignis.app.IgnisApp.quit" title="ignis.app.IgnisApp.quit"><code class="xref py py-func docutils literal notranslate"><span class="pre">quit()</span></code></a>.</p>
@@ -712,6 +738,8 @@ It's unnecessary; use <a class="reference internal" href="app.html#ignis.app.Ign
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.client.IgnisClient.close_window"><code class="docutils literal notranslate"><span class="pre">IgnisClient.close_window()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.client.IgnisClient.toggle_window"><code class="docutils literal notranslate"><span class="pre">IgnisClient.toggle_window()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.client.IgnisClient.list_windows"><code class="docutils literal notranslate"><span class="pre">IgnisClient.list_windows()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.client.IgnisClient.list_commands"><code class="docutils literal notranslate"><span class="pre">IgnisClient.list_commands()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.client.IgnisClient.run_command"><code class="docutils literal notranslate"><span class="pre">IgnisClient.run_command()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.client.IgnisClient.quit"><code class="docutils literal notranslate"><span class="pre">IgnisClient.quit()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.client.IgnisClient.inspector"><code class="docutils literal notranslate"><span class="pre">IgnisClient.inspector()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.client.IgnisClient.run_python"><code class="docutils literal notranslate"><span class="pre">IgnisClient.run_python()</span></code></a></li>

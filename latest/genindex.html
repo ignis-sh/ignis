@@ -499,6 +499,8 @@
 </li>
       <li><a href="api/services/hyprland.html#ignis.services.hyprland.HyprlandMonitor.actively_tearing">actively_tearing (ignis.services.hyprland.HyprlandMonitor property)</a>
 </li>
+      <li><a href="api/command_manager.html#ignis.command_manager.CommandManager.add_command">add_command() (ignis.command_manager.CommandManager method)</a>
+</li>
       <li><a href="api/widgets/FileDialog.html#ignis.widgets.FileDialog.add_filter">add_filter() (ignis.widgets.FileDialog method)</a>
 </li>
       <li><a href="api/app.html#ignis.app.IgnisApp.add_icons">add_icons() (ignis.app.IgnisApp method)</a>
@@ -804,11 +806,39 @@
         <li><a href="user/cli.html#cmdoption-ignis-run-python-arg-CODE">ignis-run-python command line option</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/services/recorder.html#ignis.services.recorder.RecorderConfig.color_range">color_range (ignis.services.recorder.RecorderConfig attribute)</a>
 </li>
       <li><a href="api/widgets/Grid.html#ignis.widgets.Grid.column_num">column_num (ignis.widgets.Grid property)</a>
+</li>
+      <li><a href="api/command_manager.html#ignis.command_manager.CommandManager.command">command() (ignis.command_manager.CommandManager method)</a>
+</li>
+      <li>
+    COMMAND_ARGS
+
+      <ul>
+        <li><a href="user/cli.html#cmdoption-ignis-run-command-arg-COMMAND_ARGS">ignis-run-command command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    COMMAND_NAME
+
+      <ul>
+        <li><a href="user/cli.html#cmdoption-ignis-run-command-arg-COMMAND_NAME">ignis-run-command command line option</a>
+</li>
+      </ul></li>
+      <li><a href="api/exceptions.html#ignis.exceptions.CommandAddedError.command_name">command_name (ignis.exceptions.CommandAddedError property)</a>
+
+      <ul>
+        <li><a href="api/exceptions.html#ignis.exceptions.CommandNotFoundError.command_name">(ignis.exceptions.CommandNotFoundError property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/exceptions.html#ignis.exceptions.CommandAddedError">CommandAddedError</a>
+</li>
+      <li><a href="api/command_manager.html#ignis.command_manager.CommandManager">CommandManager (class in ignis.command_manager)</a>
+</li>
+      <li><a href="api/exceptions.html#ignis.exceptions.CommandNotFoundError">CommandNotFoundError</a>
 </li>
       <li><a href="api/services/network.html#ignis.services.network.WifiAccessPoint.commit_changes_async">commit_changes_async() (ignis.services.network.WifiAccessPoint method)</a>
 </li>
@@ -1177,6 +1207,8 @@
 </li>
       <li><a href="api/utils/icon.html#ignis.utils.get_app_icon_name">get_app_icon_name() (in module ignis.utils)</a>
 </li>
+      <li><a href="api/command_manager.html#ignis.command_manager.CommandManager.get_command">get_command() (ignis.command_manager.CommandManager method)</a>
+</li>
       <li><a href="api/css_manager.html#ignis.css_manager.CssManager.get_css_info_by_name">get_css_info_by_name() (ignis.css_manager.CssManager method)</a>
 </li>
       <li><a href="api/utils/misc.html#ignis.utils.get_current_dir">get_current_dir() (in module ignis.utils)</a>
@@ -1215,10 +1247,10 @@
 </li>
       <li><a href="api/utils/monitor.html#ignis.utils.get_monitors">get_monitors() (in module ignis.utils)</a>
 </li>
-      <li><a href="api/utils/monitor.html#ignis.utils.get_n_monitors">get_n_monitors() (in module ignis.utils)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/utils/monitor.html#ignis.utils.get_n_monitors">get_n_monitors() (in module ignis.utils)</a>
+</li>
       <li><a href="api/services/notifications.html#ignis.services.notifications.NotificationService.get_notification">get_notification() (ignis.services.notifications.NotificationService method)</a>
 </li>
       <li><a href="api/utils/icon.html#ignis.utils.get_paintable">get_paintable() (in module ignis.utils)</a>
@@ -1419,6 +1451,15 @@
 </li>
       </ul></li>
       <li>
+    ignis-run-command command line option
+
+      <ul>
+        <li><a href="user/cli.html#cmdoption-ignis-run-command-arg-COMMAND_ARGS">COMMAND_ARGS</a>
+</li>
+        <li><a href="user/cli.html#cmdoption-ignis-run-command-arg-COMMAND_NAME">COMMAND_NAME</a>
+</li>
+      </ul></li>
+      <li>
     ignis-run-file command line option
 
       <ul>
@@ -1450,10 +1491,10 @@
 </li>
       <li><a href="api/client.html#ignis.client.IgnisClient">IgnisClient (class in ignis.client)</a>
 </li>
-      <li><a href="api/gobject.html#ignis.gobject.IgnisGObject">IgnisGObject (class in ignis.gobject)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/gobject.html#ignis.gobject.IgnisGObject">IgnisGObject (class in ignis.gobject)</a>
+</li>
       <li><a href="api/gobject.html#ignis.gobject.IgnisGObjectSingleton">IgnisGObjectSingleton (class in ignis.gobject)</a>
 </li>
       <li><a href="api/menu_model.html#ignis.menu_model.IgnisMenuItem">IgnisMenuItem (class in ignis.menu_model)</a>
@@ -1642,10 +1683,10 @@
 </li>
       <li><a href="api/services/mpris.html#ignis.services.mpris.MprisPlayer.length">length (ignis.services.mpris.MprisPlayer property)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/services/recorder.html#ignis.services.recorder.RecorderService.list_application_audio">list_application_audio() (ignis.services.recorder.RecorderService method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/services/recorder.html#ignis.services.recorder.RecorderService.list_application_audio_async">list_application_audio_async() (ignis.services.recorder.RecorderService method)</a>
 </li>
       <li><a href="api/services/recorder.html#ignis.services.recorder.RecorderService.list_audio_devices">list_audio_devices() (ignis.services.recorder.RecorderService method)</a>
@@ -1655,6 +1696,10 @@
       <li><a href="api/services/recorder.html#ignis.services.recorder.RecorderService.list_capture_options">list_capture_options() (ignis.services.recorder.RecorderService method)</a>
 </li>
       <li><a href="api/services/recorder.html#ignis.services.recorder.RecorderService.list_capture_options_async">list_capture_options_async() (ignis.services.recorder.RecorderService method)</a>
+</li>
+      <li><a href="api/command_manager.html#ignis.command_manager.CommandManager.list_command_names">list_command_names() (ignis.command_manager.CommandManager method)</a>
+</li>
+      <li><a href="api/client.html#ignis.client.IgnisClient.list_commands">list_commands() (ignis.client.IgnisClient method)</a>
 </li>
       <li><a href="api/css_manager.html#ignis.css_manager.CssManager.list_css_info_names">list_css_info_names() (ignis.css_manager.CssManager method)</a>
 </li>
@@ -2253,6 +2298,8 @@
       </ul></li>
       <li><a href="api/app.html#ignis.app.IgnisApp.reload_on_monitors_change">reload_on_monitors_change (ignis.app.IgnisApp property)</a>
 </li>
+      <li><a href="api/command_manager.html#ignis.command_manager.CommandManager.remove_command">remove_command() (ignis.command_manager.CommandManager method)</a>
+</li>
       <li><a href="api/app.html#ignis.app.IgnisApp.remove_css">remove_css() (ignis.app.IgnisApp method)</a>
 
       <ul>
@@ -2267,8 +2314,6 @@
         <li><a href="api/window_manager.html#ignis.window_manager.WindowManager.remove_window">(ignis.window_manager.WindowManager method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/services/audio.html#ignis.services.audio.Stream.removed">removed (ignis.services.audio.Stream property)</a>
 
       <ul>
@@ -2289,6 +2334,8 @@
         <li><a href="api/services/upower.html#ignis.services.upower.UPowerDevice.removed">(ignis.services.upower.UPowerDevice property)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/services/hyprland.html#ignis.services.hyprland.HyprlandMonitor.reserved">reserved (ignis.services.hyprland.HyprlandMonitor property)</a>
 </li>
       <li><a href="api/app.html#ignis.app.IgnisApp.reset_css">reset_css() (ignis.app.IgnisApp method)</a>
@@ -2325,6 +2372,12 @@
 </li>
       <li><a href="api/utils/thread.html#ignis.utils.ThreadTask.run">run() (ignis.utils.ThreadTask method)</a>
 </li>
+      <li><a href="api/client.html#ignis.client.IgnisClient.run_command">run_command() (ignis.client.IgnisClient method)</a>
+
+      <ul>
+        <li><a href="api/command_manager.html#ignis.command_manager.CommandManager.run_command">(ignis.command_manager.CommandManager method)</a>
+</li>
+      </ul></li>
       <li><a href="api/client.html#ignis.client.IgnisClient.run_file">run_file() (ignis.client.IgnisClient method)</a>
 </li>
       <li><a href="api/utils/thread.html#ignis.utils.run_in_thread">run_in_thread() (in module ignis.utils)</a>
