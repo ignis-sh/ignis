@@ -26,7 +26,14 @@ class CommandManager(IgnisGObjectSingleton):
             "command-name", lambda fmt="%H:%M", *_: set_format(fmt)
         )
 
+        # Add a command by decorator.
+        # "name" is optional, defaults to the function name.
+        @command_manager.command(name="foobar")
+        def foo_bar(*_) -> None:
+            pass
+
         # A regular form of callbacks
+        @command_manager.command(name="regular-command")
         def regular_callback(
             arg1: str, arg_optional: str | None = None, *args: str
         ) -> str | None:
@@ -37,8 +44,6 @@ class CommandManager(IgnisGObjectSingleton):
                 return f"arg_optional: {arg_optional}"
 
             return None # Nothing will be printed in CLI
-
-        command_manager.add_command("regular-command", regular_callback)
 
         # Remove a command by name
         command_manager.remove_command("command-name")
@@ -94,6 +99,20 @@ class CommandManager(IgnisGObjectSingleton):
             raise CommandAddedError(command_name)
 
         self._commands[command_name] = callback
+
+    def command(self, name: str | None = None):
+        """
+        Returns a decorator to add a command.
+
+        Args:
+            name: The command's name. If not provided, the callback's name is used.
+        """
+
+        def decorator(callback: CommandCallback):
+            self.add_command(name or callback.__name__, callback)
+            return callback
+
+        return decorator
 
     def remove_command(self, command_name: str) -> None:
         """
