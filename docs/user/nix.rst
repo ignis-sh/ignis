@@ -159,7 +159,7 @@ allows to enable them using ``.override``:
     environment.systemPackages = with pkgs; [
       # NOTE: If you need editor's LSP support
       # wrap with python3.withPackages additionally
-      (inputs.ignis.packages.${pkgs.system}.override {
+      (inputs.ignis.packages.${pkgs.system}.default.override {
         enableAudioService = true;
         useDartSass = true;
         extraPackages = [
