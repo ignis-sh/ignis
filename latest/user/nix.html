@@ -446,6 +446,11 @@
 <p class="admonition-title">Danger</p>
 <p>You <strong>must</strong> refer to the <a class="reference external" href="https://ignis-sh.github.io/ignis/latest/index.html">latest Ignis documentation</a>.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Don't use Home Manager?</p>
+<p>You can still install Ignis, see <a class="reference internal" href="#without-hm"><span class="std std-ref">Without Home Manager</span></a> for details.</p>
+</div>
 <section id="adding-ignis-to-a-flake">
 <h2>Adding Ignis to a flake<a class="headerlink" href="#adding-ignis-to-a-flake" title="Link to this heading">#</a></h2>
 <p>First, add Ignis to your flake's inputs:</p>
@@ -565,6 +570,32 @@
 </div>
 </section>
 </section>
+<section id="without-home-manager">
+<span id="without-hm"></span><h2>Without Home Manager<a class="headerlink" href="#without-home-manager" title="Link to this heading">#</a></h2>
+<p>Don't use Home Manager, but still want to use optional features?</p>
+<p>No problem, <a class="reference external" href="https://github.com/ignis-sh/ignis/blob/main/nix/default.nix">default.nix</a>
+allows to enable them using <code class="docutils literal notranslate"><span class="pre">.override</span></code>:</p>
+<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  inputs<span class="p">,</span>
+  pkgs<span class="p">,</span>
+  <span class="o">...</span>
+<span class="p">}:</span> <span class="p">{</span>
+  environment<span class="o">.</span><span class="ss">systemPackages</span> <span class="o">=</span> <span class="k">with</span> pkgs<span class="p">;</span> <span class="p">[</span>
+    <span class="c1"># NOTE: If you need editor&#39;s LSP support</span>
+    <span class="c1"># wrap with python3.withPackages additionally</span>
+    <span class="p">(</span>inputs<span class="o">.</span>ignis<span class="o">.</span>packages<span class="o">.</span><span class="si">${</span>pkgs<span class="o">.</span>system<span class="si">}</span><span class="o">.</span>default<span class="o">.</span>override <span class="p">{</span>
+      <span class="ss">enableAudioService</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
+      <span class="ss">useDartSass</span> <span class="o">=</span> <span class="no">true</span><span class="p">;</span>
+      <span class="ss">extraPackages</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="c1"># ...</span>
+      <span class="p">];</span>
+    <span class="p">})</span>
+  <span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>For a list of all available attributes see the <code class="docutils literal notranslate"><span class="pre">default.nix</span></code> linked above.</p>
+</section>
 </section>
 
 
@@ -619,6 +650,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-simple-flake-example">A simple flake example</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#without-home-manager">Without Home Manager</a></li>
 </ul>
   </nav></div>
 

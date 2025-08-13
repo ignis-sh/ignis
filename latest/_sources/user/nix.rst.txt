@@ -6,6 +6,11 @@ Ignis provides a Home Manager module, which is the recommended way to install it
 .. danger::
     You **must** refer to the `latest Ignis documentation <https://ignis-sh.github.io/ignis/latest/index.html>`_.
 
+.. note::
+    Don't use Home Manager?
+
+    You can still install Ignis, see :ref:`without-hm` for details.
+
 Adding Ignis to a flake
 -----------------------
 
@@ -133,3 +138,35 @@ A simple flake example
         };
       };
     }
+
+.. _without-hm:
+
+Without Home Manager
+--------------------
+
+Don't use Home Manager, but still want to use optional features?
+
+No problem, `default.nix <https://github.com/ignis-sh/ignis/blob/main/nix/default.nix>`_
+allows to enable them using ``.override``:
+
+.. code-block:: nix
+
+  {
+    inputs,
+    pkgs,
+    ...
+  }: {
+    environment.systemPackages = with pkgs; [
+      # NOTE: If you need editor's LSP support
+      # wrap with python3.withPackages additionally
+      (inputs.ignis.packages.${pkgs.system}.default.override {
+        enableAudioService = true;
+        useDartSass = true;
+        extraPackages = [
+          # ...
+        ];
+      })
+    ];
+  }
+
+For a list of all available attributes see the ``default.nix`` linked above.
