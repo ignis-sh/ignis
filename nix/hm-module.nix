@@ -8,8 +8,6 @@
   ...
 }: let
   cfg = config.programs.ignis;
-
-  ignisGvcPackage = ignis-gvc.packages.${pkgs.stdenv.hostPlatform.system}.ignis-gvc;
 in {
   options.programs.ignis = {
     enable = lib.mkEnableOption "Enable the Ignis widget framework";
@@ -79,29 +77,18 @@ in {
         xdg.configFile."ignis".source = cfg.configDir;
       })
       (let
-        pkg = (cfg.package.overrideAttrs
-          (
-            final: prev: {
-              preFixup =
-                prev.preFixup
-                + lib.optionalString cfg.services.audio.enable ''
-                  makeWrapperArgs+=(
-                    --prefix GI_TYPELIB_PATH : "${ignisGvcPackage}/lib/ignis-gvc"
-                  )
-                '';
-            }
-          )).override {
-          extraPackages =
-            cfg.extraPackages
-            ++ lib.optionals cfg.services.bluetooth.enable [pkgs.gnome-bluetooth]
-            ++ lib.optionals cfg.services.recorder.enable [pkgs.gpu-screen-recorder]
-            ++ lib.optionals cfg.services.audio.enable [ignisGvcPackage]
-            ++ lib.optionals cfg.services.network.enable [pkgs.networkmanager]
-            ++ lib.optionals cfg.sass.enable (
-              lib.optional cfg.sass.useDartSass pkgs.dart-sass
-              ++ lib.optional cfg.sass.useGrassSass pkgs.grass-sass
-            );
-        };
+        pkg = cfg.package.override ({
+            enableBluetoothService = cfg.services.bluetooth.enable;
+            enableRecorderService = cfg.services.recorder.enable;
+            enableAudioService = cfg.services.audio.enable;
+            enableNetworkService = cfg.services.network.enable;
+
+            extraPackages = cfg.extraPackages;
+          }
+          // lib.optionalAttrs cfg.sass.enable {
+            useDartSass = cfg.sass.useDartSass;
+            useGrassSass = cfg.sass.useGrassSass;
+          });
       in {
         programs.ignis.finalPackage = pkg;
         home.packages = [
