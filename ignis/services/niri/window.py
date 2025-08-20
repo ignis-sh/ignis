@@ -1,4 +1,6 @@
 from ignis.gobject import IgnisProperty, IgnisSignal, DataGObject
+from .window_layout import NiriWindowLayout
+from typing import Any
 
 
 class NiriWindow(DataGObject):
@@ -17,6 +19,20 @@ class NiriWindow(DataGObject):
         self._workspace_id: int = -1
         self._is_focused: bool = False
         self._is_floating: bool = False
+        self._layout: NiriWindowLayout = NiriWindowLayout()
+
+    def sync(self, data: dict[str, Any]) -> None:
+        layout = data.pop("layout", None)
+
+        if layout:
+            if type(layout) is dict:
+                self._layout.sync(layout)
+            else:
+                self._layout.sync(layout.data)
+
+            self.notify("layout")
+
+        super().sync(data)
 
     @IgnisSignal
     def destroyed(self):
@@ -72,6 +88,13 @@ class NiriWindow(DataGObject):
         Whether the window is floating.
         """
         return self._is_floating
+
+    @IgnisProperty
+    def layout(self) -> NiriWindowLayout:
+        """
+        The layout of the window.
+        """
+        return self._layout
 
     def close(self) -> None:
         """
