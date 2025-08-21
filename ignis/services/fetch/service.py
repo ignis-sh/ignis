@@ -25,6 +25,7 @@ class FetchService(BaseService):
 
     def __init__(self):
         super().__init__()
+        self._icon_theme = Gtk.IconTheme.get_for_display(utils.get_gdk_display())
         self._os_info = self.__get_os_info()
 
     def __get_os_info(self) -> dict[str, str]:
@@ -100,33 +101,39 @@ class FetchService(BaseService):
         """
         return self._os_info.get("PRIVACY_POLICY_URL", "Unknown")
 
-    @IgnisProperty
-    def os_logo(self) -> str:
-        """
-        The OS logo icon name.
-        """
-        return self._os_info.get("LOGO", "Unknown")
+    def __icon_or_none(self, icon_name: str) -> str | None:
+        if not self._icon_theme.has_icon(icon_name):
+            return None
+        else:
+            return icon_name
 
     @IgnisProperty
-    def os_logo_dark(self) -> str:
+    def os_logo(self) -> str | None:
         """
-        The OS dark logo icon name.
+        The OS logo icon name. ``None`` if not available.
         """
-        return f"{self.os_logo}-dark"
+        return self._os_info.get("LOGO", None)
 
     @IgnisProperty
-    def os_logo_text(self) -> str:
+    def os_logo_dark(self) -> str | None:
         """
-        The OS logo with text icon name.
+        The OS dark logo icon name. ``None`` if not available.
         """
-        return f"{self.os_logo}-text"
+        return self.__icon_or_none(f"{self.os_logo}-dark")
 
     @IgnisProperty
-    def os_logo_text_dark(self) -> str:
+    def os_logo_text(self) -> str | None:
         """
-        The OS dark logo with text icon name.
+        The OS logo with text icon name. ``None`` if not available.
         """
-        return f"{self.os_logo}-text-dark"
+        return self.__icon_or_none(f"{self.os_logo}-text")
+
+    @IgnisProperty
+    def os_logo_text_dark(self) -> str | None:
+        """
+        The OS dark logo with text icon name. ``None`` if not available.
+        """
+        return self.__icon_or_none(f"{self.os_logo}-text-dark")
 
     @IgnisProperty
     def session_type(self) -> str | None:
@@ -317,4 +324,4 @@ class FetchService(BaseService):
         """
         Current icon theme.
         """
-        return Gtk.IconTheme.get_for_display(utils.get_gdk_display()).get_theme_name()
+        return self._icon_theme.get_theme_name()
