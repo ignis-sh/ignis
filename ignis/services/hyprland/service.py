@@ -249,6 +249,8 @@ class HyprlandService(BaseService):
             case "togglegroup":
                 self.__toggle_window_group(int(value_list[0]), value_list[1].split(","))
                 self.__sync_active_window()
+            case "fullscreen":
+                self.__sync_active_window()
 
     def __get_self_dict(self, obj_desc: _HyprlandObjDesc) -> dict:
         return getattr(self, f"_{obj_desc.prop_name}")
