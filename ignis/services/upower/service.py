@@ -92,6 +92,9 @@ class UPowerService(BaseService):
     def display_device(self) -> UPowerDevice:
         """
         The currently active device intended for display.
+
+        Raises:
+            UPowerNotRunningError
         """
         if not self.is_available:
             raise UPowerNotRunningError()
