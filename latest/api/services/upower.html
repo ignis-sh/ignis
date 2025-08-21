@@ -529,11 +529,6 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.services.upower.</span></span><span class="sig-name descname"><span class="pre">UPowerService</span></span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.services.upower.UPowerService" title="Link to this definition">#</a></dt>
 <dd><p>An UPower service.
 Requires <code class="docutils literal notranslate"><span class="pre">UPower</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="../exceptions.html#ignis.exceptions.UPowerNotRunningError" title="ignis.exceptions.UPowerNotRunningError"><strong>UPowerNotRunningError</strong></a> -- If UPower D-Bus service is not running.</p>
-</dd>
-</dl>
 <dl class="py signal">
 <dt class="sig sig-object py" id="ignis.services.upower.UPowerService.device_added">
 <em class="property"><span class="pre">signal</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">device_added</span></span><a class="headerlink" href="#ignis.services.upower.UPowerService.device_added" title="Link to this definition">#</a></dt>
@@ -554,6 +549,16 @@ Requires <code class="docutils literal notranslate"><span class="pre">UPower</sp
 <dd class="field-odd"><p><strong>battery</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#ignis.services.upower.UPowerDevice" title="ignis.services.upower.device.UPowerDevice"><code class="xref py py-class docutils literal notranslate"><span class="pre">UPowerDevice</span></code></a></span>) -- The instance of the battery.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py gproperty">
+<dt class="sig sig-object py" id="ignis.services.upower.UPowerService.is_available">
+<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_available</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ignis.services.upower.UPowerService.is_available" title="Link to this definition">#</a></dt>
+<dd><ul class="simple">
+<li><p>read-only</p></li>
+</ul>
+<p>Whether UPower is available and running.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">False</span></code>, this service will not be functional.</p>
 </dd></dl>
 
 <dl class="py gproperty">
@@ -581,6 +586,11 @@ Requires <code class="docutils literal notranslate"><span class="pre">UPower</sp
 <li><p>read-only</p></li>
 </ul>
 <p>The currently active device intended for display.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../exceptions.html#ignis.exceptions.UPowerNotRunningError" title="ignis.exceptions.UPowerNotRunningError"><strong>UPowerNotRunningError</strong></a> -- </p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -847,6 +857,7 @@ Requires <code class="docutils literal notranslate"><span class="pre">UPower</sp
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.upower.UPowerService"><code class="docutils literal notranslate"><span class="pre">UPowerService</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.upower.UPowerService.device_added"><code class="docutils literal notranslate"><span class="pre">UPowerService.device_added</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.upower.UPowerService.battery_added"><code class="docutils literal notranslate"><span class="pre">UPowerService.battery_added</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.upower.UPowerService.is_available"><code class="docutils literal notranslate"><span class="pre">UPowerService.is_available</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.upower.UPowerService.devices"><code class="docutils literal notranslate"><span class="pre">UPowerService.devices</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.upower.UPowerService.batteries"><code class="docutils literal notranslate"><span class="pre">UPowerService.batteries</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.upower.UPowerService.display_device"><code class="docutils literal notranslate"><span class="pre">UPowerService.display_device</span></code></a></li>
