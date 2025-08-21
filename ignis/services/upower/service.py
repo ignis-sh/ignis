@@ -10,9 +10,6 @@ class UPowerService(BaseService):
     """
     An UPower service.
     Requires ``UPower``.
-
-    Raises:
-        UPowerNotRunningError: If UPower D-Bus service is not running.
     """
 
     def __init__(self) -> None:
@@ -26,11 +23,13 @@ class UPowerService(BaseService):
             bus_type="system",
         )
 
-        if not self._proxy.has_owner:
-            raise UPowerNotRunningError()
-
         self._devices: dict[str, UPowerDevice] = {}
         self._batteries: dict[str, UPowerDevice] = {}
+
+        if not self.is_available:
+            return
+            # lines below requires running UPower
+
         self._display_device = UPowerDevice(object_path=self._proxy.GetDisplayDevice())
 
         self._proxy.signal_subscribe(
@@ -67,6 +66,15 @@ class UPowerService(BaseService):
         """
 
     @IgnisProperty
+    def is_available(self) -> bool:
+        """
+        Whether UPower is available and running.
+
+        If ``False``, this service will not be functional.
+        """
+        return self._proxy.has_owner
+
+    @IgnisProperty
     def devices(self) -> list[UPowerDevice]:
         """
         A list of all power devices.
@@ -85,6 +93,9 @@ class UPowerService(BaseService):
         """
         The currently active device intended for display.
         """
+        if not self.is_available:
+            raise UPowerNotRunningError()
+
         return self._display_device
 
     def __add_device(self, object_path: str) -> None:
