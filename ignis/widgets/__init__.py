@@ -1,6 +1,7 @@
 from typing import TypeAlias
 from .window import Window
 from .label import Label
+from .scrolling_label import ScrollingLabel
 from .button import Button
 from .box import Box
 from .calendar import Calendar
@@ -43,6 +44,7 @@ from ignis._deprecation import deprecated_getattribute
 class Widget:
     Window: TypeAlias = Window
     Label: TypeAlias = Label
+    ScrollingLabel: TypeAlias = ScrollingLabel
     Button: TypeAlias = Button
     Box: TypeAlias = Box
     Calendar: TypeAlias = Calendar
