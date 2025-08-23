@@ -50,18 +50,12 @@ class Button(Gtk.Button, BaseWidget):
         return controller
 
     @IgnisProperty
-    def on_click(self) -> Callable:
+    def on_click(self) -> Callable | None:
         """
         The function to call on left click.
         """
 
-        def wrapper(*args, **kwargs):
-            if self._on_click is None:
-                return
-
-            return self._on_click(*args, **kwargs)
-
-        return wrapper
+        return self._on_click
 
     @on_click.setter
     def on_click(self, value: Callable) -> None:
