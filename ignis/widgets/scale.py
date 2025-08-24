@@ -150,10 +150,11 @@ class Scale(Gtk.Scale, BaseWidget):
         if not event:
             return
 
-        if event.get_event_type() == Gdk.EventType.BUTTON_PRESS:
-            self._dragging = True
-        elif event.get_event_type() == Gdk.EventType.BUTTON_RELEASE:
-            self._dragging = False
+        match event.get_event_type():
+            case Gdk.EventType.BUTTON_PRESS | Gdk.EventType.TOUCH_BEGIN:
+                self._dragging = True
+            case Gdk.EventType.BUTTON_RELEASE | Gdk.EventType.TOUCH_END:
+                self._dragging = False
 
     def __on_key_press(self, *args):
         self._dragging = True
