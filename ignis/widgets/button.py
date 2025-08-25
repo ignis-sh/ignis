@@ -50,10 +50,11 @@ class Button(Gtk.Button, BaseWidget):
         return controller
 
     @IgnisProperty
-    def on_click(self) -> Callable:
+    def on_click(self) -> Callable | None:
         """
         The function to call on left click.
         """
+
         return self._on_click
 
     @on_click.setter
@@ -65,6 +66,7 @@ class Button(Gtk.Button, BaseWidget):
         """
         The function to call on right click.
         """
+
         return self._on_right_click
 
     @on_right_click.setter
@@ -72,7 +74,8 @@ class Button(Gtk.Button, BaseWidget):
         self._on_right_click = value
         if not self.__right_click_controller:
             self.__right_click_controller = self.__init_controller(
-                3, self._on_right_click
+                3,
+                lambda *args, **kwargs: self.on_right_click(*args, **kwargs),
             )
 
     @IgnisProperty
@@ -80,6 +83,7 @@ class Button(Gtk.Button, BaseWidget):
         """
         The function to call on middle click.
         """
+
         return self._on_middle_click
 
     @on_middle_click.setter
@@ -87,5 +91,6 @@ class Button(Gtk.Button, BaseWidget):
         self._on_middle_click = value
         if not self.__middle_click_controller:
             self.__middle_click_controller = self.__init_controller(
-                2, self._on_middle_click
+                2,
+                lambda *args, **kwargs: self.on_middle_click(*args, **kwargs),
             )
