@@ -118,7 +118,6 @@ class EventBox(Box):
         """
         The function to call on left click.
         """
-
         return self._on_click
 
     @on_click.setter
@@ -136,7 +135,6 @@ class EventBox(Box):
         """
         The function to call on right click.
         """
-
         return self._on_right_click
 
     @on_right_click.setter
@@ -154,7 +152,6 @@ class EventBox(Box):
         """
         The function to call on middle click.
         """
-
         return self._on_middle_click
 
     @on_middle_click.setter
@@ -164,7 +161,7 @@ class EventBox(Box):
         if not self.__middle_click_controller:
             self.__middle_click_controller = self.__init_click_controller(
                 2,
-                lambda *args, **kwargs: self._on_middle_click(*args, **kwargs),
+                lambda *args, **kwargs: self.on_middle_click(*args, **kwargs),
             )
 
     @IgnisProperty

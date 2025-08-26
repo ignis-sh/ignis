@@ -50,11 +50,10 @@ class Button(Gtk.Button, BaseWidget):
         return controller
 
     @IgnisProperty
-    def on_click(self) -> Callable | None:
+    def on_click(self) -> Callable:
         """
         The function to call on left click.
         """
-
         return self._on_click
 
     @on_click.setter
@@ -66,7 +65,6 @@ class Button(Gtk.Button, BaseWidget):
         """
         The function to call on right click.
         """
-
         return self._on_right_click
 
     @on_right_click.setter
@@ -83,7 +81,6 @@ class Button(Gtk.Button, BaseWidget):
         """
         The function to call on middle click.
         """
-
         return self._on_middle_click
 
     @on_middle_click.setter
