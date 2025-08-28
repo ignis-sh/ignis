@@ -1,0 +1,46 @@
+<node name="/">
+  <interface name="org.freedesktop.UPower.PowerProfiles">
+    <method name="HoldProfile">
+      <arg type="s" name="profile" direction="in">
+      </arg>
+      <arg type="s" name="reason" direction="in">
+      </arg>
+      <arg type="s" name="application_id" direction="in">
+      </arg>
+      <arg type="u" name="cookie" direction="out">
+      </arg>
+    </method>
+    <method name="ReleaseProfile">
+      <arg type="u" name="cookie" direction="in">
+      </arg>
+    </method>
+    <method name="SetActionEnabled">
+      <arg type="s" name="action" direction="in">
+      </arg>
+      <arg type="b" name="enabled" direction="in">
+      </arg>
+    </method>
+    <signal name="ProfileReleased">
+      <arg type="u" name="cookie">
+      </arg>
+    </signal>
+    <property type="s" name="ActiveProfile" access="readwrite">
+    </property>
+    <property type="s" name="PerformanceInhibited" access="read">
+    </property>
+    <property type="s" name="PerformanceDegraded" access="read">
+    </property>
+    <property type="aa{sv}" name="Profiles" access="read">
+    </property>
+    <property type="as" name="Actions" access="read">
+    </property>
+    <property type="aa{sv}" name="ActionsInfo" access="read">
+    </property>
+    <property type="aa{sv}" name="ActiveProfileHolds" access="read">
+    </property>
+    <property type="s" name="Version" access="read">
+    </property>
+    <property type="b" name="BatteryAware" access="readwrite">
+    </property>
+  </interface>
+</node>
