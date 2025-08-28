@@ -62,11 +62,7 @@ class PowerProfilesService(BaseService):
         self,
         profile: str,
     ) -> None:
-        print(
-            self._proxy.gproxy.HoldProfile(
-                "(sss)", profile, "", "com.github.linkfrg.ignis"
-            )
-        )
+        self._proxy.gproxy.HoldProfile("(sss)", profile, "", "com.github.linkfrg.ignis")
 
     @IgnisProperty
     def profiles(self) -> list[str]:
