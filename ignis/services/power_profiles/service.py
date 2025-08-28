@@ -52,9 +52,9 @@ class PowerProfilesService(BaseService):
         Current active power profile.
 
         Should be either of:
-            - performance
-            - balanced
-            - power-saver
+            - `performance`
+            - `balanced`
+            - `power-saver`
         """
         return self._active_profile
 
@@ -63,12 +63,39 @@ class PowerProfilesService(BaseService):
         self,
         profile: str,
     ) -> None:
-        if profile == "balanced" and self._cookie != -1:
-            self._proxy.gproxy.ReleaseProfile("(u)", self._cookie)
+        self._cookie = -1
+        self._proxy.ActiveProfile = GLib.Variant("s", profile)
+
+    def hold_profile(self, profile: str) -> None:
+        """
+        This forces the passed profile (only `performance` or `power-saver`) to be activated until ignis exits,
+        :func:`~ignis.services.power_profiles.PowerProfilesService.release_profile` is called,
+        or the :attr:`~ignis.services.power_profiles.PowerProfilesService.active_profile` is changed manually.
+
+        Use if you need to ensure a specific profile is active for a certain amount of time or while
+        a specific task is being performed. This way the previous state will not have to be managed by you.
+        """
+        if profile == "balanced":
+            raise ValueError(
+                "Cannot hold the balanced profile, only performance or power-saver."
+            )
+
+        if self._cookie != -1:
             return
+
         self._cookie = self._proxy.gproxy.HoldProfile(
             "(sss)", profile, "", "com.github.linkfrg.ignis"
         )
+
+    def release_profile(self) -> None:
+        """
+        Release the hold on the profile
+        """
+        if self._cookie == -1:
+            return
+
+        self._proxy.gproxy.ReleaseProfile("(u)", self._cookie)
+        self._cookie = -1
 
     @IgnisProperty
     def profiles(self) -> list[str]:
@@ -76,9 +103,9 @@ class PowerProfilesService(BaseService):
         List of available power profiles.
 
         Possible values are:
-            - performance
-            - balanced
-            - power-saver
+            - `performance`
+            - `balanced`
+            - `power-saver`
         """
         return self._profiles
 
