@@ -2,8 +2,9 @@ from __future__ import annotations
 from ignis.base_service import BaseService
 from ignis.dbus import DBusProxy
 from ignis.gobject import IgnisProperty
-from gi.repository import GLib # type: ignore
+from gi.repository import GLib  # type: ignore
 from ignis import utils
+
 
 class PowerProfilesService(BaseService):
     """
@@ -13,7 +14,7 @@ class PowerProfilesService(BaseService):
 
     .. code-block:: python
 
-        from ignis.services.power_profiles import PowerProfilesService 
+        from ignis.services.power_profiles import PowerProfilesService
 
         power_profiles = PowerProfilesService.get_default()
 
@@ -25,6 +26,7 @@ class PowerProfilesService(BaseService):
 
         power_profiles.connect("notify::active-profile", lambda x, y: print(power_profiles.active_profile))
     """
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -42,8 +44,8 @@ class PowerProfilesService(BaseService):
         self._profiles: list[str] = [p["Profile"] for p in self._proxy.Profiles]
 
     @IgnisProperty
-    def active_profile( # type: ignore
-        self
+    def active_profile(  # type: ignore
+        self,
     ) -> str:
         """
         Current active power profile.
@@ -60,12 +62,11 @@ class PowerProfilesService(BaseService):
         self,
         profile: str,
     ) -> None:
-        print(self._proxy.gproxy.HoldProfile(
-            "(sss)",
-            profile,
-            "",
-            "com.github.linkfrg.ignis"
-        ))
+        print(
+            self._proxy.gproxy.HoldProfile(
+                "(sss)", profile, "", "com.github.linkfrg.ignis"
+            )
+        )
 
     @IgnisProperty
     def profiles(self) -> list[str]:
@@ -101,4 +102,3 @@ class PowerProfilesService(BaseService):
         if "Profiles" in prop_dict:
             self._profiles = list(prop_dict["Profiles"].keys())
             self.notify("profiles")
-
