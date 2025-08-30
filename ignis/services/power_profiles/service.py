@@ -69,8 +69,7 @@ class PowerProfilesService(BaseService):
     def hold_profile(self, profile: str) -> None:
         """
         This forces the passed profile (only `performance` or `power-saver`) to be activated until ignis exits,
-        :func:`~ignis.services.power_profiles.PowerProfilesService.release_profile` is called,
-        or the :attr:`~ignis.services.power_profiles.PowerProfilesService.active_profile` is changed manually.
+        :func:`~release_profile` is called, or the :attr:`~active_profile` is changed manually.
 
         Use if you need to ensure a specific profile is active for a certain amount of time or while
         a specific task is being performed. This way the previous state will not have to be managed by you.
