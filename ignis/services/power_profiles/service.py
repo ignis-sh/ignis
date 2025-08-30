@@ -127,6 +127,7 @@ class PowerProfilesService(BaseService):
         if "ActiveProfile" in prop_dict:
             self._active_profile = prop_dict["ActiveProfile"]
             self.notify("active-profile")
+            self.notify("icon-name")
         if "Profiles" in prop_dict:
             self._profiles = list(prop_dict["Profiles"].keys())
             self.notify("profiles")
