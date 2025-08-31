@@ -1,6 +1,7 @@
 from __future__ import annotations
 from ignis.base_service import BaseService
 from ignis.dbus import DBusProxy
+from ignis.exceptions import PowerProfilesDaemonNotRunningError
 from ignis.gobject import IgnisProperty
 from gi.repository import GLib  # type: ignore
 from ignis import utils
@@ -92,6 +93,12 @@ class PowerProfilesService(BaseService):
                 "Cannot hold the balanced profile, only performance or power-saver."
             )
 
+        self.__hold_profile(profile)
+
+    def __hold_profile(self, profile: str) -> None:
+        if not self.is_available:
+            raise PowerProfilesDaemonNotRunningError()
+
         if self._cookie != -1:
             return
 
@@ -103,11 +110,18 @@ class PowerProfilesService(BaseService):
         """
         Release the hold on the profile
         """
+        self.__release_profile()
+
+    def __release_profile(self) -> None:
+        if not self.is_available:
+            raise PowerProfilesDaemonNotRunningError()
+
         if self._cookie == -1:
             return
 
         self._proxy.gproxy.ReleaseProfile("(u)", self._cookie)
         self._cookie = -1
+
 
     @IgnisProperty
     def profiles(self) -> list[str]:

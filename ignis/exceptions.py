@@ -451,6 +451,18 @@ class UPowerNotRunningError(Exception):
         )
 
 
+class PowerProfilesDaemonNotRunningError(Exception):
+    """
+    Raised when Power Profiles daemon is not running.
+    """
+
+    def __init__(self, *args: object) -> None:
+        super().__init__(
+            "Power Profiles daemon is not running. To use the Power Profile service, install and run power-profiles-daemon",
+            *args,
+        )
+
+
 class GnomeBluetoothNotFoundError(Exception):
     """
     Raised when GnomeBluetooth-3.0 is not found.
