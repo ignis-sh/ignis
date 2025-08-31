@@ -81,6 +81,9 @@ class PowerProfilesService(BaseService):
     ) -> None:
         if not self.is_available:
             raise PowerProfilesDaemonNotRunningError()
+        if profile not in self.profiles:
+            raise ValueError(f"Profile '{profile}' is not available.")
+
         self._cookie = -1
         self._proxy.ActiveProfile = GLib.Variant("s", profile)
 
@@ -92,6 +95,8 @@ class PowerProfilesService(BaseService):
         Use if you need to ensure a specific profile is active for a certain amount of time or while
         a specific task is being performed. This way the previous state will not have to be managed by you.
         """
+        if profile not in self.profiles:
+            raise ValueError(f"Profile '{profile}' is not available.")
         if profile == "balanced":
             raise ValueError(
                 "Cannot hold the balanced profile, only performance or power-saver."
