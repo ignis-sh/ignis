@@ -132,6 +132,8 @@ class PowerProfilesService(BaseService):
             - `balanced`
             - `power-saver`
         """
+        if not self.is_available:
+            return []
         return self._profiles
 
     @IgnisProperty
