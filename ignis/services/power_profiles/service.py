@@ -10,7 +10,7 @@ from .constants import PP_ICON_TEMPLATE
 
 class PowerProfilesService(BaseService):
     """
-    A service for managing power profiles through the UPower DBus interface.
+    A service for managing power profiles through the DBus interface power-profiles-daemon provides.
 
     Example usage:
 
@@ -121,7 +121,6 @@ class PowerProfilesService(BaseService):
 
         self._proxy.gproxy.ReleaseProfile("(u)", self._cookie)
         self._cookie = -1
-
 
     @IgnisProperty
     def profiles(self) -> list[str]:
