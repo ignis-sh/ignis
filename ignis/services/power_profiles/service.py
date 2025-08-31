@@ -4,6 +4,7 @@ from ignis.dbus import DBusProxy
 from ignis.gobject import IgnisProperty
 from gi.repository import GLib  # type: ignore
 from ignis import utils
+from .constants import PP_ICON_TEMPLATE
 
 
 class PowerProfilesService(BaseService):
@@ -125,13 +126,7 @@ class PowerProfilesService(BaseService):
         """
         Icon name representing the active power profile.
         """
-        if self.active_profile == "performance":
-            return "power-profile-performance-symbolic"
-        if self.active_profile == "balanced":
-            return "power-profile-balanced-symbolic"
-        if self.active_profile == "power-saver":
-            return "power-profile-power-saver-symbolic"
-        return ""
+        return PP_ICON_TEMPLATE.format(self.active_profile)
 
     def __on_properties_changed(self, _, properties: GLib.Variant, ignored):
         prop_dict = properties.unpack()
