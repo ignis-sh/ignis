@@ -93,9 +93,6 @@ class PowerProfilesService(BaseService):
                 "Cannot hold the balanced profile, only performance or power-saver."
             )
 
-        self.__hold_profile(profile)
-
-    def __hold_profile(self, profile: str) -> None:
         if not self.is_available:
             raise PowerProfilesDaemonNotRunningError()
 
@@ -110,9 +107,6 @@ class PowerProfilesService(BaseService):
         """
         Release the hold on the profile
         """
-        self.__release_profile()
-
-    def __release_profile(self) -> None:
         if not self.is_available:
             raise PowerProfilesDaemonNotRunningError()
 
