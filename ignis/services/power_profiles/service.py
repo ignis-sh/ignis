@@ -70,6 +70,8 @@ class PowerProfilesService(BaseService):
             - `balanced`
             - `power-saver`
         """
+        if not self.is_available:
+            raise PowerProfilesDaemonNotRunningError()
         return self._active_profile
 
     @active_profile.setter
@@ -77,6 +79,8 @@ class PowerProfilesService(BaseService):
         self,
         profile: str,
     ) -> None:
+        if not self.is_available:
+            raise PowerProfilesDaemonNotRunningError()
         self._cookie = -1
         self._proxy.ActiveProfile = GLib.Variant("s", profile)
 
