@@ -123,7 +123,7 @@ class PowerProfilesService(BaseService):
     @IgnisProperty
     def icon_name(self) -> str:
         """
-        The current icon name representing the active power profile.
+        Icon name representing the active power profile.
         """
         if self.active_profile == "performance":
             return "power-profile-performance-symbolic"
