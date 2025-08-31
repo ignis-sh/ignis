@@ -434,6 +434,7 @@
 <li class="toctree-l2"><a class="reference internal" href="services/network.html">Network</a></li>
 <li class="toctree-l2"><a class="reference internal" href="services/niri.html">Niri</a></li>
 <li class="toctree-l2"><a class="reference internal" href="services/notifications.html">Notifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="services/power_profiles.html">Power Profiles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="services/recorder.html">Recorder</a></li>
 <li class="toctree-l2"><a class="reference internal" href="services/system_tray.html">System Tray</a></li>
 <li class="toctree-l2"><a class="reference internal" href="services/systemd.html">Systemd</a></li>
@@ -855,6 +856,12 @@
 </dd></dl>
 
 <dl class="py exception">
+<dt class="sig sig-object py" id="ignis.exceptions.PowerProfilesDaemonNotRunningError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.exceptions.</span></span><span class="sig-name descname"><span class="pre">PowerProfilesDaemonNotRunningError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><span class="pre">object</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.exceptions.PowerProfilesDaemonNotRunningError" title="Link to this definition">#</a></dt>
+<dd><p>Raised when Power Profiles daemon is not running.</p>
+</dd></dl>
+
+<dl class="py exception">
 <dt class="sig sig-object py" id="ignis.exceptions.GnomeBluetoothNotFoundError">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.exceptions.</span></span><span class="sig-name descname"><span class="pre">GnomeBluetoothNotFoundError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><span class="pre">object</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.exceptions.GnomeBluetoothNotFoundError" title="Link to this definition">#</a></dt>
 <dd><p>Raised when GnomeBluetooth-3.0 is not found.</p>
@@ -1038,6 +1045,7 @@
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.exceptions.UPowerNotRunningError"><code class="docutils literal notranslate"><span class="pre">UPowerNotRunningError</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.exceptions.PowerProfilesDaemonNotRunningError"><code class="docutils literal notranslate"><span class="pre">PowerProfilesDaemonNotRunningError</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.exceptions.GnomeBluetoothNotFoundError"><code class="docutils literal notranslate"><span class="pre">GnomeBluetoothNotFoundError</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.exceptions.GpuScreenRecorderError"><code class="docutils literal notranslate"><span class="pre">GpuScreenRecorderError</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.exceptions.GpuScreenRecorderError.returncode"><code class="docutils literal notranslate"><span class="pre">GpuScreenRecorderError.returncode</span></code></a></li>
