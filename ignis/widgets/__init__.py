@@ -34,6 +34,7 @@ from .revealer_window import RevealerWindow
 from .stack import Stack
 from .stack_switcher import StackSwitcher
 from .stack_page import StackPage
+from .animated_gif import AnimatedGif
 from ignis._deprecation import deprecated_getattribute
 
 
@@ -76,6 +77,7 @@ class Widget:
     Stack: TypeAlias = Stack
     StackSwitcher: TypeAlias = StackSwitcher
     StackPage = StackPage
+    AnimatedGif: TypeAlias = AnimatedGif
 
 
 __all__ = [
@@ -114,4 +116,5 @@ __all__ = [
     "Switch",
     "ToggleButton",
     "Window",
+    "AnimatedGif",
 ]
