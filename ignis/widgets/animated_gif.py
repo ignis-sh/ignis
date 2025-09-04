@@ -1,8 +1,3 @@
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from collections.abc import Callable
-
 from gi.repository import GdkPixbuf, GLib, Gtk  # type: ignore
 
 from ignis.base_widget import BaseWidget
@@ -18,7 +13,7 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
     A widget that displays animated GIF files.
 
     The widget automatically scales each frame to the specified dimensions and provides
-    control over animation duration, looping behavior, and interpolation quality.
+    control over animation duration, looping behavior.
 
     Args:
         **kwargs: Properties to set.
@@ -43,7 +38,6 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
         height: int = 100,
         duration_ms: int = 0,
         loop: bool = True,
-        interp: GdkPixbuf.InterpType = GdkPixbuf.InterpType.BILINEAR,
         **kwargs,
     ):
         Gtk.Picture.__init__(self)
@@ -54,7 +48,7 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
         self._height = height
         self._duration_ms = duration_ms
         self._loop = loop
-        self._interp = interp
+        self._interp = GdkPixbuf.InterpType.BILINEAR
         
         # Animation state
         self._anim: GdkPixbuf.PixbufAnimation | None = None
@@ -79,7 +73,7 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
     def image(self, value: str) -> None:
         if self._image != value:
             self._image = value
-            self._load_animation()
+            self.__load_animation()
 
     @IgnisProperty
     def width(self) -> int:
@@ -129,20 +123,6 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
     def loop(self, value: bool) -> None:
         self._loop = value
 
-    # Remove the IgnisProperty for interp since it causes issues with enum defaults
-    # Instead, use a simple property without GObject registration
-    def get_interp(self) -> GdkPixbuf.InterpType:
-        """
-        Get the interpolation method for scaling frames.
-        """
-        return self._interp
-
-    def set_interp(self, value: GdkPixbuf.InterpType) -> None:
-        """
-        Set the interpolation method for scaling frames.
-        """
-        self._interp = value
-
     def start(self) -> None:
         """
         Start the animation.
@@ -169,7 +149,7 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
             self._iter = self._anim.get_iter()
             self.start()
 
-    def _load_animation(self) -> None:
+    def __load_animation(self) -> None:
         """Load the GIF animation from file."""
         if not self._image:
             return
