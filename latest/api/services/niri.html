@@ -765,6 +765,20 @@ by its unique ID (not by <code class="docutils literal notranslate"><span class=
 <dt class="sig sig-object py" id="ignis.services.niri.NiriWindow">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.services.niri.</span></span><span class="sig-name descname"><span class="pre">NiriWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ignis.services.niri.NiriWindow" title="Link to this definition">#</a></dt>
 <dd><p>A window.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ignis.services.niri.NiriWindow.sync">
+<span class="sig-name descname"><span class="pre">sync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.services.niri.NiriWindow.sync" title="Link to this definition">#</a></dt>
+<dd><p>Perform the property synchronization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span>) -- The dictionary to synchronize with.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py signal">
 <dt class="sig sig-object py" id="ignis.services.niri.NiriWindow.destroyed">
 <em class="property"><span class="pre">signal</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">destroyed</span></span><a class="headerlink" href="#ignis.services.niri.NiriWindow.destroyed" title="Link to this definition">#</a></dt>
@@ -834,6 +848,15 @@ by its unique ID (not by <code class="docutils literal notranslate"><span class=
 <p>Whether the window is floating.</p>
 </dd></dl>
 
+<dl class="py gproperty">
+<dt class="sig sig-object py" id="ignis.services.niri.NiriWindow.layout">
+<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">layout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ignis.services.niri.NiriWindowLayout" title="ignis.services.niri.window_layout.NiriWindowLayout"><span class="pre">NiriWindowLayout</span></a></em><a class="headerlink" href="#ignis.services.niri.NiriWindow.layout" title="Link to this definition">#</a></dt>
+<dd><ul class="simple">
+<li><p>read-only</p></li>
+</ul>
+<p>The layout of the window.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="ignis.services.niri.NiriWindow.close">
 <span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.services.niri.NiriWindow.close" title="Link to this definition">#</a></dt>
@@ -876,6 +899,57 @@ by its unique ID (not by <code class="docutils literal notranslate"><span class=
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ignis.services.niri.NiriWindowLayout">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.services.niri.</span></span><span class="sig-name descname"><span class="pre">NiriWindowLayout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ignis.services.niri.NiriWindowLayout" title="Link to this definition">#</a></dt>
+<dd><p>Layout of a window.</p>
+<dl class="py gproperty">
+<dt class="sig sig-object py" id="ignis.services.niri.NiriWindowLayout.pos_in_scrolling_layout">
+<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pos_in_scrolling_layout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ignis.services.niri.NiriWindowLayout.pos_in_scrolling_layout" title="Link to this definition">#</a></dt>
+<dd><ul class="simple">
+<li><p>read-only</p></li>
+</ul>
+<p>Location of a tiled window within a workspace.</p>
+</dd></dl>
+
+<dl class="py gproperty">
+<dt class="sig sig-object py" id="ignis.services.niri.NiriWindowLayout.tile_size">
+<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tile_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a></em><a class="headerlink" href="#ignis.services.niri.NiriWindowLayout.tile_size" title="Link to this definition">#</a></dt>
+<dd><ul class="simple">
+<li><p>read-only</p></li>
+</ul>
+<p>Size of the tile this window is in.</p>
+</dd></dl>
+
+<dl class="py gproperty">
+<dt class="sig sig-object py" id="ignis.services.niri.NiriWindowLayout.window_size">
+<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">window_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a></em><a class="headerlink" href="#ignis.services.niri.NiriWindowLayout.window_size" title="Link to this definition">#</a></dt>
+<dd><ul class="simple">
+<li><p>read-only</p></li>
+</ul>
+<p>Size of the window’s visual geometry itself.</p>
+</dd></dl>
+
+<dl class="py gproperty">
+<dt class="sig sig-object py" id="ignis.services.niri.NiriWindowLayout.tile_pos_in_workspace_view">
+<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tile_pos_in_workspace_view</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ignis.services.niri.NiriWindowLayout.tile_pos_in_workspace_view" title="Link to this definition">#</a></dt>
+<dd><ul class="simple">
+<li><p>read-only</p></li>
+</ul>
+<p>Tile position within the current view of the workspace.</p>
+</dd></dl>
+
+<dl class="py gproperty">
+<dt class="sig sig-object py" id="ignis.services.niri.NiriWindowLayout.window_offset_in_tile">
+<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">window_offset_in_tile</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a></em><a class="headerlink" href="#ignis.services.niri.NiriWindowLayout.window_offset_in_tile" title="Link to this definition">#</a></dt>
+<dd><ul class="simple">
+<li><p>read-only</p></li>
+</ul>
+<p>Location of the window’s visual geometry within its tile.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1039,6 +1113,7 @@ by its unique ID (not by <code class="docutils literal notranslate"><span class=
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWindow"><code class="docutils literal notranslate"><span class="pre">NiriWindow</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWindow.sync"><code class="docutils literal notranslate"><span class="pre">NiriWindow.sync()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWindow.destroyed"><code class="docutils literal notranslate"><span class="pre">NiriWindow.destroyed</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWindow.id"><code class="docutils literal notranslate"><span class="pre">NiriWindow.id</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWindow.title"><code class="docutils literal notranslate"><span class="pre">NiriWindow.title</span></code></a></li>
@@ -1047,10 +1122,19 @@ by its unique ID (not by <code class="docutils literal notranslate"><span class=
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWindow.workspace_id"><code class="docutils literal notranslate"><span class="pre">NiriWindow.workspace_id</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWindow.is_focused"><code class="docutils literal notranslate"><span class="pre">NiriWindow.is_focused</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWindow.is_floating"><code class="docutils literal notranslate"><span class="pre">NiriWindow.is_floating</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWindow.layout"><code class="docutils literal notranslate"><span class="pre">NiriWindow.layout</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWindow.close"><code class="docutils literal notranslate"><span class="pre">NiriWindow.close()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWindow.focus"><code class="docutils literal notranslate"><span class="pre">NiriWindow.focus()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWindow.toggle_fullscreen"><code class="docutils literal notranslate"><span class="pre">NiriWindow.toggle_fullscreen()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWindow.toggle_floating"><code class="docutils literal notranslate"><span class="pre">NiriWindow.toggle_floating()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWindowLayout"><code class="docutils literal notranslate"><span class="pre">NiriWindowLayout</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWindowLayout.pos_in_scrolling_layout"><code class="docutils literal notranslate"><span class="pre">NiriWindowLayout.pos_in_scrolling_layout</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWindowLayout.tile_size"><code class="docutils literal notranslate"><span class="pre">NiriWindowLayout.tile_size</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWindowLayout.window_size"><code class="docutils literal notranslate"><span class="pre">NiriWindowLayout.window_size</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWindowLayout.tile_pos_in_workspace_view"><code class="docutils literal notranslate"><span class="pre">NiriWindowLayout.tile_pos_in_workspace_view</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWindowLayout.window_offset_in_tile"><code class="docutils literal notranslate"><span class="pre">NiriWindowLayout.window_offset_in_tile</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.services.niri.NiriWorkspace"><code class="docutils literal notranslate"><span class="pre">NiriWorkspace</span></code></a><ul class="nav section-nav flex-column">
