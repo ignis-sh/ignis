@@ -34,6 +34,7 @@ from .revealer_window import RevealerWindow
 from .stack import Stack
 from .stack_switcher import StackSwitcher
 from .stack_page import StackPage
+from .fixed import Fixed
 from ignis._deprecation import deprecated_getattribute
 
 
@@ -58,6 +59,7 @@ class Widget:
     RegularWindow: TypeAlias = RegularWindow
     FileChooserButton: TypeAlias = FileChooserButton
     FileFilter: TypeAlias = FileFilter
+    Fixed = Fixed
     Grid: TypeAlias = Grid
     PopoverMenu: TypeAlias = PopoverMenu
     EventBox: TypeAlias = EventBox
@@ -92,6 +94,7 @@ __all__ = [
     "FileChooserButton",
     "FileDialog",
     "FileFilter",
+    "Fixed",
     "Grid",
     "HeaderBar",
     "Icon",
