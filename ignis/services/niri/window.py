@@ -22,6 +22,9 @@ class NiriWindow(DataGObject):
         self._layout: NiriWindowLayout = NiriWindowLayout()
 
     def sync(self, data: dict[str, Any]) -> None:
+        """
+        :meta private:
+        """
         layout = data.pop("layout", None)
 
         if layout:
