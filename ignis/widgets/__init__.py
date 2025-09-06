@@ -35,6 +35,7 @@ from .stack import Stack
 from .stack_switcher import StackSwitcher
 from .stack_page import StackPage
 from ignis._deprecation import deprecated_getattribute
+from .corner import Corner
 
 
 @deprecated_getattribute(
@@ -76,6 +77,7 @@ class Widget:
     Stack: TypeAlias = Stack
     StackSwitcher: TypeAlias = StackSwitcher
     StackPage = StackPage
+    Corner: TypeAlias = Corner
 
 
 __all__ = [
@@ -86,6 +88,7 @@ __all__ = [
     "Calendar",
     "CenterBox",
     "CheckButton",
+    "Corner",
     "DropDown",
     "Entry",
     "EventBox",
