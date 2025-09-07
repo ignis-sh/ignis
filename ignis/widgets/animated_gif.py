@@ -3,8 +3,6 @@ from gi.repository import GdkPixbuf, GLib, Gtk  # type: ignore
 from ignis.base_widget import BaseWidget
 from ignis.gobject import IgnisProperty
 
-__all__ = ["AnimatedGif"]
-
 
 class AnimatedGif(Gtk.Picture, BaseWidget):
     """
@@ -42,19 +40,19 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
     ):
         Gtk.Picture.__init__(self)
 
-        # Initialize private variables before BaseWidget.__init__
+        # Initialize variables before BaseWidget.__init__
         self._image: str | None = None
         self._width = width
         self._height = height
         self._duration_ms = duration_ms
         self._loop = loop
-        self._interp = GdkPixbuf.InterpType.BILINEAR
-        
+        self.__interp = GdkPixbuf.InterpType.BILINEAR
+
         # Animation state
-        self._anim: GdkPixbuf.PixbufAnimation | None = None
-        self._iter: GdkPixbuf.PixbufAnimationIter | None = None
-        self._timeout_id: int | None = None
-        self._start_time = 0
+        self.__anim: GdkPixbuf.PixbufAnimation | None = None
+        self.__iter: GdkPixbuf.PixbufAnimationIter | None = None
+        self.__timeout_id: int | None = None
+        self.__start_time = 0
 
         # Set initial widget size
         self.width_request = width if width > 0 else -1
@@ -127,26 +125,26 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
         """
         Start the animation.
         """
-        if self._anim and not self._timeout_id:
-            self._start_time = GLib.get_monotonic_time() // 1000
-            if self._iter:
-                self._tick()
+        if self.__anim and not self.__timeout_id:
+            self.__start_time = GLib.get_monotonic_time() // 1000
+            if self.__iter:
+                self.__tick()
 
     def stop(self) -> None:
         """
         Stop the animation.
         """
-        if self._timeout_id:
-            GLib.source_remove(self._timeout_id)
-            self._timeout_id = None
+        if self.__timeout_id:
+            GLib.source_remove(self.__timeout_id)
+            self.__timeout_id = None
 
     def restart(self) -> None:
         """
         Restart the animation from the beginning.
         """
-        if self._anim:
+        if self.__anim:
             self.stop()
-            self._iter = self._anim.get_iter()
+            self.__iter = self.__anim.get_iter()
             self.start()
 
     def __load_animation(self) -> None:
@@ -157,27 +155,27 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
         self.stop()  # Stop any existing animation
 
         try:
-            self._anim = GdkPixbuf.PixbufAnimation.new_from_file(self._image)
-            self._iter = self._anim.get_iter()
+            self.__anim = GdkPixbuf.PixbufAnimation.new_from_file(self._image)
+            self.__iter = self.__anim.get_iter()
             self.start()
         except Exception:
             # If loading fails, clear the animation state
-            self._anim = None
-            self._iter = None
+            self.__anim = None
+            self.__iter = None
 
     @staticmethod
-    def _get_current_time() -> GLib.TimeVal:
+    def __get_current_time() -> GLib.TimeVal:
         """Get current time as GLib.TimeVal."""
         usec = GLib.get_monotonic_time()
         tv = GLib.TimeVal()
         tv.tv_sec, tv.tv_usec = divmod(usec, 1_000_000)
         return tv
 
-    def _elapsed_ms(self) -> int:
+    def __elapsed_ms(self) -> int:
         """Get elapsed time in milliseconds since animation start."""
-        return (GLib.get_monotonic_time() // 1000) - self._start_time
+        return (GLib.get_monotonic_time() // 1000) - self.__start_time
 
-    def _scale_pixbuf(self, pixbuf: GdkPixbuf.Pixbuf) -> GdkPixbuf.Pixbuf:
+    def __scale_pixbuf(self, pixbuf: GdkPixbuf.Pixbuf) -> GdkPixbuf.Pixbuf:
         """Scale pixbuf to target dimensions if needed."""
         if self._width <= 0 or self._height <= 0:
             return pixbuf
@@ -188,34 +186,34 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
         if current_width == self._width and current_height == self._height:
             return pixbuf
 
-        return pixbuf.scale_simple(self._width, self._height, self._interp)
+        return pixbuf.scale_simple(self._width, self._height, self.__interp)
 
-    def _tick(self) -> bool:
+    def __tick(self) -> bool:
         """Animation tick - update current frame and schedule next."""
-        if not self._iter:
+        if not self.__iter:
             return False
 
         # Update the displayed frame
-        current_pixbuf = self._iter.get_pixbuf()
-        scaled_pixbuf = self._scale_pixbuf(current_pixbuf)
+        current_pixbuf = self.__iter.get_pixbuf()
+        scaled_pixbuf = self.__scale_pixbuf(current_pixbuf)
         self.set_pixbuf(scaled_pixbuf)
 
         # Check duration limit
-        if self._duration_ms > 0 and self._elapsed_ms() >= self._duration_ms:
-            self._timeout_id = None
+        if self._duration_ms > 0 and self.__elapsed_ms() >= self._duration_ms:
+            self.__timeout_id = None
             return False
 
         # Advance to next frame
-        at_end = not self._iter.advance(self._get_current_time())
+        at_end = not self.__iter.advance(self.__get_current_time())
 
         # Check if animation ended and shouldn't loop
         if at_end and not self._loop:
-            self._timeout_id = None
+            self.__timeout_id = None
             return False
 
         # Schedule next frame update
-        delay = max(20, self._iter.get_delay_time())  # Minimum 20ms delay
-        self._timeout_id = GLib.timeout_add(delay, self._tick)
+        delay = max(20, self.__iter.get_delay_time())  # Minimum 20ms delay
+        self.__timeout_id = GLib.timeout_add(delay, self.__tick)
 
         return False  # Don't repeat this timeout (new one scheduled)
 
