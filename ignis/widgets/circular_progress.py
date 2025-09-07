@@ -5,8 +5,6 @@ import cairo
 import gi
 from gi.repository.Gdk import RGBA
 
-gi.require_version("Gdk", "4.0")
-gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk
 from ignis.base_widget import BaseWidget
 from ignis.gobject import IgnisProperty
@@ -81,12 +79,7 @@ class CircularProgressBar(Gtk.DrawingArea, BaseWidget):
 
     @IgnisProperty
     def value(self) -> float:
-        """
-        The current progress value.
-
-        Returns:
-            float: Current progress.
-        """
+        """The current progress value."""
         return self._value
 
     @value.setter
@@ -96,12 +89,7 @@ class CircularProgressBar(Gtk.DrawingArea, BaseWidget):
 
     @IgnisProperty
     def min_value(self) -> float:
-        """
-        Minimum value for this progress bar.
-
-        Returns:
-            float: Minimum progress value.
-        """
+        """Minimum value for this progress bar."""
         return self._min_value
 
     @min_value.setter
@@ -111,12 +99,7 @@ class CircularProgressBar(Gtk.DrawingArea, BaseWidget):
 
     @IgnisProperty
     def max_value(self) -> float:
-        """
-        Maximum value for this progress bar.
-
-        Returns:
-            float: Maximum progress value.
-        """
+        """Maximum value for this progress bar."""
         return self._max_value
 
     @max_value.setter
@@ -128,12 +111,7 @@ class CircularProgressBar(Gtk.DrawingArea, BaseWidget):
 
     @IgnisProperty
     def pie(self) -> bool:
-        """
-        Whether to draw as a filled pie chart instead of a ring.
-
-        Returns:
-            bool: True if pie chart mode is enabled.
-        """
+        """Whether to draw as a filled pie chart instead of a ring."""
         return self._pie
 
     @pie.setter
@@ -143,12 +121,7 @@ class CircularProgressBar(Gtk.DrawingArea, BaseWidget):
 
     @IgnisProperty
     def line_width(self) -> int:
-        """
-        The width of this progress bar's line in pixels.
-
-        Returns:
-            int: Line width in pixels.
-        """
+        """The width of the progress arc line."""
         return self._line_width
 
     @line_width.setter
@@ -158,12 +131,7 @@ class CircularProgressBar(Gtk.DrawingArea, BaseWidget):
 
     @IgnisProperty
     def line_style(self) -> str | cairo.LineCap:
-        """
-        The style of the line caps.
-
-        Returns:
-            str | cairo.LineCap: Original string if set, else LineCap
-        """
+        """The style of the progress arc line."""
         return self._line_style_value
 
     @line_style.setter
@@ -175,6 +143,7 @@ class CircularProgressBar(Gtk.DrawingArea, BaseWidget):
 
     @IgnisProperty
     def start_angle(self) -> float:
+        """The starting angle of the progress arc in degrees."""
         return self._start_angle
 
     @start_angle.setter
@@ -184,6 +153,7 @@ class CircularProgressBar(Gtk.DrawingArea, BaseWidget):
 
     @IgnisProperty
     def end_angle(self) -> float:
+        """The ending angle of the progress arc in degrees."""
         return self._end_angle
 
     @end_angle.setter
@@ -193,6 +163,7 @@ class CircularProgressBar(Gtk.DrawingArea, BaseWidget):
 
     @IgnisProperty
     def invert(self) -> bool:
+        """Whether to invert the drawing direction of the progress arc."""
         return self._invert
 
     @invert.setter
