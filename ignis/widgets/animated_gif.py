@@ -101,7 +101,7 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
     def duration_ms(self) -> int:
         """
         Duration in milliseconds before auto-stopping animation.
-        
+
         Set to 0 for infinite animation.
         """
         return self._duration_ms
@@ -156,7 +156,8 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
 
         try:
             self.__anim = GdkPixbuf.PixbufAnimation.new_from_file(self._image)
-            self.__iter = self.__anim.get_iter()
+            if self.__anim is not None:
+                self.__iter = self.__anim.get_iter()
             self.start()
         except Exception:
             # If loading fails, clear the animation state
@@ -186,7 +187,8 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
         if current_width == self._width and current_height == self._height:
             return pixbuf
 
-        return pixbuf.scale_simple(self._width, self._height, self.__interp)
+        scaled = pixbuf.scale_simple(self._width, self._height, self.__interp)
+        return scaled if scaled is not None else pixbuf
 
     def __tick(self) -> bool:
         """Animation tick - update current frame and schedule next."""
