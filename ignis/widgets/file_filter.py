@@ -1,5 +1,6 @@
-from gi.repository import Gtk, GObject  # type: ignore
+from gi.repository import Gtk  # type: ignore
 from ignis.gobject import IgnisGObject
+from ignis.gobject import IgnisProperty
 
 
 class FileFilter(Gtk.FileFilter, IgnisGObject):
@@ -11,12 +12,16 @@ class FileFilter(Gtk.FileFilter, IgnisGObject):
         It doesn't support common widget properties and cannot be added as a child to a container.
 
     A file filter.
-    Intended for use in :class:`~ignis.widgets.Widget.FileDialog`.
+    Intended for use in :class:`~ignis.widgets.FileDialog`.
     Uses MIME types, `here <https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types>`_ is a list of common MIME types.
+
+    Args:
+        mime_types: A list of MIME types.
+        **kwargs: Properties to set.
 
     .. code-block :: python
 
-        Widget.FileFilter(
+        widgets.FileFilter(
             mime_types=["image/jpeg", "image/png"],
             default=True,
             name="Images JPEG/PNG",
@@ -34,20 +39,16 @@ class FileFilter(Gtk.FileFilter, IgnisGObject):
         for i in mime_types:
             self.add_mime_type(i)
 
-    @GObject.Property
+    @IgnisProperty
     def mime_types(self) -> list[str]:
         """
-        - required, read-only
-
         A list of MIME types.
         """
         return self._mime_types
 
-    @GObject.Property
+    @IgnisProperty
     def default(self) -> bool:
         """
-        - optional, read-write
-
         Whether the filter will be selected by default.
         """
         return self._default

@@ -1,5 +1,5 @@
 FileFilter
 ----------
 
-.. autoclass:: ignis.widgets.Widget.FileFilter
+.. autoclass:: ignis.widgets.FileFilter
     :members:

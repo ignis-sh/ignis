@@ -1,5 +1,5 @@
 RevealerWindow
 --------------
 
-.. autoclass:: ignis.widgets.Widget.RevealerWindow
+.. autoclass:: ignis.widgets.RevealerWindow
     :members:

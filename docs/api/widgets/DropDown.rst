@@ -1,5 +1,5 @@
 DropDown
 --------
 
-.. autoclass:: ignis.widgets.Widget.DropDown
+.. autoclass:: ignis.widgets.DropDown
     :members:

@@ -1,5 +1,6 @@
-from gi.repository import Gtk, GObject  # type: ignore
+from gi.repository import Gtk  # type: ignore
 from ignis.base_widget import BaseWidget
+from ignis.gobject import IgnisProperty
 
 
 class CenterBox(Gtk.CenterBox, BaseWidget):
@@ -8,13 +9,16 @@ class CenterBox(Gtk.CenterBox, BaseWidget):
 
     A box widget that contains three widgets, which are placed at the start, center, and end of the container.
 
+    Args:
+        **kwargs: Properties to set.
+
     .. code-block:: python
 
-        Widget.CenterBox(
+        widgets.CenterBox(
             vertical=False,
-            start_widget=Widget.Label(label='start'),
-            center_widget=Widget.Label(label='center'),
-            end_widget=Widget.Label(label='end'),
+            start_widget=widgets.Label(label='start'),
+            center_widget=widgets.Label(label='center'),
+            end_widget=widgets.Label(label='end'),
         )
     """
 
@@ -25,11 +29,9 @@ class CenterBox(Gtk.CenterBox, BaseWidget):
         Gtk.CenterBox.__init__(self)
         BaseWidget.__init__(self, **kwargs)
 
-    @GObject.Property
+    @IgnisProperty
     def vertical(self) -> bool:
         """
-        - optional, read-write
-
         Whether the box arranges children vertically.
 
         Default: ``False``.

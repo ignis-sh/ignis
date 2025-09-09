@@ -1,10 +1,9 @@
 import os
 import json
 from ignis.dbus import DBusService, DBusProxy
-from gi.repository import GLib, GObject, GdkPixbuf  # type: ignore
-from ignis.utils import Utils
+from gi.repository import GLib, GdkPixbuf  # type: ignore
+from ignis import utils
 from loguru import logger
-from ignis.services.options import OptionsService
 from datetime import datetime
 from ignis.base_service import BaseService
 from .notification import Notification
@@ -15,12 +14,16 @@ from .constants import (
     NOTIFICATIONS_IMAGE_DATA,
 )
 from ignis.exceptions import AnotherNotificationDaemonRunningError
+from ignis.options import options
+from ignis.gobject import IgnisProperty, IgnisSignal
 
 
 class NotificationService(BaseService):
     """
     A notification daemon.
     Allow receiving notifications and perform actions on them.
+
+    There are options available for this service: :class:`~ignis.options.Options.Notifications`.
 
     Raises:
         AnotherNotificationDaemonRunningError: If another notification daemon is already running.
@@ -42,7 +45,7 @@ class NotificationService(BaseService):
         self.__dbus = DBusService(
             name="org.freedesktop.Notifications",
             object_path="/org/freedesktop/Notifications",
-            info=Utils.load_interface_xml("org.freedesktop.Notifications"),
+            info=utils.load_interface_xml("org.freedesktop.Notifications"),
             on_name_lost=self.__on_name_lost,
         )
 
@@ -64,125 +67,55 @@ class NotificationService(BaseService):
         os.makedirs(NOTIFICATIONS_CACHE_DIR, exist_ok=True)
         os.makedirs(NOTIFICATIONS_IMAGE_DATA, exist_ok=True)
 
-        options = OptionsService.get_default()
-
-        opt_group = options.create_group(name="notifications", exists_ok=True)
-
-        self._dnd_opt = opt_group.create_option(
-            name="dnd", default=False, exists_ok=True
-        )
-        self._popup_timeout_opt = opt_group.create_option(
-            name="timeout", default=5000, exists_ok=True
-        )
-        self._max_popups_count_opt = opt_group.create_option(
-            name="max_popups_count", default=3, exists_ok=True
-        )
-
         self.__load_notifications()
 
     def __on_name_lost(self, *args) -> None:
-        proxy = DBusProxy(
+        proxy = DBusProxy.new(
             name="org.freedesktop.Notifications",
             interface_name="org.freedesktop.Notifications",
             object_path="/org/freedesktop/Notifications",
-            info=Utils.load_interface_xml("org.freedesktop.Notifications"),
+            info=utils.load_interface_xml("org.freedesktop.Notifications"),
         )
         try:
             info = proxy.GetServerInformation()
             name = info[0]
         except Exception:  # notification daemon can simply not implement GetServerInformation method, or do it wrongly, so we except all errors
-            name = proxy.proxy.get_name_owner()
+            name = proxy.gproxy.get_name_owner()
 
         raise AnotherNotificationDaemonRunningError(name)
 
-    @GObject.Signal(arg_types=(Notification,))
-    def notified(self, *args):
+    @IgnisSignal
+    def notified(self, notification: Notification):
         """
-        - Signal
-
         Emitted when a new notification appears.
 
         Args:
-            notification (:class:`~ignis.services.notifications.Notification`): The instance of the notification.
+            notification: The instance of the notification.
         """
 
-    @GObject.Signal(arg_types=(Notification,))
-    def new_popup(self, *args):
+    @IgnisSignal
+    def new_popup(self, notification: Notification):
         """
-        - Signal
-
         Emitted when a new popup notification appears.
         Only emitted if ``dnd`` is set to ``False``.
 
         Args:
-            notification (:class:`~ignis.services.notifications.Notification`): The instance of the notification.
+            notification: The instance of the notification.
         """
 
-    @GObject.Property
+    @IgnisProperty
     def notifications(self) -> list[Notification]:
         """
-        - read-only
-
         A list of all notifications.
         """
         return list(self._notifications.values())
 
-    @GObject.Property
+    @IgnisProperty
     def popups(self) -> list[Notification]:
         """
-        - read-only
-
         A list of currently active popup notifications.
         """
         return list(self._popups.values())
-
-    @GObject.Property
-    def dnd(self) -> bool:
-        """
-        - read-write
-
-        Do Not Disturb mode.
-        If set to ``True``, the ``new_popup`` signal will not be emitted,
-        and all new :class:`~ignis.services.notifications.Notification` instances will have ``popup`` set to ``False``.
-
-        Default: ``False``.
-        """
-        return self._dnd_opt.value
-
-    @dnd.setter
-    def dnd(self, value: bool) -> None:
-        self._dnd_opt.value = value
-
-    @GObject.Property
-    def popup_timeout(self) -> int:
-        """
-        - read-write
-
-        The timeout before a popup is automatically dismissed, in milliseconds.
-
-        Default: ``5000``.
-        """
-        return self._popup_timeout_opt.value
-
-    @popup_timeout.setter
-    def popup_timeout(self, value: int) -> None:
-        self._popup_timeout_opt.value = value
-
-    @GObject.Property
-    def max_popups_count(self) -> int:
-        """
-        - read-write
-
-        The Maximum number of popups.
-        If the length of the ``popups`` list exceeds ``max_popups_count``, the oldest popup will be dismissed.
-
-        Default: ``3``.
-        """
-        return self._max_popups_count_opt.value
-
-    @max_popups_count.setter
-    def max_popups_count(self, value: int) -> None:
-        self._max_popups_count_opt.value = value
 
     def __GetServerInformation(self, *args) -> GLib.Variant:
         return GLib.Variant(
@@ -262,14 +195,18 @@ class NotificationService(BaseService):
         hints: dict,
         timeout: int,
     ) -> None:
-        icon = None
-
-        if isinstance(app_icon, str):
-            icon = app_icon
-
+        # Follow freedesktop specification
+        # https://specifications.freedesktop.org/notification-spec/latest/icons-and-images.html
         if "image-data" in hints:
-            icon = f"{NOTIFICATIONS_IMAGE_DATA}/{_id}"
-            self.__save_pixbuf(hints["image-data"], icon)
+            icon = self.__save_pixbuf(hints["image-data"], _id)
+        elif "image-path" in hints:
+            icon = hints["image-path"]
+        elif app_icon != "":
+            icon = app_icon
+        elif "icon_data" in hints:
+            icon = self.__save_pixbuf(hints["icon_data"], _id)
+        else:
+            icon = None
 
         notification = Notification(
             dbus=self.__dbus,
@@ -280,13 +217,13 @@ class NotificationService(BaseService):
             body=body,
             actions=actions,
             urgency=hints.get("urgency", 1),
-            timeout=self.popup_timeout if timeout == -1 else timeout,
+            timeout=options.notifications.popup_timeout if timeout == -1 else timeout,
             time=datetime.now().timestamp(),
-            popup=not self.dnd,
+            popup=not options.notifications.dnd,
         )
 
-        if len(self.popups) >= self.max_popups_count:
-            if not self.max_popups_count == 0:
+        if len(self.popups) >= options.notifications.max_popups_count:
+            if not options.notifications.max_popups_count == 0:
                 self.popups[0].dismiss()
 
         if notification.popup:
@@ -299,7 +236,9 @@ class NotificationService(BaseService):
         self.emit("notified", notification)
         self.notify("notifications")
 
-    def __save_pixbuf(self, px_args: list, save_path: str) -> None:
+    def __save_pixbuf(self, px_args: list, notification_id: int) -> str:
+        save_path = f"{NOTIFICATIONS_IMAGE_DATA}/{notification_id}"
+
         GdkPixbuf.Pixbuf.new_from_bytes(
             width=px_args[0],
             height=px_args[1],
@@ -309,6 +248,8 @@ class NotificationService(BaseService):
             rowstride=px_args[2],
             bits_per_sample=px_args[4],
         ).savev(save_path, "png")
+
+        return save_path
 
     def clear_all(self) -> None:
         """

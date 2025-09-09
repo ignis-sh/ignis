@@ -1,6 +1,7 @@
-from gi.repository import Gtk, GObject  # type: ignore
+from gi.repository import Gtk  # type: ignore
 from ignis.base_widget import BaseWidget
-from typing import Callable
+from collections.abc import Callable
+from ignis.gobject import IgnisProperty
 
 
 class SpinButton(Gtk.SpinButton, BaseWidget):  # type: ignore
@@ -9,9 +10,12 @@ class SpinButton(Gtk.SpinButton, BaseWidget):  # type: ignore
 
     A widget that allows the user to increment or decrement the displayed value within a specified range.
 
+    Args:
+        **kwargs: Properties to set.
+
     .. code-block:: python
 
-        Widget.SpinButton(
+        widgets.SpinButton(
             min=0,
             max=100,
             step=1,
@@ -35,11 +39,9 @@ class SpinButton(Gtk.SpinButton, BaseWidget):  # type: ignore
 
         self.connect("value-changed", self.__invoke_on_change)
 
-    @GObject.Property
+    @IgnisProperty
     def value(self) -> float:
         """
-        - optional, read-write
-
         The current value.
         """
         return super().get_value()
@@ -48,11 +50,9 @@ class SpinButton(Gtk.SpinButton, BaseWidget):  # type: ignore
     def value(self, value: float) -> None:
         self.adjustment.set_value(value)
 
-    @GObject.Property
+    @IgnisProperty
     def min(self) -> float:
         """
-        - optional, read-write
-
         Minimum value.
         """
         return self.adjustment.props.lower
@@ -61,11 +61,9 @@ class SpinButton(Gtk.SpinButton, BaseWidget):  # type: ignore
     def min(self, value: float) -> None:
         self.adjustment.props.lower = value
 
-    @GObject.Property
+    @IgnisProperty
     def max(self) -> float:
         """
-        - optional, read-write
-
         Maximum value.
         """
         return self.adjustment.props.upper
@@ -74,11 +72,9 @@ class SpinButton(Gtk.SpinButton, BaseWidget):  # type: ignore
     def max(self, value: float) -> None:
         self.adjustment.props.upper = value
 
-    @GObject.Property
+    @IgnisProperty
     def step(self) -> float:
         """
-        - optional, read-write
-
         Step increment.
         """
         return self.adjustment.props.step_increment
@@ -87,11 +83,9 @@ class SpinButton(Gtk.SpinButton, BaseWidget):  # type: ignore
     def step(self, value: float) -> None:
         self.adjustment.props.step_increment = value
 
-    @GObject.Property
+    @IgnisProperty
     def on_change(self) -> Callable | None:
         """
-        - optional, read-write
-
         The function to call when the value changes.
         """
         return self._on_change

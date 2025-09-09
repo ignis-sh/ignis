@@ -1,5 +1,5 @@
 Overlay
 -------
 
-.. autoclass:: ignis.widgets.Widget.Overlay
+.. autoclass:: ignis.widgets.Overlay
     :members:

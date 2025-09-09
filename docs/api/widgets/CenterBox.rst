@@ -1,5 +1,5 @@
 CenterBox
 ---------
 
-.. autoclass:: ignis.widgets.Widget.CenterBox
+.. autoclass:: ignis.widgets.CenterBox
     :members:

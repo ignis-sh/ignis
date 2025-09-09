@@ -1,6 +1,4 @@
-from gi.repository import GObject  # type: ignore
-from ignis.gobject import IgnisGObject
-from typing import Union
+from ignis.gobject import IgnisGObject, IgnisProperty, IgnisSignal
 from ._imports import NM
 from .util import check_is_vpn
 
@@ -11,7 +9,7 @@ class VpnConnection(IgnisGObject):
     """
 
     def __init__(
-        self, connection: Union[NM.Connection, NM.ActiveConnection], client: NM.Client
+        self, connection: "NM.Connection | NM.ActiveConnection", client: NM.Client
     ):
         super().__init__()
         self._connection = connection
@@ -25,69 +23,55 @@ class VpnConnection(IgnisGObject):
         self._client.connect("notify::active-connections", self.__update_is_connected)
         self.__update_is_connected()
 
-    @GObject.Signal
+    @IgnisSignal
     def removed(self):
         """
         Emitted when this VPN connection is removed.
         """
 
-    @GObject.Property
+    @IgnisProperty
     def is_connected(self) -> bool:
         """
-        - read-only
-
         Whether the device is connected to the network.
         """
         return self._is_connected
 
-    @GObject.Property
+    @IgnisProperty
     def name(self) -> str | None:
         """
-        - read-only
-
         The id (name) of the vpn connection or ``None`` if unknown.
         """
         return self._connection.get_id()
 
-    def toggle_connection(self) -> None:
+    async def toggle_connection(self) -> None:
         """
         Toggle this VPN depending on it's `is_connected` property
         """
         if self.is_connected:
-            self.disconnect_from()
+            await self.disconnect_from()
         else:
-            self.connect_to()
+            await self.connect_to()
 
-    def connect_to(self) -> None:
+    async def connect_to(self) -> None:
         """
         Connect to this VPN.
         """
 
-        def finish(x, res) -> None:
-            self._client.activate_connection_finish(res)
-
-        self._client.activate_connection_async(
+        await self._client.activate_connection_async(
             self._connection,  # type: ignore
             None,
             None,
-            None,
-            finish,
         )
 
-    def disconnect_from(self) -> None:
+    async def disconnect_from(self) -> None:
         """
         Disconnect from this VPN.
         """
 
-        def finish(x, res) -> None:
-            self._client.deactivate_connection_finish(res)
-
         for conn in self._client.get_active_connections():
             if conn.get_uuid() == self._connection.get_uuid():
-                self._client.deactivate_connection_async(
+                await self._client.deactivate_connection_async(  # type: ignore
                     conn,
-                    None,
-                    finish,
                 )
 
     def __update_is_connected(self, *args) -> None:
@@ -123,47 +107,41 @@ class Vpn(IgnisGObject):
         for a in self._client.get_active_connections():
             self.__add_active_connection(None, a, False)
 
-    @GObject.Signal(arg_types=(VpnConnection,))
-    def new_connection(self, *args):
+    @IgnisSignal
+    def new_connection(self, connection: VpnConnection):
         """
         Emitted when a new VPN connection is added.
 
         Args:
-            connection (:class:`~ignis.services.network.VpnConnection`): An instance of the VPN connection.
+            connection: An instance of the VPN connection.
         """
 
-    @GObject.Signal(arg_types=(VpnConnection,))
-    def new_active_connection(self, *args):
+    @IgnisSignal
+    def new_active_connection(self, connection: VpnConnection):
         """
         Emitted when a VPN connection is activated.
 
         Args:
-            connection (:class:`~ignis.services.network.VpnConnection`): An instance of the newly activated VPN connection.
+            connection: An instance of the newly activated VPN connection.
         """
 
-    @GObject.Property
+    @IgnisProperty
     def connections(self) -> list[VpnConnection]:
         """
-        - read-only
-
         A list of all VPN connections.
         """
         return list(self._connections.values())
 
-    @GObject.Property
+    @IgnisProperty
     def active_connections(self) -> list[VpnConnection]:
         """
-        - read-only
-
         A list of active VPN connections.
         """
         return list(self._active_connections.values())
 
-    @GObject.Property
+    @IgnisProperty
     def active_vpn_id(self) -> str | None:
         """
-        - read-only
-
         The id (name) of the first active vpn connection.
         """
         if not self.is_connected:
@@ -171,20 +149,16 @@ class Vpn(IgnisGObject):
         else:
             return self.active_connections[0].name
 
-    @GObject.Property
+    @IgnisProperty
     def is_connected(self) -> bool:
         """
-        - read-only
-
         Whether at least one VPN connection is active.
         """
         return len(self._active_connections) != 0
 
-    @GObject.Property
+    @IgnisProperty
     def icon_name(self) -> str:
         """
-        - read-only
-
         The general icon name for all vpn connections, depends on ``is_connected`` property.
         """
         if self.is_connected:
@@ -205,9 +179,12 @@ class Vpn(IgnisGObject):
 
     @check_is_vpn
     def __remove_connection(self, client, connection: NM.Connection) -> None:
-        obj = self._connections.pop(connection)
-        obj.emit("removed")
-        self.notify("connections")
+        try:
+            obj = self._connections.pop(connection)
+            obj.emit("removed")
+            self.notify("connections")
+        except KeyError:
+            pass
 
     @check_is_vpn
     def __add_active_connection(
@@ -224,11 +201,18 @@ class Vpn(IgnisGObject):
         if emit:
             self.emit("new-active-connection", obj)
             self.notify("active-connections")
+            self.notify("active-vpn-id")
+            self.notify("is-connected")
 
     @check_is_vpn
     def __remove_active_connection(
         self, client, connection: NM.ActiveConnection
     ) -> None:
-        obj = self._active_connections.pop(connection)
-        obj.emit("removed")
-        self.notify("active-connections")
+        try:
+            obj = self._active_connections.pop(connection)
+            obj.emit("removed")
+            self.notify("active-connections")
+            self.notify("active-vpn-id")
+            self.notify("is-connected")
+        except KeyError:
+            pass

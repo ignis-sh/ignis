@@ -1,5 +1,5 @@
 HeaderBar
 ---------
 
-.. autoclass:: ignis.widgets.Widget.HeaderBar
+.. autoclass:: ignis.widgets.HeaderBar
     :members:

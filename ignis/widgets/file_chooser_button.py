@@ -1,11 +1,13 @@
 import os
-from gi.repository import Gtk, GObject  # type: ignore
+import asyncio
+from gi.repository import Gtk  # type: ignore
 from ignis.base_widget import BaseWidget
 from ignis.widgets.label import Label
 from ignis.widgets.box import Box
 from ignis.widgets.icon import Icon
 from ignis.widgets.file_dialog import FileDialog
-from ignis.utils import Utils
+from ignis import utils
+from ignis.gobject import IgnisProperty
 
 
 class FileChooserButton(Gtk.Button, BaseWidget):
@@ -14,20 +16,25 @@ class FileChooserButton(Gtk.Button, BaseWidget):
 
     A button that allows the user to select a file.
 
+    Args:
+        dialog: An instance of :class:`~ignis.widgets.FileDialog`.
+        label: An instance of :class:`~ignis.widgets.Label`.
+        **kwargs: Properties to set.
+
     .. code-block :: python
 
-        Widget.FileChooserButton(
-            dialog=Widget.FileDialog(
+        widgets.FileChooserButton(
+            dialog=widgets.FileDialog(
                 initial_path=os.path.expanduser("~/.wallpaper"),
                 filters=[
-                    Widget.FileFilter(
+                    widgets.FileFilter(
                         mime_types=["image/jpeg", "image/png"],
                         default=True,
                         name="Images JPEG/PNG",
                     )
                 ]
             ),
-            label=Widget.Label(label='Select', ellipsize="end", max_width_chars=20)
+            label=widgets.Label(label='Select', ellipsize="end", max_width_chars=20)
         )
     """
 
@@ -62,31 +69,27 @@ class FileChooserButton(Gtk.Button, BaseWidget):
 
         self.connect(
             "clicked",
-            lambda *args: self.dialog.open_dialog(),
+            lambda *args: asyncio.create_task(self.dialog.open_dialog()),
         )
 
-    @GObject.Property
+    @IgnisProperty
     def dialog(self) -> FileDialog:
         """
-        - required, read-only
-
-        An instance of :class:`~ignis.widgets.Widget.FileDialog`.
+        An instance of :class:`~ignis.widgets.FileDialog`.
         """
         return self._dialog
 
-    @GObject.Property
+    @IgnisProperty
     def label(self) -> Label:
         """
-        - required, read-only
-
-        An instance of :class:`~ignis.widgets.Widget.Label`.
+        An instance of :class:`~ignis.widgets.Label`.
         """
         return self._label
 
     def __sync(self, path: str) -> None:
         self.label.label = os.path.basename(path)
         try:
-            self.__file_icon.icon_name = Utils.get_file_icon_name(path, symbolic=True)
+            self.__file_icon.icon_name = utils.get_file_icon_name(path, symbolic=True)
             self.__file_icon.visible = True
         except FileNotFoundError:
             pass

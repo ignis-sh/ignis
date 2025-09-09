@@ -1,7 +1,8 @@
+import asyncio
 from ignis.dbus import DBusProxy
-from gi.repository import GObject  # type: ignore
-from ignis.utils import Utils
+from ignis import utils
 from ignis.base_service import BaseService
+from ignis.gobject import IgnisProperty, IgnisSignal
 from .player import MprisPlayer
 
 
@@ -24,62 +25,56 @@ class MprisService(BaseService):
         super().__init__()
         self._players: dict[str, MprisPlayer] = {}
 
-        self.__dbus = DBusProxy(
+        self.__dbus = DBusProxy.new(
             name="org.freedesktop.DBus",
             object_path="/org/freedesktop/DBus",
             interface_name="org.freedesktop.DBus",
-            info=Utils.load_interface_xml("org.freedesktop.DBus"),
+            info=utils.load_interface_xml("org.freedesktop.DBus"),
         )
 
         self.__dbus.signal_subscribe(
             signal_name="NameOwnerChanged",
-            callback=lambda *args: self.__init_player(args[5][0]),
+            callback=lambda *args: asyncio.create_task(self.__init_player(args[5][0])),
         )
 
-        self.__get_players()
+        asyncio.create_task(self.__get_players())
 
-    def __get_players(self) -> None:
+    async def __get_players(self) -> None:
         all_names = self.__dbus.ListNames()
         for name in all_names:
-            self.__init_player(name)
+            await self.__init_player(name)
 
-    def __init_player(self, name: str) -> None:
+    async def __init_player(self, name: str) -> None:
         if (
             name.startswith("org.mpris.MediaPlayer2")
             and name not in self._players
             and name != "org.mpris.MediaPlayer2.playerctld"
         ):
-            player = MprisPlayer(name)
-            player.connect("ready", self.__add_player, name)
+            player = await MprisPlayer.new_async(name)
 
-    def __add_player(self, player: MprisPlayer, name: str) -> None:
-        self._players[name] = player
-        player.connect("closed", lambda x: self.__remove_player(name))
-        self.emit("player_added", player)
-        self.notify("players")
+            self._players[name] = player
+            player.connect("closed", lambda x: self.__remove_player(name))
+            self.emit("player_added", player)
+            self.notify("players")
 
     def __remove_player(self, name: str) -> None:
         if name in self._players:
             self._players.pop(name)
             self.notify("players")
 
-    @GObject.Signal(arg_types=(MprisPlayer,))
-    def player_added(self, *args):
+    @IgnisSignal
+    def player_added(self, player: MprisPlayer):
         """
-        - Signal
-
         Emitted when a player has been added.
 
         Args:
-            player (:class:`~ignis.services.mpris.MprisPlayer`): The instance of the player.
+            player: The instance of the player.
         """
         pass
 
-    @GObject.Property
+    @IgnisProperty
     def players(self) -> list[MprisPlayer]:
         """
-        - read-only
-
         A list of currently active players.
         """
         return list(self._players.values())

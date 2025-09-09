@@ -1,18 +1,10 @@
 name: Documentation
-description: Improvements or additions to documentation
+description: Suggest improvements or additions to the documentation
 labels: ["documentation"]
 body:
-  - type: markdown
-    attributes:
-      value: |
-        Before opening a new issue, take a moment to search through the current open ones.
-
-        ---
-
   - type: textarea
-    id: desc
     attributes:
       label: Description
-      description: "Describe your idea"
+      description: "Clearly describe your suggestion for improving the documentation"
     validations:
       required: true

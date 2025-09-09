@@ -1,13 +1,14 @@
-from gi.repository import Gtk, GObject, GLib  # type: ignore
-from typing import Any, Callable, Union
-from ignis.gobject import IgnisGObject
-from ignis.exceptions import CssParsingError
-
-
-def raise_css_parsing_error(
-    css_provider: Gtk.CssProvider, section: Gtk.CssSection, gerror: GLib.GError
-) -> None:
-    raise CssParsingError(section, gerror)
+from gi.repository import Gtk, GObject  # type: ignore
+from typing import Any
+from collections.abc import Callable
+from ignis.gobject import IgnisGObject, IgnisProperty
+from ignis._deprecation import ignore_deprecation_warnings
+from ignis.css_manager import (
+    CssManager,
+    StylePriority,
+    _raise_css_parsing_error,
+    GTK_STYLE_PRIORITIES,
+)
 
 
 class BaseWidget(Gtk.Widget, IgnisGObject):
@@ -24,6 +25,7 @@ class BaseWidget(Gtk.Widget, IgnisGObject):
     def __init__(
         self,
         setup: Callable | None = None,
+        style_priority: StylePriority | None = None,
         vexpand: bool = False,
         hexpand: bool = False,
         visible: bool = True,
@@ -32,7 +34,14 @@ class BaseWidget(Gtk.Widget, IgnisGObject):
         Gtk.Widget.__init__(self)
 
         self._style: str | None = None
-        self._css_provider: Union[Gtk.CssProvider, None] = None
+        self._css_provider: Gtk.CssProvider | None = None
+
+        css_manager = CssManager.get_default()
+        self._style_priority: StylePriority = (
+            css_manager.widgets_style_priority
+            if style_priority is None
+            else style_priority
+        )
 
         self.vexpand = vexpand
         self.hexpand = hexpand
@@ -46,29 +55,57 @@ class BaseWidget(Gtk.Widget, IgnisGObject):
         if setup:
             setup(self)
 
-    @GObject.property
+    @IgnisProperty
     def style(self) -> str | None:
         return self._style
 
     @style.setter
     def style(self, value: str) -> None:
         if self._css_provider:
-            self.get_style_context().remove_provider(self._css_provider)
+            with ignore_deprecation_warnings():
+                self.get_style_context().remove_provider(self._css_provider)
 
         if "{" not in value and "}" not in value:
             value = "* {" + value + "}"
 
         css_provider = Gtk.CssProvider()
-        css_provider.connect("parsing-error", raise_css_parsing_error)
+        css_provider.connect("parsing-error", _raise_css_parsing_error)
 
-        css_provider.load_from_data(value.encode())
+        css_provider.load_from_string(value)
 
-        self.get_style_context().add_provider(
-            css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-        )
+        with ignore_deprecation_warnings():
+            self.get_style_context().add_provider(
+                css_provider, GTK_STYLE_PRIORITIES[self._style_priority]
+            )
 
         self._css_provider = css_provider
         self._style = value
+
+    @IgnisProperty
+    def style_priority(self) -> StylePriority:
+        """
+        The style priority for this widget.
+        Overrides :attr:`~ignis.app.IgnisApp.widgets_style_priority`.
+
+        More info about style priorities: :obj:`Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION`.
+
+        .. warning::
+            Changing this property won't affect an already applied style!
+
+            .. code-block:: python
+
+                some_widget = WIDGET_NAME(
+                    style="some style",
+                    style_priority="user"
+                )
+                some_widget.style_priority = "application"  # nothing change for current style
+                some_widget.style = "new style"  # this style will have "application" priority
+        """
+        return self._style_priority
+
+    @style_priority.setter
+    def style_priority(self, value: StylePriority) -> None:
+        self._style_priority = value
 
     def set_property(self, property_name: str, value: Any) -> None:
         """

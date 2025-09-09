@@ -1,5 +1,7 @@
 on: 
   push:
+    branches:
+      - main
     paths:
       - "ignis/**"
       - "examples/**"
@@ -8,6 +10,7 @@ on:
     paths:
       - "ignis/**"
       - "examples/**"
+      - ".github/workflows/static.yaml"
 
 name: Static Analysis
 jobs:
@@ -20,11 +23,13 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: 'pip'
 
       - name: Install system dependencies
-        run: |
-          sudo apt update
-          sudo apt install libcairo2-dev
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: libcairo2-dev
+          version: 1.0
       
       - name: Install Python dependencies
         run: |
@@ -45,6 +50,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: 'pip'
+
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip

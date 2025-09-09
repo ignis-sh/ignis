@@ -1,5 +1,5 @@
 Scale
 -----
 
-.. autoclass:: ignis.widgets.Widget.Scale
+.. autoclass:: ignis.widgets.Scale
     :members:

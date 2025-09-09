@@ -1,5 +1,5 @@
 Icon
 ----
 
-.. autoclass:: ignis.widgets.Widget.Icon
+.. autoclass:: ignis.widgets.Icon
     :members:

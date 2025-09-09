@@ -1,5 +1,5 @@
 Picture
 -------
 
-.. autoclass:: ignis.widgets.Widget.Picture
+.. autoclass:: ignis.widgets.Picture
     :members:

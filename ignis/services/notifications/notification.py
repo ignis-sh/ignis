@@ -1,7 +1,6 @@
 from ignis.dbus import DBusService
-from gi.repository import GObject  # type: ignore
-from ignis.utils import Utils
-from ignis.gobject import IgnisGObject
+from ignis import utils
+from ignis.gobject import IgnisGObject, IgnisProperty, IgnisSignal
 from .action import NotificationAction
 
 
@@ -16,7 +15,7 @@ class Notification(IgnisGObject):
         dbus: DBusService,
         id: int,
         app_name: str,
-        icon: str,
+        icon: str | None,
         summary: str,
         body: str,
         actions: list[str],
@@ -47,102 +46,80 @@ class Notification(IgnisGObject):
             for i in range(0, len(actions), 2)
         ]
 
-        Utils.Timeout(timeout, self.dismiss)
+        utils.Timeout(timeout, self.dismiss)
 
-    @GObject.Signal
+    @IgnisSignal
     def closed(self):
         """
-        - Signal
-
         Emitted when notification has been closed.
         """
 
-    @GObject.Signal
+    @IgnisSignal
     def dismissed(self):
         """
-        - Signal
-
         Emitted when notification has been dismissed.
         """
 
-    @GObject.Property
+    @IgnisProperty
     def id(self) -> int:
         """
-        - read-only
-
         The ID of the notification.
         """
         return self._id
 
-    @GObject.Property
+    @IgnisProperty
     def app_name(self) -> str:
         """
-        - read-only
-
         The name of the application that sent the notification.
         """
         return self._app_name
 
-    @GObject.Property
-    def icon(self) -> str:
+    @IgnisProperty
+    def icon(self) -> str | None:
         """
-        - read-only
-
         The icon name, path to image or ``None``.
         """
         return self._icon
 
-    @GObject.Property
+    @IgnisProperty
     def summary(self) -> str:
         """
-        - read-only
-
         The summary text of the notification, usually the title.
         """
         return self._summary
 
-    @GObject.Property
+    @IgnisProperty
     def body(self) -> str:
         """
-        - read-only
-
         The body text of the notification, usually containing additional information.
         """
         return self._body
 
-    @GObject.Property
+    @IgnisProperty
     def actions(self) -> list["NotificationAction"]:
         """
-        - read-only
-
         A list of actions associated with the notification.
         """
         return self._actions
 
-    @GObject.Property
+    @IgnisProperty
     def timeout(self) -> int:
         """
-        - read-only
-
         The timeout for the notification.
         Usually equal to the ``popup_timeout`` property of the :class:`~ignis.services.NotificationService` unless the notification specifies otherwise.
         """
         return self._timeout
 
-    @GObject.Property
+    @IgnisProperty
     def time(self) -> float:
         """
-        - read-only
-
         Time in POSIX format when the notification was sent.
         """
         return self._time
 
-    @GObject.Property
+    @IgnisProperty
     def urgency(self) -> int:
         """
-        - read-only
-
         The urgency of the notification.
 
         Levels:
@@ -153,20 +130,16 @@ class Notification(IgnisGObject):
         """
         return self._urgency
 
-    @GObject.Property
+    @IgnisProperty
     def popup(self) -> bool:
         """
-        - read-only
-
         Whether the notification is a popup.
         """
         return self._popup
 
-    @GObject.Property
+    @IgnisProperty
     def json(self) -> dict:
         """
-        - read-only
-
         The notification data in dictionary format.
         """
         return {

@@ -1,5 +1,6 @@
-from gi.repository import Gtk, GObject  # type: ignore
+from gi.repository import Gtk  # type: ignore
 from ignis.base_widget import BaseWidget
+from ignis.gobject import IgnisProperty
 
 
 class Grid(Gtk.Grid, BaseWidget):
@@ -8,17 +9,20 @@ class Grid(Gtk.Grid, BaseWidget):
 
     A container that arranges its child widgets in rows and columns.
 
+    Args:
+        **kwargs: Properties to set.
+
     .. code-block:: python
 
-        Widget.Grid(
-            child=[Widget.Button(label=str(i)), for i in range(100)],
+        widgets.Grid(
+            child=[widgets.Button(label=str(i)), for i in range(100)],
             column_num=3
         )
 
     .. code-block:: python
 
-        Widget.Grid(
-            child=[Widget.Button(label=str(i)), for i in range(100)],
+        widgets.Grid(
+            child=[widgets.Button(label=str(i)), for i in range(100)],
             row_num=3
         )
     """
@@ -35,11 +39,9 @@ class Grid(Gtk.Grid, BaseWidget):
         self._child: list[Gtk.Widget] = []
         BaseWidget.__init__(self, **kwargs)
 
-    @GObject.Property
+    @IgnisProperty
     def column_num(self) -> int:
         """
-        - optional, read-write
-
         The number of columns.
         """
         return self._column_num
@@ -49,11 +51,9 @@ class Grid(Gtk.Grid, BaseWidget):
         self._column_num = value
         self.__apply()
 
-    @GObject.Property
+    @IgnisProperty
     def row_num(self) -> int:
         """
-        - optional, read-write
-
         The number of rows. This will not take effect if ``column_num`` is specified.
         """
         return self._row_num
@@ -63,11 +63,9 @@ class Grid(Gtk.Grid, BaseWidget):
         self._row_num = value
         self.__apply()
 
-    @GObject.Property
+    @IgnisProperty
     def child(self) -> list[Gtk.Widget]:
         """
-        - optional, read-write
-
         A list of child widgets.
         """
         return self._child

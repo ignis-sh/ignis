@@ -1,9 +1,9 @@
 from __future__ import annotations
 import os
-from gi.repository import GObject  # type: ignore
 from ignis.dbus import DBusProxy
-from ignis.utils import Utils
+from ignis import utils
 from ignis.base_service import BaseService
+from ignis.gobject import IgnisProperty
 from typing import Literal
 from .unit import SystemdUnit
 
@@ -41,11 +41,11 @@ class SystemdService(BaseService):
 
         self._bus_type = bus_type
 
-        self._proxy = DBusProxy(
+        self._proxy = DBusProxy.new(
             name="org.freedesktop.systemd1",
             object_path="/org/freedesktop/systemd1",
             interface_name="org.freedesktop.systemd1.Manager",
-            info=Utils.load_interface_xml("org.freedesktop.systemd1.Manager"),
+            info=utils.load_interface_xml("org.freedesktop.systemd1.Manager"),
             bus_type=bus_type,
         )
 
@@ -72,24 +72,20 @@ class SystemdService(BaseService):
             setattr(cls, instance_attr, cls(bus_type))  # type: ignore
         return getattr(cls, instance_attr)
 
-    @GObject.Property
+    @IgnisProperty
     def bus_type(self) -> Literal["session", "system"]:
         """
-        - read-only
-
         The bus type.
         """
         return self._bus_type
 
-    @GObject.Property
+    @IgnisProperty
     def units(self) -> list[SystemdUnit]:
         """
-        - read-only
-
         A list of all systemd units on the bus.
         """
         units = []
-        for item in self._proxy.proxy.ListUnitFiles():
+        for item in self._proxy.gproxy.ListUnitFiles():
             unit_name = os.path.basename(item[0])
             if "@" not in unit_name:
                 units.append(self.get_unit(unit_name))
@@ -106,5 +102,5 @@ class SystemdService(BaseService):
         Returns:
             :class:`~ignis.services.systemd.SystemdUnit`
         """
-        object_path = self._proxy.proxy.LoadUnit("(s)", unit)
+        object_path = self._proxy.gproxy.LoadUnit("(s)", unit)
         return SystemdUnit(object_path, self._bus_type)

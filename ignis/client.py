@@ -1,6 +1,10 @@
 from ignis.dbus import DBusProxy
-from ignis.utils import Utils
-from ignis.exceptions import WindowNotFoundError, IgnisNotRunningError
+from ignis import utils
+from ignis.exceptions import (
+    CommandNotFoundError,
+    WindowNotFoundError,
+    IgnisNotRunningError,
+)
 from typing import Any
 
 
@@ -30,18 +34,16 @@ class IgnisClient:
     """
 
     def __init__(self):
-        self.__dbus = DBusProxy(
+        self.__dbus = DBusProxy.new(
             name="com.github.linkfrg.ignis",
             object_path="/com/github/linkfrg/ignis",
             interface_name="com.github.linkfrg.ignis",
-            info=Utils.load_interface_xml("com.github.linkfrg.ignis"),
+            info=utils.load_interface_xml("com.github.linkfrg.ignis"),
         )
 
     @property
     def has_owner(self) -> bool:
         """
-        - read-only
-
         Whether D-Bus name has the owner (Whether Ignis is running).
         """
         return self.__dbus.has_owner
@@ -59,19 +61,19 @@ class IgnisClient:
 
     def open_window(self, window_name: str) -> None:
         """
-        Same as :func:`~ignis.app.IgnisApp.open_window`.
+        Same as :func:`~ignis.window_manager.WindowManager.open_window`.
         """
         self.__call_window_method("OpenWindow", window_name)
 
     def close_window(self, window_name: str) -> None:
         """
-        Same as :func:`~ignis.app.IgnisApp.close_window`.
+        Same as :func:`~ignis.window_manager.WindowManager.close_window`.
         """
         self.__call_window_method("CloseWindow", window_name)
 
     def toggle_window(self, window_name: str) -> None:
         """
-        Same as :func:`~ignis.app.IgnisApp.toggle_window`.
+        Same as :func:`~ignis.window_manager.WindowManager.toggle_window`.
         """
         self.__call_window_method("ToggleWindow", window_name)
 
@@ -83,6 +85,28 @@ class IgnisClient:
             list[str]: A list of all window names.
         """
         return self.__call_dbus_method("ListWindows")
+
+    def list_commands(self) -> list[str]:
+        """
+        Get a list of all command names.
+
+        Returns:
+            list[str]: A list of all command names.
+        """
+        return self.__call_dbus_method("ListCommands")
+
+    def run_command(self, command_name: str, command_args: list[str]) -> str:
+        """
+        Same as :func:`~ignis.command_manager.CommandManager.run_command`.
+        """
+        command_error, command_output = self.__call_dbus_method(
+            "RunCommand", "(sas)", command_name, command_args
+        )
+        if command_error == str(CommandNotFoundError(command_name)):
+            raise CommandNotFoundError(command_name)
+        elif command_error != "":
+            raise Exception(command_error)
+        return command_output
 
     def quit(self) -> None:
         """

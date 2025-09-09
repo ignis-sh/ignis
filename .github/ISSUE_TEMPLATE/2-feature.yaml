@@ -1,18 +1,10 @@
 name: Feature Request
-description: I'd like to request additional functionality
+description: Suggest a new feature or improvement
 labels: ["enhancement"]
 body:
-  - type: markdown
-    attributes:
-      value: |
-        Before opening a new issue, take a moment to search through the current open ones.
-
-        ---
-
   - type: textarea
-    id: desc
     attributes:
-      label: Description
-      description: "Describe your idea"
+      label: Feature Description
+      description: "Clearly describe the feature or improvement you'd like to see"
     validations:
       required: true

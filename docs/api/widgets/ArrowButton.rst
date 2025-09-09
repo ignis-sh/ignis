@@ -1,5 +1,5 @@
 ArrowButton
 -----------
 
-.. autoclass:: ignis.widgets.Widget.ArrowButton
+.. autoclass:: ignis.widgets.ArrowButton
     :members:

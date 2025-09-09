@@ -1,0 +1,17 @@
+name: Build PR Documentation
+
+on:
+  pull_request:
+    paths:
+      - "ignis/**"
+      - "docs/**"
+      - ".github/workflows/pr_docs.yaml"
+      - ".github/workflows/_build_docs.yaml"
+    branches:
+      - '*'
+
+jobs:
+  build:
+    uses: ./.github/workflows/_build_docs.yaml
+    with:
+      DOC_TAG: "latest"

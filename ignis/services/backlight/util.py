@@ -1,13 +1,13 @@
 import os
 from ignis.dbus import DBusProxy
-from ignis.utils import Utils
+from ignis import utils
 
 
 def get_session_path() -> str:
-    proxy = DBusProxy(
+    proxy = DBusProxy.new(
         name="org.freedesktop.login1",
         object_path="/org/freedesktop/login1",
-        info=Utils.load_interface_xml("org.freedesktop.login1.Manager"),
+        info=utils.load_interface_xml("org.freedesktop.login1.Manager"),
         interface_name="org.freedesktop.login1.Manager",
         bus_type="system",
     )

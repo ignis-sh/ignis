@@ -6,6 +6,6 @@ on:
 
 jobs:
   build:
-    uses: ./.github/workflows/build_docs.yaml
+    uses: ./.github/workflows/_deploy_docs.yaml
     with:
       DOC_TAG: ${{ github.ref_name }}

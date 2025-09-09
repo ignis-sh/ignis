@@ -11,8 +11,9 @@ Replace ``WIDGET_NAME`` with the actual name of the widget.
 
 .. code-block:: python
 
-    from gi.repository import Gtk, GObject
+    from gi.repository import Gtk
     from ignis.base_widget import BaseWidget
+    from ignis.gobject import IgnisProperty
 
 
     class WIDGET_NAME(Gtk.WIDGET_NAME, BaseWidget):
@@ -27,7 +28,7 @@ Replace ``WIDGET_NAME`` with the actual name of the widget.
             self._custom_property = None  # define protected/private variables for your custom properties BEFORE BaseWidget.__init__(self, **kwargs)
             BaseWidget.__init__(self, **kwargs)  # this sets all properties transferred to kwargs
 
-        @GObject.Property
+        @IgnisProperty
         def custom_property(self) -> bool:
             return self._custom_property
 

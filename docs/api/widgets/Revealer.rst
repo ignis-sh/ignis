@@ -1,5 +1,5 @@
 Revealer
 --------
 
-.. autoclass:: ignis.widgets.Widget.Revealer
+.. autoclass:: ignis.widgets.Revealer
     :members:

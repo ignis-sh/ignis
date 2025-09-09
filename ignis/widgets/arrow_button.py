@@ -1,6 +1,6 @@
-from gi.repository import GObject  # type: ignore
 from ignis.widgets.button import Button
 from ignis.widgets.arrow import Arrow
+from ignis.gobject import IgnisProperty
 
 
 class ArrowButton(Button):
@@ -9,10 +9,14 @@ class ArrowButton(Button):
 
     A simple button with an arrow. On click, it will toggle (rotate) the arrow.
 
+    Args:
+        arrow: An instance of an arrow.
+        **kwargs: Properties to set.
+
     .. code-block:: python
 
-        Widget.ArrowButton(
-            arrow=Widget.Arrow(
+        widgets.ArrowButton(
+            arrow=widgets.Arrow(
                 ... # Arrow-specific properties go here
             )
         )
@@ -26,17 +30,15 @@ class ArrowButton(Button):
         super().__init__(child=self._arrow, **kwargs)
         self.connect("clicked", lambda x: self._arrow.toggle())
 
-    @GObject.Property
+    @IgnisProperty
     def arrow(self) -> Arrow:
         """
-        - required, read-only
-
         An instance of an arrow.
         """
         return self._arrow
 
     def toggle(self) -> None:
         """
-        Same as :func:`~ignis.widgets.Widget.Arrow.toggle`
+        Same as :func:`~ignis.widgets.Arrow.toggle`
         """
         self._arrow.toggle()

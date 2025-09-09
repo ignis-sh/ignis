@@ -1,5 +1,5 @@
 ToggleButton
 ------------
 
-.. autoclass:: ignis.widgets.Widget.ToggleButton
+.. autoclass:: ignis.widgets.ToggleButton
     :members:

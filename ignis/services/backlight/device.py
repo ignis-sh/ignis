@@ -1,7 +1,6 @@
 import os
-from ignis.gobject import IgnisGObject
-from gi.repository import GObject  # type: ignore
-from ignis.utils import Utils
+from ignis.gobject import IgnisGObject, IgnisProperty
+from ignis import utils
 from ignis.dbus import DBusProxy
 from .constants import SYS_BACKLIGHT
 from .util import get_session_path
@@ -28,17 +27,17 @@ class BacklightDevice(IgnisGObject):
         with open(self._PATH_TO_MAX_BRIGHTNESS) as backlight_file:
             self._max_brightness = int(backlight_file.read().strip())
 
-        Utils.FileMonitor(
+        utils.FileMonitor(
             path=self._PATH_TO_BRIGHTNESS,
             callback=lambda x, path, event_type: self.__sync_brightness()
             if event_type != "changed"  # "changed" event is called multiple times
             else None,
         )
 
-        self.__session_proxy = DBusProxy(
+        self.__session_proxy = DBusProxy.new(
             name="org.freedesktop.login1",
             object_path=get_session_path(),
-            info=Utils.load_interface_xml("org.freedesktop.login1.Session"),
+            info=utils.load_interface_xml("org.freedesktop.login1.Session"),
             interface_name="org.freedesktop.login1.Session",
             bus_type="system",
         )
@@ -51,29 +50,23 @@ class BacklightDevice(IgnisGObject):
 
         self.notify("brightness")
 
-    @GObject.Property
+    @IgnisProperty
     def device_name(self) -> str:
         """
-        - read-only
-
         The name of the directory in ``/sys/class/backlight``.
         """
         return self._device_name
 
-    @GObject.Property
+    @IgnisProperty
     def max_brightness(self) -> int:
         """
-        - read-only
-
         The maximum brightness allowed by the device.
         """
         return self._max_brightness
 
-    @GObject.Property
+    @IgnisProperty
     def brightness(self) -> int:
         """
-        - read-write
-
         The current brightness of the device.
         """
         return self._brightness
@@ -85,5 +78,18 @@ class BacklightDevice(IgnisGObject):
             "backlight",
             self._device_name,
             value,
-            result_handler=lambda *args: None,
+        )
+
+    async def set_brightness_async(self, value: int) -> None:
+        """
+        Asynchronously set brightness.
+
+        Args:
+            value: The value to set.
+        """
+        await self.__session_proxy.SetBrightnessAsync(
+            "(ssu)",
+            "backlight",
+            self._device_name,
+            value,
         )

@@ -1,15 +1,17 @@
 import os
 import sys
-import shutil
 from sphinx.ext.autodoc.mock import mock
+
+sys.path.insert(0, os.path.abspath("."))
+sys.path.insert(0, os.path.abspath(".."))
 
 # ============================== PROJECT INFO ===============================
 
 project = "Ignis"
 copyright = "2024, linkfrg"
 author = "linkfrg"
-REPO_URL = "https://github.com/linkfrg/ignis"
-DOCS_URL = "https://linkfrg.github.io/ignis/latest"
+REPO_URL = "https://github.com/ignis-sh/ignis"
+DOCS_URL = "https://ignis-sh.github.io/ignis/latest"
 
 extensions = [
     "sphinx.ext.intersphinx",
@@ -18,6 +20,8 @@ extensions = [
     "sphinx_design",
     "sphinx_copybutton",
     "sphinx_autodoc_typehints",
+    "sphinx_click",
+    "_ext.ignis_directives",
 ]
 
 intersphinx_mapping = {
@@ -28,6 +32,7 @@ intersphinx_mapping = {
     "gdkpixbuf": ("https://lazka.github.io/pgi-docs/GdkPixbuf-2.0", None),
     "nm": ("https://lazka.github.io/pgi-docs/NM-1.0", None),
     "gobject": ("https://lazka.github.io/pgi-docs/GObject-2.0", None),
+    "pygobject": ("https://pygobject.gnome.org", None),
 }
 
 templates_path = ["_templates"]
@@ -36,7 +41,7 @@ suppress_warnings = ["config.cache"]
 
 # ============================ AUTODOC/TYPEHINTS ============================
 
-autodoc_mock_imports = ["gi", "loguru", "setuptools", "click", "cairo", "requests"]
+autodoc_mock_imports = ["gi", "loguru", "setuptools", "click", "cairo"]
 autodoc_member_order = "bysource"
 
 smartquotes = False
@@ -46,24 +51,6 @@ typehints_use_signature = True
 typehints_use_signature_return = True
 typehints_defaults = "comma"
 always_use_bars_union = True
-
-# =============================== PATH STUFF ================================
-
-TMP_DIR = "./tmp"
-SOURCE_DIR = "../ignis"
-TARGET_DIR = TMP_DIR + "/ignis"
-
-
-def copy_dir(source_dir: str, target_dir: str) -> None:
-    if os.path.exists(target_dir):
-        shutil.rmtree(target_dir)
-
-    shutil.copytree(source_dir, target_dir)
-
-
-copy_dir(SOURCE_DIR, TARGET_DIR)
-
-sys.path.insert(0, os.path.abspath(TMP_DIR))
 
 # =============================== VERSIONING ================================
 
@@ -118,31 +105,8 @@ html_theme_options = {
 }
 
 html_context = {
-    "github_user": "linkfrg",
+    "github_user": "ignis-sh",
     "github_repo": "ignis",
     "github_version": "main",
     "doc_path": "docs/",
 }
-
-# ============================== CUSTOM STUFF ===============================
-
-
-def replace_gobject_property(target_dir: str) -> None:
-    """
-    This function replaces @GObject.Property with @property.
-    For what? To indicate to Sphinx that GObject.Property functions are actually properties.
-    """
-    for dirpath, _, filenames in os.walk(target_dir):
-        for filename in filenames:
-            if filename.endswith(".py"):
-                file_path = os.path.join(dirpath, filename)
-                with open(file_path) as file:
-                    content = file.read()
-
-                new_content = content.replace("@GObject.Property", "@property")
-
-                with open(file_path, "w", encoding="utf-8") as file:
-                    file.write(new_content)
-
-
-replace_gobject_property(TARGET_DIR)

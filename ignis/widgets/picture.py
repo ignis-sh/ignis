@@ -1,8 +1,8 @@
 import os
 from ignis.base_widget import BaseWidget
-from gi.repository import Gtk, GObject, GdkPixbuf, Gdk  # type: ignore
-from ignis.utils import Utils
-from typing import Union
+from gi.repository import Gtk, GdkPixbuf, Gdk  # type: ignore
+from ignis import utils
+from ignis.gobject import IgnisProperty
 
 
 class Picture(Gtk.Picture, BaseWidget):
@@ -22,9 +22,12 @@ class Picture(Gtk.Picture, BaseWidget):
 
         For more info, see :class:`Gtk.ContentFit`.
 
+    Args:
+        **kwargs: Properties to set.
+
     .. code-block:: python
 
-        Widget.Picture(
+        widgets.Picture(
             image='path/to/img',
             width=20,
             height=30
@@ -41,7 +44,7 @@ class Picture(Gtk.Picture, BaseWidget):
         self.override_enum("content_fit", Gtk.ContentFit)
 
         # avoid custom setters to avoid running the __draw function multiple times during initialization
-        self._image: Union[str, GdkPixbuf.Pixbuf, None] = None
+        self._image: str | GdkPixbuf.Pixbuf | None = None
         self._width = width
         self._height = height
         self.width_request = width
@@ -51,25 +54,21 @@ class Picture(Gtk.Picture, BaseWidget):
 
         BaseWidget.__init__(self, **kwargs)
 
-    @GObject.Property
-    def image(self) -> Union[str, GdkPixbuf.Pixbuf, None]:
+    @IgnisProperty
+    def image(self) -> "str | GdkPixbuf.Pixbuf | None":
         """
-        - optional, read-write
-
         The icon name, path to an image or ``GdkPixbuf.Pixbuf``.
         """
         return self._image
 
     @image.setter
-    def image(self, value: Union[str, GdkPixbuf.Pixbuf]) -> None:
+    def image(self, value: "str | GdkPixbuf.Pixbuf") -> None:
         self._image = value
         self.__draw(value)
 
-    @GObject.Property
+    @IgnisProperty
     def width(self) -> int:
         """
-        - optional, read-write
-
         Width of the image.
         """
         return self._width
@@ -80,11 +79,9 @@ class Picture(Gtk.Picture, BaseWidget):
         self.width_request = value
         self.__draw(self.image)
 
-    @GObject.Property
+    @IgnisProperty
     def height(self) -> int:
         """
-        - optional, read-write
-
         Height of the image.
         """
         return self._height
@@ -95,7 +92,7 @@ class Picture(Gtk.Picture, BaseWidget):
         self.height_request = value
         self.__draw(self.image)
 
-    def __draw(self, image: Union[str, GdkPixbuf.Pixbuf]):
+    def __draw(self, image: "str | GdkPixbuf.Pixbuf") -> None:
         if isinstance(image, GdkPixbuf.Pixbuf):
             self.__set_from_pixbuf(image)
         elif isinstance(image, str):
@@ -140,7 +137,7 @@ class Picture(Gtk.Picture, BaseWidget):
         if size <= 0:
             size = 16
 
-        paintable = Utils.get_paintable(self, icon_name, size)
+        paintable = utils.get_paintable(self, icon_name, size)
 
         if not paintable:
             return
@@ -160,7 +157,7 @@ class Picture(Gtk.Picture, BaseWidget):
 
     def __scale_pixbuf(
         self, pixbuf: GdkPixbuf.Pixbuf, width: int, height: int
-    ) -> Union[GdkPixbuf.Pixbuf, None]:
+    ) -> "GdkPixbuf.Pixbuf | None":
         if width <= 0:
             return pixbuf
 
@@ -168,6 +165,6 @@ class Picture(Gtk.Picture, BaseWidget):
             return pixbuf
 
         if self.content_fit == "cover":
-            pixbuf = Utils.crop_pixbuf(pixbuf, width, height)
+            pixbuf = utils.crop_pixbuf(pixbuf, width, height)
 
-        return Utils.scale_pixbuf(pixbuf, width, height)
+        return utils.scale_pixbuf(pixbuf, width, height)

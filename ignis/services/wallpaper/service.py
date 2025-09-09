@@ -1,9 +1,8 @@
 import os
 import shutil
-from ignis.utils import Utils
-from gi.repository import GObject  # type: ignore
-from ignis.services.options import OptionsService
+from ignis import utils
 from ignis.base_service import BaseService
+from ignis.options import options
 from .window import WallpaperLayerWindow
 from .constants import CACHE_WALLPAPER_PATH
 
@@ -13,6 +12,8 @@ class WallpaperService(BaseService):
     A simple service to set the wallpaper.
     Supports multiple monitors.
 
+    There are options available for this service: :class:`~ignis.options.Options.Wallpaper`.
+
     Example usage:
 
     .. code-block:: python
@@ -20,43 +21,28 @@ class WallpaperService(BaseService):
         .. code-block:: python
 
         from ignis.services.wallpaper import WallpaperService
+        from ignis.options import options
 
-        wallpaper = WallpaperService.get_default()
+        WallpaperService.get_default()  # just to initialize it
 
-        wallpaper.set_wallpaper("path/to/image")
-
+        options.wallpaper.set_wallpaper_path("path/to/image")
     """
 
     def __init__(self):
         super().__init__()
         self._windows: list[WallpaperLayerWindow] = []
-
-        options = OptionsService.get_default()
-
-        opt_group = options.create_group(name="wallpaper", exists_ok=True)
-        self._wallpaper_path_opt = opt_group.create_option(
-            name="wallpaper_path", default=None, exists_ok=True
+        options.wallpaper.connect_option(
+            "wallpaper_path", lambda: self.__update_wallpaper()
         )
-
         self.__sync()
 
-    @GObject.Property
-    def wallpaper(self) -> str:
-        """
-        - read-write
-
-        The path to the image.
-        """
-        return self._wallpaper_path_opt.value
-
-    @wallpaper.setter
-    def wallpaper(self, value: str) -> None:
+    def __update_wallpaper(self) -> None:
         try:
-            shutil.copy(value, CACHE_WALLPAPER_PATH)
+            if options.wallpaper.wallpaper_path is not None:
+                shutil.copyfile(options.wallpaper.wallpaper_path, CACHE_WALLPAPER_PATH)
         except shutil.SameFileError:
             return
 
-        self._wallpaper_path_opt.value = value
         self.__sync()
 
     def __sync(self) -> None:
@@ -68,8 +54,8 @@ class WallpaperService(BaseService):
 
         self._windows = []
 
-        for monitor_id in range(Utils.get_n_monitors()):
-            gdkmonitor = Utils.get_monitor(monitor_id)
+        for monitor_id in range(utils.get_n_monitors()):
+            gdkmonitor = utils.get_monitor(monitor_id)
             if not gdkmonitor:
                 return
 

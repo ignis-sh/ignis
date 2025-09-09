@@ -1,8 +1,9 @@
 import os
-from gi.repository import GObject, Gtk, Gdk  # type: ignore
-from ignis.exceptions import DisplayNotFoundError
-from ignis.base_service import BaseService
 import glob
+from gi.repository import Gtk  # type: ignore
+from ignis.base_service import BaseService
+from ignis.gobject import IgnisProperty
+from ignis import utils
 
 
 class FetchService(BaseService):
@@ -24,6 +25,7 @@ class FetchService(BaseService):
 
     def __init__(self):
         super().__init__()
+        self._icon_theme = Gtk.IconTheme.get_for_display(utils.get_gdk_display())
         self._os_info = self.__get_os_info()
 
     def __get_os_info(self) -> dict[str, str]:
@@ -36,169 +38,139 @@ class FetchService(BaseService):
 
         return os_info
 
-    @GObject.Property
+    @IgnisProperty
     def os_name(self) -> str:
         """
-        - read-only
-
         The OS name.
         """
         return self._os_info.get("NAME", "Unknown")
 
-    @GObject.Property
+    @IgnisProperty
     def os_id(self) -> str:
         """
-        - read-only
-
         The OS ID.
         """
         return self._os_info.get("ID", "Unknown")
 
-    @GObject.Property
+    @IgnisProperty
     def os_build_id(self) -> str:
         """
-        - read-only
-
         The OS build ID.
         """
         return self._os_info.get("BUILD_ID", "Unknown")
 
-    @GObject.Property
+    @IgnisProperty
     def os_ansi_color(self) -> str:
         """
-        - read-only
-
         The OS ANSI color.
         """
         return self._os_info.get("ANSI_COLOR", "Unknown")
 
-    @GObject.Property
+    @IgnisProperty
     def os_home_url(self) -> str:
         """
-        - read-only
-
         The OS homepage URL.
         """
         return self._os_info.get("HOME_URL", "Unknown")
 
-    @GObject.Property
+    @IgnisProperty
     def os_documentation_url(self) -> str:
         """
-        - read-only
-
         The OS documentation URL.
         """
         return self._os_info.get("DOCUMENTATION_URL", "Unknown")
 
-    @GObject.Property
+    @IgnisProperty
     def os_support_url(self) -> str:
         """
-        - read-only
-
         The OS support URL.
         """
         return self._os_info.get("SUPPORT_URL", "Unknown")
 
-    @GObject.Property
+    @IgnisProperty
     def os_bug_report_url(self) -> str:
         """
-        - read-only
-
         The OS bug report URL.
         """
         return self._os_info.get("BUG_REPORT_URL", "Unknown")
 
-    @GObject.Property
+    @IgnisProperty
     def os_privacy_policy_url(self) -> str:
         """
-        - read-only
-
         The OS privacy policy URL.
         """
         return self._os_info.get("PRIVACY_POLICY_URL", "Unknown")
 
-    @GObject.Property
-    def os_logo(self) -> str:
-        """
-        - read-only
+    def __icon_or_none(self, icon_name: str) -> str | None:
+        if not self._icon_theme.has_icon(icon_name):
+            return None
+        else:
+            return icon_name
 
-        The OS logo icon name.
+    @IgnisProperty
+    def os_logo(self) -> str | None:
         """
-        return self._os_info.get("LOGO", "Unknown")
-
-    @GObject.Property
-    def os_logo_dark(self) -> str:
+        The OS logo icon name. ``None`` if not available.
         """
-        - read-only
+        return self._os_info.get("LOGO", None)
 
-        The OS dark logo icon name.
+    @IgnisProperty
+    def os_logo_dark(self) -> str | None:
         """
-        return f"{self.os_logo}-dark"
-
-    @GObject.Property
-    def os_logo_text(self) -> str:
+        The OS dark logo icon name. ``None`` if not available.
         """
-        - read-only
+        return self.__icon_or_none(f"{self.os_logo}-dark")
 
-        The OS logo with text icon name.
+    @IgnisProperty
+    def os_logo_text(self) -> str | None:
         """
-        return f"{self.os_logo}-text"
-
-    @GObject.Property
-    def os_logo_text_dark(self) -> str:
+        The OS logo with text icon name. ``None`` if not available.
         """
-        - read-only
+        return self.__icon_or_none(f"{self.os_logo}-text")
 
-        The OS dark logo with text icon name.
+    @IgnisProperty
+    def os_logo_text_dark(self) -> str | None:
         """
-        return f"{self.os_logo}-text-dark"
+        The OS dark logo with text icon name. ``None`` if not available.
+        """
+        return self.__icon_or_none(f"{self.os_logo}-text-dark")
 
-    @GObject.Property
+    @IgnisProperty
     def session_type(self) -> str | None:
         """
-        - read-only
-
         The current session type (wayland/x11).
         """
         return os.environ.get("XDG_SESSION_TYPE")
 
-    @GObject.Property
+    @IgnisProperty
     def current_desktop(self) -> str | None:
         """
-        - read-only
-
         The current desktop environment.
         """
         return os.environ.get("XDG_CURRENT_DESKTOP")
 
-    @GObject.Property
+    @IgnisProperty
     def hostname(self) -> str:
         """
-        - read-only
-
         The hostname of this machine.
         """
         with open("/etc/hostname") as file:
             data = file.read()
         return data
 
-    @GObject.Property
+    @IgnisProperty
     def kernel(self) -> str:
         """
-        - read-only
-
         Kernel version.
         """
         return os.uname().release
 
-    @GObject.Property
+    @IgnisProperty
     def uptime(self) -> tuple[int, int, int, int]:
         """
-        - read-only
-
         The current uptime (days, hours, minutes, seconds).
 
-        You can use :class:`~ignis.utils.Utils.Poll` to get the current uptime every minute or second.
+        You can use :class:`~ignis.utils.utils.Poll` to get the current uptime every minute or second.
         """
         with open("/proc/uptime") as f:
             uptime_seconds = float(f.readline().split()[0])
@@ -209,11 +181,9 @@ class FetchService(BaseService):
 
         return int(days), int(hours), int(minutes), int(seconds)
 
-    @GObject.Property
+    @IgnisProperty
     def cpu(self) -> str:
         """
-        - read-only
-
         CPU model.
         """
         cpu_name = "Unknown"
@@ -224,13 +194,9 @@ class FetchService(BaseService):
                     break
         return cpu_name
 
-    @GObject.Property
-    def cpu_temp(self) -> float:
-        """
-        - read-only
-
-        Current CPU temperature.
-        """
+    # Get CPU temperature from x86_pkg_temp driver used by various Intel CPUs
+    # Returns None if not found
+    def __get_x86_pkg_temp(self) -> float | None:
         for thermal_zone in glob.glob("/sys/class/thermal/thermal_zone*"):
             type_path = os.path.join(thermal_zone, "type")
             temp_path = os.path.join(thermal_zone, "temp")
@@ -243,13 +209,46 @@ class FetchService(BaseService):
                         return int(temp_file.read().strip()) / 1000.0
             except FileNotFoundError:
                 continue
-        return -1.0
+        return None
 
-    @GObject.Property
+    # Get CPU temperature from k10temp driver used by various AMD CPUs
+    # Returns None if not found
+    def __get_k10temp(self) -> float | None:
+        for hwmon in glob.glob("/sys/class/hwmon/*"):
+            name_path = os.path.join(hwmon, "name")
+            try:
+                with open(name_path) as name_file:
+                    name = name_file.read().strip()
+
+                if name == "k10temp":
+                    for temp_label_path, temp_input_path in zip(
+                        glob.glob(os.path.join(hwmon, "temp*_label")),
+                        glob.glob(os.path.join(hwmon, "temp*_input")),
+                        strict=True,
+                    ):
+                        try:
+                            with open(temp_label_path) as temp_label_file:
+                                temp_label = temp_label_file.read().strip()
+
+                            if temp_label == "Tctl":
+                                with open(temp_input_path) as temp_input_file:
+                                    return int(temp_input_file.read().strip()) / 1000.0
+                        except FileNotFoundError:
+                            continue
+            except FileNotFoundError:
+                continue
+        return None
+
+    @IgnisProperty
+    def cpu_temp(self) -> float:
+        """
+        Current CPU temperature.
+        """
+        return self.__get_x86_pkg_temp() or self.__get_k10temp() or -1.0
+
+    @IgnisProperty
     def mem_info(self) -> dict[str, int]:
         """
-        - read-only
-
         The dictionary with all information about RAM.
         """
         mem_info = {}
@@ -261,38 +260,30 @@ class FetchService(BaseService):
                 mem_info[key.strip()] = int(value)
         return mem_info
 
-    @GObject.Property
+    @IgnisProperty
     def mem_total(self) -> int:
         """
-        - read-only
-
         Total amount of RAM.
         """
         return self.mem_info.get("MemTotal", None)
 
-    @GObject.Property
+    @IgnisProperty
     def mem_available(self) -> int:
         """
-        - read-only
-
         Available amount of RAM.
         """
         return self.mem_info.get("MemAvailable", None)
 
-    @GObject.Property
+    @IgnisProperty
     def mem_used(self) -> int:
         """
-        - read-only
-
         Vendor of the motherboard.
         """
         return self.mem_total - self.mem_available
 
-    @GObject.Property
+    @IgnisProperty
     def board_vendor(self) -> str:
         """
-        - read-only
-
         Motherboard name.
         """
         with open("/sys/devices/virtual/dmi/id/board_vendor") as file:
@@ -300,11 +291,9 @@ class FetchService(BaseService):
 
         return data.strip()
 
-    @GObject.Property
+    @IgnisProperty
     def board_name(self) -> str:
         """
-        - read-only
-
         BIOS/UEFI version.
         """
         with open("/sys/devices/virtual/dmi/id/board_name") as file:
@@ -312,18 +301,16 @@ class FetchService(BaseService):
 
         return data.strip()
 
-    @GObject.Property
+    @IgnisProperty
     def bios_version(self) -> str:
         with open("/sys/devices/virtual/dmi/id/bios_version") as file:
             data = file.read()
 
         return data.strip()
 
-    @GObject.Property
+    @IgnisProperty
     def gtk_theme(self) -> str | None:
         """
-        - read-only
-
         Current GTK theme.
         """
         settings = Gtk.Settings.get_default()
@@ -332,15 +319,9 @@ class FetchService(BaseService):
 
         return settings.get_property("gtk-theme-name")
 
-    @GObject.Property
+    @IgnisProperty
     def icon_theme(self) -> str | None:
         """
-        - read-only
-
         Current icon theme.
         """
-        display = Gdk.Display.get_default()
-        if not display:
-            raise DisplayNotFoundError()
-
-        return Gtk.IconTheme.get_for_display(display).get_theme_name()
+        return self._icon_theme.get_theme_name()

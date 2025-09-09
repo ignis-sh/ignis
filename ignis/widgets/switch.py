@@ -1,6 +1,8 @@
-from gi.repository import Gtk, GObject  # type: ignore
+from gi.repository import Gtk  # type: ignore
 from ignis.base_widget import BaseWidget
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
+from ignis.gobject import IgnisProperty
 
 
 class Switch(Gtk.Switch, BaseWidget):
@@ -9,9 +11,12 @@ class Switch(Gtk.Switch, BaseWidget):
 
     A switch widget.
 
+    Args:
+        **kwargs: Properties to set.
+
     .. code-block:: python
 
-        Widget.Switch(
+        widgets.Switch(
             active=True,
             on_change=lambda x, active: print(active),
         )
@@ -28,11 +33,9 @@ class Switch(Gtk.Switch, BaseWidget):
 
         self.connect("state-set", self.__invoke_on_change)
 
-    @GObject.Property
+    @IgnisProperty
     def on_change(self) -> Callable | None:
         """
-        - optional, read-write
-
         The function to call when the position of the switch changes (e.g., when the user toggles the switch).
         """
         return self._on_change

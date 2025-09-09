@@ -1,6 +1,7 @@
-from gi.repository import Gtk, GObject  # type: ignore
+from gi.repository import Gtk  # type: ignore
 from ignis.base_widget import BaseWidget
-from typing import Callable
+from collections.abc import Callable
+from ignis.gobject import IgnisProperty
 
 
 class Entry(Gtk.Entry, BaseWidget):  # type: ignore
@@ -9,10 +10,13 @@ class Entry(Gtk.Entry, BaseWidget):  # type: ignore
 
     An input field. To make it work, set the ``kb_mode`` property of the window to ``on_demand`` or ``exclusive``.
 
+    Args:
+        **kwargs: Properties to set.
+
     .. code-block:: python
 
-        Widget.Entry(
-            placeholder="placeholder",
+        widgets.Entry(
+            placeholder_text="placeholder",
             on_accept=lambda x: print(x.text),
             on_change=lambda x: print(x.text),
         )
@@ -34,11 +38,9 @@ class Entry(Gtk.Entry, BaseWidget):  # type: ignore
             "notify::text", lambda x, y: self.on_change(x) if self.on_change else None
         )
 
-    @GObject.Property
+    @IgnisProperty
     def on_accept(self) -> Callable:
         """
-        - optional, read-write
-
         The function that will be called when the user hits the Enter key.
         """
         return self._on_accept
@@ -47,11 +49,9 @@ class Entry(Gtk.Entry, BaseWidget):  # type: ignore
     def on_accept(self, value: Callable) -> None:
         self._on_accept = value
 
-    @GObject.Property
+    @IgnisProperty
     def on_change(self) -> Callable:
         """
-        - optional, read-write
-
         The function that will be called when the text in the widget is changed (e.g., when the user types something into the entry).
         """
         return self._on_change

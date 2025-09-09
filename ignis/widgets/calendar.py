@@ -8,9 +8,12 @@ class Calendar(Gtk.Calendar, BaseWidget):
 
     A calendar.
 
+    Args:
+        **kwargs: Properties to set.
+
     .. code-block:: python
 
-        Widget.Calendar(
+        widgets.Calendar(
             day=1,
             month=1,
             year=2024,

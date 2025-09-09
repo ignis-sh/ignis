@@ -43,11 +43,11 @@ Type hints will be added automatically.
 General Classes
 ~~~~~~~~~~~~~~~~
 
+- For classes that the user can initialize manually, explicitly define the constructor arguments in the `Args` section.
+
 - Signals:
 
-    If a class has custom signals, add docstrings to the functions decorated with ``@GObject.Signal`` respectively.
-
-    At the top of the docstring indicate that it's signal: ``- Signal``.
+    If a class has custom signals, add docstrings to the functions decorated with ``@IgnisSignal`` respectively.
 
     Also, if the signal have custom arguments, define them in the ``Args`` section.
 
@@ -55,15 +55,11 @@ General Classes
 
     If a class has custom properties, add docstrings to the functions decorated with ``@GObject.Object`` or ``@property`` respectively.
 
-    At the top of the docstring indicate ``read-only`` / ``read-write``, ``optional`` / ``required`` / ``not argument``.
-
-    .. note::
-        You shouldn't specify ``optional`` / ``required`` / ``not argument``
-        in properties of Services and classes related to them, since the user shouldn't initialize them manually.
-
 - If possible, please provide a code example.
 
 .. code-block:: python
+
+    from ignis.gobject import IgnisProperty, IgnisSignal
 
     class SomeClass:
         """
@@ -71,36 +67,32 @@ General Classes
         Further info goes here...
         """
 
-    @GObject.Signal
+    @IgnisSignal
     def some_signal(self):
         """
-        - Signal
-
         Emitted when the something happens.
         """
 
-    @GObject.Signal(arg_types=(int,))
-    def arg_signal(self):
+    @IgnisSignal
+    def arg_signal(self, some_arg: int):
         """
-        - Signal
-
         Emitted when the something another happens.
 
         Args:
-            some_arg (``int``): Description of the argument...
+            some_arg: Description of the argument...
         """
 
-    @GObject.Property
+    @IgnisProperty
     def some_prop(self) -> int:
         """
-        - optional, read-only
+        The description of some_prop.
         """
         ...
 
-    @GObject.Property
+    @IgnisProperty
     def rw_prop(self) -> str:
         """
-        - optional, read-write
+        The description of rw_prop.
         """
         ...
 
@@ -108,11 +100,26 @@ General Classes
     def rw_prop(self, value: str) -> None:
         ...
 
+.. code-block:: python
+    
+    class AnotherClass:
+        """
+        Description of the class...
+
+        Args:
+            arg1: desc for arg1
+            arg2: desc for arg2
+            some_arg: desc for some_arg
+        """
+        def __init__(self, arg1: int, arg2: str, some_arg: bool = True):
+            ...
+
 Widgets
 ~~~~~~~~~~~~~~~~
 
 - Use the same patterns as described above for general classes.
 - Specify the base widget using the ``:class:`` directive.
+- If the widget can set properties using ``**kwargs``, you should mention it.
 
 .. code-block:: python
 
@@ -122,14 +129,18 @@ Widgets
 
         The description of the widget.
 
+        Args:
+            **kwargs: Properties to set.
+
         .. code-block:: python
 
-            Widget.WIDGET_NAME(
+            widgets.WIDGET_NAME(
                 prop1="asd",
                 prop2=12
             )
         """
-        ... # rest of stuff goes here
+        def __init__(self, **kwargs):
+            ...
 
 Building documentation
 -------------------------

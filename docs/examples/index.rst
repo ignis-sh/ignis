@@ -1,10 +1,8 @@
 Examples
 =============
 
-`A simple bar <https://github.com/linkfrg/ignis/tree/main/examples/bar>`_
----------------------------------------------------------------------------------
-.. image:: https://github.com/linkfrg/ignis/blob/main/examples/bar/simple-bar.png?raw=true
+.. toctree::
+   :maxdepth: 1
 
-`My own configuration <https://github.com/linkfrg/dotfiles/>`_
----------------------------------------------------------------------------------
-.. image:: https://github.com/linkfrg/dotfiles/blob/main/assets/1.png?raw=true
+   configurations
+   code_snippets

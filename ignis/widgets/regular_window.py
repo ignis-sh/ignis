@@ -1,24 +1,29 @@
-from gi.repository import Gtk, GObject  # type: ignore
+from gi.repository import Gtk  # type: ignore
 from ignis.base_widget import BaseWidget
-from ignis.app import IgnisApp
+from ignis.window_manager import WindowManager
 from ignis.exceptions import WindowNotFoundError
+from ignis.gobject import IgnisProperty
 
-app = IgnisApp.get_default()
+window_manager = WindowManager.get_default()
 
 
 class RegularWindow(Gtk.Window, BaseWidget):
     """
     Bases: :class:`Gtk.Window`
 
-    A standart application window.
+    A standard application window.
+
+    Args:
+        namespace: The name of the window, used for accessing it from the CLI and :class:`~ignis.app.IgnisApp`. It must be unique.
+        **kwargs: Properties to set.
 
     .. code-block:: python
 
-        Widget.RegularWindow(
-            child=Widget.Label(label="this is regular window"),
+        widgets.RegularWindow(
+            child=widgets.Label(label="this is regular window"),
             title="This is title",
             namespace='some-regular-window',
-            titlebar=Widget.HeaderBar(show_title_buttons=True),
+            titlebar=widgets.HeaderBar(show_title_buttons=True),
         )
     """
 
@@ -31,15 +36,13 @@ class RegularWindow(Gtk.Window, BaseWidget):
 
         self._namespace = namespace
 
-        app.add_window(namespace, self)
+        window_manager.add_window(namespace, self)
 
         self.connect("close-request", self.__on_close_request)
 
-    @GObject.Property
+    @IgnisProperty
     def namespace(self) -> str:
         """
-        - required, read-only
-
         The name of the window, used for accessing it from the CLI and :class:`~ignis.app.IgnisApp`.
         It must be unique.
         """
@@ -47,7 +50,7 @@ class RegularWindow(Gtk.Window, BaseWidget):
 
     def __remove(self, *args) -> None:
         try:
-            app.remove_window(self.namespace)
+            window_manager.remove_window(self.namespace)
         except WindowNotFoundError:
             pass
 

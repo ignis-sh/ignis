@@ -6,22 +6,22 @@ Static text can be boring, so let's add some dynamic elements!
 .. code-block:: python
 
     import datetime
-    from ignis.widgets import Widget
-    from ignis.utils import Utils
+    from ignis import widgets
+    from ignis import utils
 
-    def update_label(clock_label: Widget.Label) -> None:
+    def update_label(clock_label: widgets.Label) -> None:
         text = datetime.datetime.now().strftime("%H:%M:%S")
         clock_label.set_label(text)
 
-    def bar(monitor: int) -> Widget.Window:
-        clock_label = Widget.Label()
+    def bar(monitor: int) -> widgets.Window:
+        clock_label = widgets.Label()
 
-        Utils.Poll(1000, lambda x: update_label(clock_label))
+        utils.Poll(1000, lambda x: update_label(clock_label))
 
-        return Widget.Window(
+        return widgets.Window(
             namespace=f"some-window-{monitor}",
             monitor=monitor,
-            child=Widget.Box(
+            child=widgets.Box(
                 vertical=True,
                 spacing=10,
                 child=[clock_label],
@@ -35,7 +35,7 @@ Signals
 
 Polling data every second isn't always ideal, as it can negatively impact performance.
 This is where **signals** are useful. 
-Signals let us call a callback only when an event occurs (like ``on_click`` in ``Widget.Button``).
+Signals let us call a callback only when an event occurs (like ``on_click`` in ``widgets.Button``).
 
 Let's consider services, which often have both **signals** and **properties**.
 
@@ -68,18 +68,18 @@ Use the ``.bind()`` method, passing the property name as the first argument, and
 .. code-block:: python
 
     from ignis.services.audio import AudioService
-    from ignis.widgets import Widget
+    from ignis import widgets
 
     audio = AudioService.get_default()
 
-    def bar(monitor: int) -> Widget.Window:
-        return Widget.Window(
+    def bar(monitor: int) -> widgets.Window:
+        return widgets.Window(
             namespace=f"some-window-{monitor}",
             monitor=monitor,
-            child=Widget.Box(
+            child=widgets.Box(
                 child=[
-                    Widget.Label(label="Current volume: "),
-                    Widget.Label(
+                    widgets.Label(label="Current volume: "),
+                    widgets.Label(
                         label=audio.speaker.bind("volume", lambda value: str(value))  # this function converts the value to a string
                     )
                 ]
@@ -89,6 +89,20 @@ Use the ``.bind()`` method, passing the property name as the first argument, and
 Try changing the speaker volume using a tool like ``pavucontrol``.
 
 When the property changes, the transform function (if provided) will be called with the new value, and it should return the processed result.
+
+Multiple Binding
+-----------------
+
+You can bind multiple properties at the same time with ``bind_many()``.
+
+.. code-block:: python
+
+    widgets.Scale(
+        value=audio.speaker.bind_many(
+            ["volume", "is_muted"],
+            lambda volume, is_muted: 0 if is_muted else volume,
+        ),
+    )
 
 ``notify`` signal
 ------------------

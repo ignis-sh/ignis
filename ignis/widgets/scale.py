@@ -1,6 +1,7 @@
-from gi.repository import Gtk, GObject, Gdk  # type: ignore
+from gi.repository import Gtk, Gdk  # type: ignore
 from ignis.base_widget import BaseWidget
-from typing import Callable
+from collections.abc import Callable
+from ignis.gobject import IgnisProperty
 
 
 class Scale(Gtk.Scale, BaseWidget):
@@ -18,9 +19,12 @@ class Scale(Gtk.Scale, BaseWidget):
         - top
         - bottom
 
+    Args:
+        **kwargs: Properties to set.
+
     .. code-block:: python
 
-        Widget.Scale(
+        widgets.Scale(
             vertical=False,
             min=0,
             max=100,
@@ -64,11 +68,9 @@ class Scale(Gtk.Scale, BaseWidget):
         self.add_controller(scroll_controller)
         scroll_controller.connect("scroll", self.__on_scroll)
 
-    @GObject.Property
+    @IgnisProperty
     def value(self) -> float:
         """
-        - optional, read-write
-
         The current value.
         """
         return super().get_value()
@@ -81,11 +83,9 @@ class Scale(Gtk.Scale, BaseWidget):
         if not self._dragging:
             self.adjustment.set_value(value)
 
-    @GObject.Property
+    @IgnisProperty
     def min(self) -> float:
         """
-        - optional, read-write
-
         Minimum value.
         """
         return self.adjustment.props.lower
@@ -94,11 +94,9 @@ class Scale(Gtk.Scale, BaseWidget):
     def min(self, value: float) -> None:
         self.adjustment.props.lower = value
 
-    @GObject.Property
+    @IgnisProperty
     def max(self) -> float:
         """
-        - optional, read-write
-
         Maximum value.
         """
         return self.adjustment.props.upper
@@ -107,11 +105,9 @@ class Scale(Gtk.Scale, BaseWidget):
     def max(self, value: float) -> None:
         self.adjustment.props.upper = value
 
-    @GObject.Property
+    @IgnisProperty
     def on_change(self) -> Callable:
         """
-        - optional, read-write
-
         The function to call when the value changes.
         """
         return self._on_change
@@ -120,11 +116,9 @@ class Scale(Gtk.Scale, BaseWidget):
     def on_change(self, value: Callable) -> None:
         self._on_change = value
 
-    @GObject.Property
+    @IgnisProperty
     def step(self) -> float:
         """
-        - optional, read-write
-
         Step increment.
         """
         return self.adjustment.props.step_increment
@@ -133,11 +127,9 @@ class Scale(Gtk.Scale, BaseWidget):
     def step(self, value: float) -> None:
         self.adjustment.props.step_increment = value
 
-    @GObject.Property
+    @IgnisProperty
     def vertical(self) -> bool:
         """
-        - optional, read-write
-
         Whether the scale is vertical.
         """
         return self.get_orientation() == Gtk.Orientation.VERTICAL
@@ -158,10 +150,11 @@ class Scale(Gtk.Scale, BaseWidget):
         if not event:
             return
 
-        if event.get_event_type() == Gdk.EventType.BUTTON_PRESS:
-            self._dragging = True
-        elif event.get_event_type() == Gdk.EventType.BUTTON_RELEASE:
-            self._dragging = False
+        match event.get_event_type():
+            case Gdk.EventType.BUTTON_PRESS | Gdk.EventType.TOUCH_BEGIN:
+                self._dragging = True
+            case Gdk.EventType.BUTTON_RELEASE | Gdk.EventType.TOUCH_END:
+                self._dragging = False
 
     def __on_key_press(self, *args):
         self._dragging = True

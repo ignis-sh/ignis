@@ -1,4 +1,0 @@
-{
-    "mesonbuild.configureOnOpen": false,
-    "python.analysis.extraPaths": ["stubs"]
-}

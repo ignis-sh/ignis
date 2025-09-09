@@ -1,5 +1,5 @@
 RegularWindow
 -------------
 
-.. autoclass:: ignis.widgets.Widget.RegularWindow
+.. autoclass:: ignis.widgets.RegularWindow
     :members:

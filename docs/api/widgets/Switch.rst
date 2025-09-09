@@ -1,5 +1,5 @@
 Switch
 ------
 
-.. autoclass:: ignis.widgets.Widget.Switch
+.. autoclass:: ignis.widgets.Switch
     :members:

@@ -1,6 +1,6 @@
 Debounce
------------
+========
 
-.. autoclass:: ignis.utils.Utils.DebounceTask
+.. autoclass:: ignis.utils.DebounceTask
 
-.. autofunction:: ignis.utils.Utils.debounce
+.. autofunction:: ignis.utils.debounce

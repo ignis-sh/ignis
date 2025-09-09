@@ -1,8 +1,8 @@
-from gi.repository import Gio, GLib, GObject  # type: ignore
+from gi.repository import Gio, GLib  # type: ignore
 from ignis.dbus import DBusProxy
-from ignis.utils import Utils
-from ignis.logging import logger
-from ignis.gobject import IgnisGObject
+from ignis import utils
+from loguru import logger
+from ignis.gobject import IgnisGObject, IgnisProperty
 from typing import Literal
 
 
@@ -20,15 +20,15 @@ class SystemdUnit(IgnisGObject):
         else:
             self._flags = Gio.DBusCallFlags.NONE
 
-        self._proxy = DBusProxy(
+        self._proxy = DBusProxy.new(
             name="org.freedesktop.systemd1",
             object_path=object_path,
             interface_name="org.freedesktop.systemd1.Unit",
-            info=Utils.load_interface_xml("org.freedesktop.systemd1.Unit"),
+            info=utils.load_interface_xml("org.freedesktop.systemd1.Unit"),
             bus_type=bus_type,
         )
 
-        self._proxy.proxy.connect("g-properties-changed", self.__sync)
+        self._proxy.gproxy.connect("g-properties-changed", self.__sync)
 
     def __handle_result(self, proxy, result, user_data) -> None:
         if isinstance(result, GLib.Error):
@@ -42,20 +42,16 @@ class SystemdUnit(IgnisGObject):
         if "ActiveState" in prop_dict.keys():
             self.notify("is-active")
 
-    @GObject.Property
+    @IgnisProperty
     def name(self) -> str:
         """
-        - read-only
-
         The name of the unit.
         """
         return self._proxy.Id
 
-    @GObject.Property
+    @IgnisProperty
     def is_active(self) -> bool:
         """
-        - read-only
-
         Whether the unit is active (running).
         """
         state = self._proxy.ActiveState
@@ -72,7 +68,16 @@ class SystemdUnit(IgnisGObject):
             "(s)",
             "replace",
             flags=self._flags,
-            result_handler=self.__handle_result,
+        )
+
+    async def start_async(self) -> None:
+        """
+        Asynchronous version of :func:`start`.
+        """
+        await self._proxy.StartAsync(
+            "(s)",
+            "replace",
+            flags=self._flags,
         )
 
     def stop(self) -> None:
@@ -83,7 +88,16 @@ class SystemdUnit(IgnisGObject):
             "(s)",
             "replace",
             flags=self._flags,
-            result_handler=self.__handle_result,
+        )
+
+    async def stop_async(self) -> None:
+        """
+        Asynchronous version of :func:`stop`.
+        """
+        await self._proxy.StopAsync(
+            "(s)",
+            "replace",
+            flags=self._flags,
         )
 
     def restart(self) -> None:
@@ -94,5 +108,14 @@ class SystemdUnit(IgnisGObject):
             "(s)",
             "replace",
             flags=self._flags,
-            result_handler=self.__handle_result,
+        )
+
+    async def restart_async(self) -> None:
+        """
+        Asynchronous version of :func:`restart`.
+        """
+        await self._proxy.RestartAsync(
+            "(s)",
+            "replace",
+            flags=self._flags,
         )

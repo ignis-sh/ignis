@@ -1,0 +1,4 @@
+contact_links:
+- name: Question
+  url: https://github.com/ignis-sh/ignis/discussions
+  about: To ask a question, please use Github Discussions

@@ -2,7 +2,7 @@ Expanding functionality
 ========================
 
 Most of the features you need should be available in the `API Reference <../api/index.html>`_.
-owever, if the feature you are looking for is not there, this page may help you.
+However, if the feature you are looking for is not there, this page may help you.
 
 Since Ignis uses Python, you can take advantage of its many benefits, features, and modules to expand functionality, including the use of native PyGObject.
 

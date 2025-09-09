@@ -1,17 +1,18 @@
 import cairo
-from gi.repository import Gtk, GObject  # type: ignore
+from gi.repository import Gtk  # type: ignore
 from ignis.base_widget import BaseWidget
-from ignis.utils import Utils
+from ignis import utils
 from gi.repository import Gtk4LayerShell as GtkLayerShell  # type: ignore
 from ignis.exceptions import (
     MonitorNotFoundError,
     LayerShellNotSupportedError,
     WindowNotFoundError,
 )
+from ignis.gobject import IgnisProperty, IgnisSignal
+from ignis.window_manager import WindowManager
 from ignis.app import IgnisApp
 
-app = IgnisApp.get_default()
-
+window_manager = WindowManager.get_default()
 LAYER = {
     "background": GtkLayerShell.Layer.BACKGROUND,
     "bottom": GtkLayerShell.Layer.BOTTOM,
@@ -47,19 +48,24 @@ class Window(Gtk.Window, BaseWidget):
 
     The top-level widget that contains everything.
 
+    Args:
+        namespace: The name of the window, used to access it from the CLI and :class:`~ignis.app.IgnisApp`. It must be unique. It is also the name of the layer.
+        dynamic_input_region: Whether to dynamically update the input region depending on the :attr:`child` size.
+        **kwargs: Properties to set.
+
     .. warning::
-        Applying CSS styles directly to ``Widget.Window`` can cause various graphical glitches/bugs.
-        It's highly recommended to set some container (for example, ``Widget.Box``) or widget as a child and apply styles to it.
+        Applying CSS styles directly to ``widgets.Window`` can cause various graphical glitches/bugs.
+        It's highly recommended to set some container (for example, ``widgets.Box``) or widget as a child and apply styles to it.
         For example:
 
         .. code-block:: python
 
-            from ignis.widgets import Widget
+            from ignis import widgets
 
-            Widget.Window(
+            widgets.Window(
                 namespace="some-window",
                 # css_classes=['test-window'],  # don't do this!
-                child=Widget.Box(
+                child=widgets.Box(
                     css_classes=['test-window'],  # use this instead
                     child=[...]
                 )
@@ -70,9 +76,9 @@ class Window(Gtk.Window, BaseWidget):
 
     .. code-block:: python
 
-        Widget.Window(
+        widgets.Window(
             namespace="example_window",
-            child=Widget.Label(label='heh'),
+            child=widgets.Label(label='heh'),
             monitor=0,
             anchor=["top", "right"],
             exclusive=True,
@@ -99,17 +105,20 @@ class Window(Gtk.Window, BaseWidget):
         margin_left: int = 0,
         margin_right: int = 0,
         margin_top: int = 0,
+        dynamic_input_region: bool = False,
         **kwargs,
     ):
         if not GtkLayerShell.is_supported():
             raise LayerShellNotSupportedError()
 
-        Gtk.Window.__init__(self, application=app)  # type: ignore
+        app = IgnisApp.get_initialized()
+
+        Gtk.Window.__init__(self, application=app)
         GtkLayerShell.init_for_window(self)
 
         self._anchor = None
         self._exclusivity = None
-        self._namespace = None
+        self._namespace = namespace
         self._layer = None
         self._kb_mode = None
         self._popup = None
@@ -120,13 +129,14 @@ class Window(Gtk.Window, BaseWidget):
         self._margin_left = 0
         self._margin_right = 0
         self._margin_top = 0
+        self._dynamic_input_region = dynamic_input_region
 
         self.anchor = anchor
         self.exclusivity = exclusivity
-        self.namespace = namespace
         self.layer = layer
         self.kb_mode = kb_mode
-        self.monitor = monitor
+        if monitor is not None:
+            self.monitor = monitor
         self.popup = popup
         self.default_width = 2
         self.default_height = 2
@@ -135,7 +145,9 @@ class Window(Gtk.Window, BaseWidget):
         self.margin_right = margin_right
         self.margin_top = margin_top
 
-        app.add_window(namespace, self)
+        GtkLayerShell.set_namespace(self, name_space=namespace)
+
+        window_manager.add_window(namespace, self)
 
         key_controller = Gtk.EventControllerKey()
         self.add_controller(key_controller)
@@ -145,16 +157,36 @@ class Window(Gtk.Window, BaseWidget):
 
         self.connect("close-request", self.__on_close_request)
 
+        if dynamic_input_region is True:
+            self.__set_dynamic_input_region()
+
+    def __set_dynamic_input_region(self) -> None:
+        child = self.get_child()
+        if not child:
+            raise TypeError(
+                "Trying to set dynamic_input_region to True but the child is None"
+            )
+
+        def sync() -> None:
+            self.input_width = child.get_width()
+            self.input_height = child.get_height()
+
+        self.connect("size-changed", lambda *_: sync())
+
+        sync()
+
     def __close_popup(self, event_controller_key, keyval, keycode, state):
         if self._popup:
             if keyval == 65307:  # 65307 = ESC
                 self.visible = False
 
-    @GObject.Property
+    @IgnisSignal
+    def size_changed(self):  # private signal
+        ...
+
+    @IgnisProperty
     def namespace(self) -> str:
         """
-        - required, read-only
-
         The name of the window, used to access it from the CLI and :class:`~ignis.app.IgnisApp`.
 
         It must be unique.
@@ -162,16 +194,9 @@ class Window(Gtk.Window, BaseWidget):
         """
         return self._namespace
 
-    @namespace.setter
-    def namespace(self, value: str) -> None:
-        self._namespace = value
-        GtkLayerShell.set_namespace(self, name_space=value)
-
-    @GObject.Property
+    @IgnisProperty
     def anchor(self) -> list[str] | None:
         """
-        - optional, read-write
-
         A list of anchors.
         If the list is empty, the window will be centered on the screen.
         ``None`` will unset all anchors.
@@ -197,11 +222,9 @@ class Window(Gtk.Window, BaseWidget):
             for i in value:
                 GtkLayerShell.set_anchor(self, ANCHOR[i], True)
 
-    @GObject.Property
+    @IgnisProperty
     def exclusivity(self) -> str:
         """
-        - optional, read-write
-
         Defines how the compositor should avoid occluding a window area with other surfaces/layers.
 
         Default: ``normal``.
@@ -221,11 +244,9 @@ class Window(Gtk.Window, BaseWidget):
         else:
             GtkLayerShell.set_exclusive_zone(self, EXCLUSIVITY[value])
 
-    @GObject.Property
+    @IgnisProperty
     def layer(self) -> str:
         """
-        - optional, read-write
-
         The layer of the surface.
 
         Default: ``top``.
@@ -243,11 +264,9 @@ class Window(Gtk.Window, BaseWidget):
         self._layer = value
         GtkLayerShell.set_layer(self, LAYER[value])
 
-    @GObject.Property
+    @IgnisProperty
     def kb_mode(self) -> str:
         """
-        - optional, read-write
-
         Whether the window should receive keyboard events from the compositor.
 
         Default: ``none``.
@@ -264,11 +283,9 @@ class Window(Gtk.Window, BaseWidget):
         self._kb_mode = value
         GtkLayerShell.set_keyboard_mode(self, KB_MODE[value])
 
-    @GObject.Property
+    @IgnisProperty
     def popup(self) -> bool:
         """
-        - optional, read-write
-
         Whether the window should close on ESC.
 
         Works only if ``kb_mode`` is set to ``exclusive`` or ``on_demand``.
@@ -279,11 +296,9 @@ class Window(Gtk.Window, BaseWidget):
     def popup(self, value: bool) -> None:
         self._popup = value
 
-    @GObject.Property
+    @IgnisProperty
     def monitor(self) -> int:
         """
-        - optional, read-write
-
         The monitor number on which to display the window.
 
         Raises:
@@ -296,18 +311,16 @@ class Window(Gtk.Window, BaseWidget):
         if value is None:
             return
 
-        gdkmonitor = Utils.get_monitor(value)
+        gdkmonitor = utils.get_monitor(value)
         if gdkmonitor is None:
             raise MonitorNotFoundError(value)
 
         GtkLayerShell.set_monitor(self, gdkmonitor)
         self._monitor = value
 
-    @GObject.Property
+    @IgnisProperty
     def input_width(self) -> int:
         """
-        - optional, read-write
-
         The width at which the window can receive keyboard and mouse input. Must be > 0.
         """
         return self._input_width
@@ -317,11 +330,9 @@ class Window(Gtk.Window, BaseWidget):
         self._input_width = value
         self.__change_input_region()
 
-    @GObject.Property
+    @IgnisProperty
     def input_height(self) -> int:
         """
-        - optional, read-write
-
         The height at which the window can receive keyboard and mouse input. Must be > 0.
         """
         return self._input_height
@@ -331,11 +342,16 @@ class Window(Gtk.Window, BaseWidget):
         self._input_height = value
         self.__change_input_region()
 
-    @GObject.Property
+    @IgnisProperty
+    def dynamic_input_region(self) -> bool:
+        """
+        Whether to dynamically update the input region depending on the :attr:`child` size.
+        """
+        return self._dynamic_input_region
+
+    @IgnisProperty
     def margin_bottom(self) -> int:
         """
-        - optional, read-write
-
         The bottom margin.
 
         Default: ``0``.
@@ -347,11 +363,9 @@ class Window(Gtk.Window, BaseWidget):
         self._margin_bottom = value
         GtkLayerShell.set_margin(self, GtkLayerShell.Edge.BOTTOM, value)
 
-    @GObject.Property
+    @IgnisProperty
     def margin_left(self) -> int:
         """
-        - optional, read-write
-
         The left margin.
 
         Default: ``0``.
@@ -363,11 +377,9 @@ class Window(Gtk.Window, BaseWidget):
         self._margin_left = value
         GtkLayerShell.set_margin(self, GtkLayerShell.Edge.LEFT, value)
 
-    @GObject.Property
+    @IgnisProperty
     def margin_right(self) -> int:
         """
-        - optional, read-write
-
         The right margin.
 
         Default: ``0``.
@@ -379,11 +391,9 @@ class Window(Gtk.Window, BaseWidget):
         self._margin_right = value
         GtkLayerShell.set_margin(self, GtkLayerShell.Edge.RIGHT, value)
 
-    @GObject.Property
+    @IgnisProperty
     def margin_top(self) -> int:
         """
-        - optional, read-write
-
         The top margin.
 
         Default: ``0``.
@@ -406,13 +416,14 @@ class Window(Gtk.Window, BaseWidget):
         region = cairo.Region(rectangle)
         surface = self.get_surface()
         if not surface:
+            self.connect("realize", lambda *args: self.__change_input_region())
             return
 
         surface.set_input_region(region)
 
     def __remove(self, *args) -> None:
         try:
-            app.remove_window(self.namespace)
+            window_manager.remove_window(self.namespace)
         except WindowNotFoundError:
             pass
 
@@ -427,3 +438,7 @@ class Window(Gtk.Window, BaseWidget):
     def unrealize(self):
         self.__remove()
         return super().unrealize()
+
+    def do_size_allocate(self, width: int, height: int, baseline: int) -> None:
+        self.emit("size-changed")
+        return Gtk.Window.do_size_allocate(self, width, height, baseline)

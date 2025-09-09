@@ -1,8 +1,8 @@
 import os
 from ignis.base_widget import BaseWidget
-from gi.repository import Gtk, GObject, GdkPixbuf, Gdk  # type: ignore
-from ignis.utils import Utils
-from typing import Union
+from gi.repository import Gtk, GdkPixbuf, Gdk  # type: ignore
+from ignis import utils
+from ignis.gobject import IgnisProperty
 
 
 class Icon(Gtk.Image, BaseWidget):
@@ -13,9 +13,12 @@ class Icon(Gtk.Image, BaseWidget):
 
     If you want to display an image at its native aspect ratio, see :class:`~ignis.widgets.picture.Picture`.
 
+    Args:
+        **kwargs: Properties to set.
+
     .. code-block:: python
 
-        Widget.Icon(
+        widgets.Icon(
             image='audio-volume-high',
             pixel_size=12
         )
@@ -28,20 +31,18 @@ class Icon(Gtk.Image, BaseWidget):
     def __init__(self, pixel_size: int = -1, **kwargs):
         Gtk.Image.__init__(self)
         self.pixel_size = pixel_size  # this need to set pixel_size BEFORE image
-        self._image: Union[str, GdkPixbuf.Pixbuf, None] = None
+        self._image: str | GdkPixbuf.Pixbuf | None = None
         BaseWidget.__init__(self, **kwargs)
 
-    @GObject.Property
-    def image(self) -> Union[str, GdkPixbuf.Pixbuf, None]:
+    @IgnisProperty
+    def image(self) -> "str | GdkPixbuf.Pixbuf | None":
         """
-        - optional, read-write
-
         The icon name, path to the file, or a ``GdkPixbuf.Pixbuf``.
         """
         return self._image
 
     @image.setter
-    def image(self, value: Union[str, GdkPixbuf.Pixbuf]) -> None:
+    def image(self, value: "str | GdkPixbuf.Pixbuf") -> None:
         self._image = value
 
         pixbuf = None
@@ -59,7 +60,7 @@ class Icon(Gtk.Image, BaseWidget):
             return
 
         if not self.pixel_size <= 0:
-            pixbuf = Utils.scale_pixbuf(pixbuf, self.pixel_size, self.pixel_size)
+            pixbuf = utils.scale_pixbuf(pixbuf, self.pixel_size, self.pixel_size)
 
         paintable = Gdk.Texture.new_for_pixbuf(pixbuf)
         self.set_from_paintable(paintable)

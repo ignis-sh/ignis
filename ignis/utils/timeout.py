@@ -1,19 +1,23 @@
-from gi.repository import GLib, GObject  # type: ignore
-from ignis.gobject import IgnisGObject
-from typing import Callable
+from gi.repository import GLib  # type: ignore
+from ignis.gobject import IgnisGObject, IgnisProperty
+from collections.abc import Callable
 
 
 class Timeout(IgnisGObject):
     """
     Calls a function after a specified time interval.
 
+    Args:
+        ms: Time in milliseconds.
+        target: The function to call.
+
     Example usage:
 
     .. code-block:: python
 
-        from ignis.utils import Utils
+        from ignis import utils
 
-        Utils.Timeout(ms=3000, target=lambda: print("Hello"))
+        utils.Timeout(ms=3000, target=lambda: print("Hello"))
     """
 
     def __init__(self, ms: int, target: Callable, *args):
@@ -23,20 +27,16 @@ class Timeout(IgnisGObject):
 
         self._id = GLib.timeout_add(ms, target, *args)
 
-    @GObject.Property
+    @IgnisProperty
     def ms(self) -> int:
         """
-        - required, read-only
-
         Time in milliseconds.
         """
         return self._ms
 
-    @GObject.Property
+    @IgnisProperty
     def target(self) -> Callable:
         """
-        - required, read-only
-
         The function to call.
         """
         return self._target

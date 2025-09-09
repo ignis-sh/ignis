@@ -1,6 +1,6 @@
-from gi.repository import GObject  # type: ignore
 from ignis.widgets.icon import Icon
-from ignis.utils import Utils
+from ignis import utils
+from ignis.gobject import IgnisProperty
 
 DIRECTION = {
     "right": "pan-end-symbolic",
@@ -17,17 +17,20 @@ class Arrow(Icon):
     An arrow icon that can rotate (with animation!).
     Useful for dropdown lists.
 
+    Args:
+        **kwargs: Properties to set.
+
     .. hint::
         If you are looking for a button with an arrow that rotates on click,
-        see :class:`~ignis.widgets.Widget.ArrowButton`.
+        see :class:`~ignis.widgets.ArrowButton`.
 
     .. hint::
         You can set your custom icon name or image using the ``image`` property.
 
     .. code-block:: python
 
-        Widget.Arrow(
-            pixel_size=20, # inherited from Widget.Icon
+        widgets.Arrow(
+            pixel_size=20, # inherited from widgets.Icon
             rotated=False,
             degree=90,
             time=135,
@@ -72,11 +75,9 @@ class Arrow(Icon):
 
         self.style = f"-gtk-icon-transform: rotate({self.__deg}deg);"
 
-    @GObject.Property
+    @IgnisProperty
     def rotated(self) -> bool:
         """
-        - optional, read-write
-
         Whether the arrow is rotated.
 
         Default: ``False``.
@@ -89,7 +90,7 @@ class Arrow(Icon):
         interval = self.time // steps
 
         for i in range(steps):
-            Utils.Timeout(interval * i, self.__rotate, value)
+            utils.Timeout(interval * i, self.__rotate, value)
 
         self._rotated = value
 
@@ -100,11 +101,9 @@ class Arrow(Icon):
         )  # Calculate steps based on time, with a minimum of 9 steps
         self.__step = max(1, self.degree // steps)  # Ensure step is at least 1 degree
 
-    @GObject.Property
+    @IgnisProperty
     def degree(self) -> int:
         """
-        - optional, read-write
-
         The target rotation degree.
         Must be > 0.
 
@@ -117,11 +116,9 @@ class Arrow(Icon):
         self._degree = value
         self.__update_step()
 
-    @GObject.Property
+    @IgnisProperty
     def time(self) -> int:
         """
-        - optional, read-write
-
         Rotation time in milliseconds.
 
         Default: ``135``.
@@ -133,11 +130,9 @@ class Arrow(Icon):
         self._time = value
         self.__update_step()
 
-    @GObject.Property
+    @IgnisProperty
     def direction(self) -> str:
         """
-        - optional, read-write
-
         The direction of the arrow.
         Do not use this property if using custom icon name.
 
@@ -156,11 +151,9 @@ class Arrow(Icon):
         self._direction = value
         self.icon_name = DIRECTION[value]
 
-    @GObject.Property
+    @IgnisProperty
     def counterclockwise(self) -> bool:
         """
-        - optional, read-write
-
         Whether to rotate counterclockwise.
 
         Default: ``False``.

@@ -1,8 +1,5 @@
-{ self }:
-
-let
-  initPy = builtins.readFile ../ignis/__init__.py;
-  version = builtins.elemAt (builtins.match ".*__version__ = \"([^\"]*?)\".*" initPy) 0;
+{self}: let
+  version = "0.5"; # FIXME: hard-coded
+  rev = self.shortRev or "dirty";
   date = builtins.substring 0 8 (self.lastModifiedDate or "19700101");
-in
-"${version}+date=${date}_${self.shortRev or "dirty"}"
+in "${version}+g${rev}.d${date}"

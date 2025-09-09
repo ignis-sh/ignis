@@ -1,34 +1,12 @@
 name: Bug Report
-description: Something is not working right
+description: Something is not working as expected
 labels: ["bug"]
 body:
-  - type: checkboxes
-    attributes:
-      label: Already reported ? *
-      description: Before opening a new bug report, please take a moment to search through the current open and closed issues to check if it already exists.
-      options:
-      - label: I have searched the existing open and closed issues.
-        required: true
-
-  - type: dropdown
-    id: type
-    attributes:
-      label: Regression?
-      description: |
-        Regression means that something used to work but no longer does.
-      multiple: false
-      options:
-        - "Yes"
-        - "No"
-    validations:
-      required: true
-
   - type: textarea
-    id: sysinfo
     attributes:
       label: System Information
       description: |
-        Paste the output of `ignis systeminfo` here.
+        Paste the output of `ignis systeminfo` below.
 
       value: "
         ```
@@ -40,25 +18,22 @@ body:
       required: true
 
   - type: textarea
-    id: desc
     attributes:
       label: Description
-      description: "What went wrong?"
+      description: "Provide a clear and concise description of the issue you encountered"
     validations:
       required: true
 
   - type: textarea
-    id: repro
     attributes:
       label: How to reproduce
-      description: "How can someone else reproduce the issue?"
+      description: "List the steps to reproduce the issue. Be as detailed as possible to help replicate the problem"
     validations:
       required: true
 
   - type: textarea
-    id: logs
     attributes:
-      label: Logs, images, videos, config files, CSS/SCSS files
+      label: Additional Information
       description: |
-        Anything that can help. Please always ATTACH and not paste them.
-        The log file is stored in ``~/.ignis/ignis.log``
+        Anything that can help (Logs, Images, Videos, Configs, etc.). Please avoid pasting large text directly.
+        Logs can be found at `$XDG_STATE_HOME/ignis/ignis.log` (`~/.local/state/ignis/ignis.log`).

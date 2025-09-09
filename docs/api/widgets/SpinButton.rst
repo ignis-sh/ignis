@@ -1,5 +1,5 @@
 SpinButton
 ----------
 
-.. autoclass:: ignis.widgets.Widget.SpinButton
+.. autoclass:: ignis.widgets.SpinButton
     :members:

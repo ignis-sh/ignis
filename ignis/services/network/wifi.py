@@ -1,5 +1,4 @@
-from gi.repository import GObject  # type: ignore
-from ignis.gobject import IgnisGObject
+from ignis.gobject import IgnisGObject, IgnisProperty, IgnisSignal
 from ._imports import NM
 from .wifi_device import WifiDevice
 
@@ -24,29 +23,25 @@ class Wifi(IgnisGObject):
         for device in self._client.get_devices():
             self.__add_device(None, device, False)
 
-    @GObject.Signal(arg_types=(WifiDevice,))
-    def new_device(self, *args):
+    @IgnisSignal
+    def new_device(self, device: WifiDevice):
         """
         Emitted when a new Wi-FI device is added.
 
         Args:
-            device (:class:`~ignis.services.network.WifiDevice`): An instance of the device.
+            device: An instance of the device.
         """
 
-    @GObject.Property
+    @IgnisProperty
     def devices(self) -> list[WifiDevice]:
         """
-        - read-only
-
         A list of Wi-Fi devices.
         """
         return list(self._devices.values())
 
-    @GObject.Property
+    @IgnisProperty
     def is_connected(self) -> bool:
         """
-        - read-only
-
         Whether at least one Wi-Fi device is connected to the network.
         """
         for i in self.devices:
@@ -54,11 +49,9 @@ class Wifi(IgnisGObject):
                 return True
         return False
 
-    @GObject.Property
+    @IgnisProperty
     def icon_name(self) -> str:
         """
-        - read-only
-
         The icon name of the first device in the list.
         """
         result = None
@@ -71,11 +64,9 @@ class Wifi(IgnisGObject):
         else:
             return result
 
-    @GObject.Property
+    @IgnisProperty
     def enabled(self) -> bool:
         """
-        - read-write
-
         Whether Wi-Fi is enabled.
         """
         return self._client.wireless_get_enabled()
@@ -107,6 +98,9 @@ class Wifi(IgnisGObject):
         if device.get_device_type() != NM.DeviceType.WIFI:
             return
 
-        obj = self._devices.pop(device)
-        obj.emit("removed")
-        self.notify("devices")
+        try:
+            obj = self._devices.pop(device)
+            obj.emit("removed")
+            self.notify("devices")
+        except KeyError:
+            pass

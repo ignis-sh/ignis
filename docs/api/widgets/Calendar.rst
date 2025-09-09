@@ -1,5 +1,5 @@
 Calendar
 --------
 
-.. autoclass:: ignis.widgets.Widget.Calendar
+.. autoclass:: ignis.widgets.Calendar
     :members:

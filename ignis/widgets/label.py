@@ -30,9 +30,12 @@ class Label(Gtk.Label, BaseWidget):
         - char: Wrap lines at character boundaries.
         - word_char: Wrap lines at word boundaries, but fall back to character boundaries if there is not enough space for a full word.
 
+    Args:
+        **kwargs: Properties to set.
+
     .. code-block:: python
 
-        Widget.Label(
+        widgets.Label(
             label='heh',
             use_markup=False,
             justify='left',

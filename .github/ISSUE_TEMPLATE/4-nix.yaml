@@ -1,0 +1,10 @@
+name: Nix/NixOS
+description: Related to the Nix package manager or NixOS
+labels: ["nix"]
+body:
+  - type: textarea
+    attributes:
+      label: Description
+      description: "Describe the issue"
+    validations:
+      required: true

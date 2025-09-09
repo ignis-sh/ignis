@@ -1,5 +1,5 @@
 Arrow
 -----
 
-.. autoclass:: ignis.widgets.Widget.Arrow
+.. autoclass:: ignis.widgets.Arrow
     :members:

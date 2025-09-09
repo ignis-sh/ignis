@@ -1,6 +1,7 @@
-from ignis.gobject import IgnisGObject
-from gi.repository import GLib, GObject  # type: ignore
-from typing import Any, Callable
+from ignis.gobject import IgnisGObject, IgnisProperty, IgnisSignal
+from gi.repository import GLib  # type: ignore
+from typing import Any
+from collections.abc import Callable
 
 
 class Poll(IgnisGObject):
@@ -9,14 +10,19 @@ class Poll(IgnisGObject):
 
     You can pass arguments to the constructor, and they will be passed to the callback.
 
+    Args:
+        timeout: The timeout interval in milliseconds.
+        callback: The function to call when the timeout is reached. The ``self`` will passed as an argument.
+        *args: Arguments to pass to `callback`.
+
     Example usage:
 
     .. code-block:: python
 
-        from ignis.utils import Utils
+        from ignis import utils
 
         # print "Hello" every second
-        Utils.Poll(timeout=1_000, callback=lambda self: print("Hello"))
+        utils.Poll(timeout=1_000, callback=lambda self: print("Hello"))
     """
 
     def __init__(self, timeout: int, callback: Callable, *args):
@@ -30,19 +36,15 @@ class Poll(IgnisGObject):
 
         self.__main()
 
-    @GObject.Signal
+    @IgnisSignal
     def changed(self):
         """
-        - Signal
-
         Emitted at each iteration.
         """
 
-    @GObject.Property
+    @IgnisProperty
     def timeout(self) -> int:
         """
-        - required, read-write
-
         The timeout interval in milliseconds.
         """
         return self._timeout
@@ -51,11 +53,9 @@ class Poll(IgnisGObject):
     def timeout(self, value: int) -> None:
         self._timeout = value
 
-    @GObject.Property
+    @IgnisProperty
     def callback(self) -> Callable:
         """
-        - required, read-write
-
         The function to call when the timeout is reached. The ``self`` will passed as an argument.
         """
         return self._callback
@@ -64,11 +64,9 @@ class Poll(IgnisGObject):
     def callback(self, value: Callable) -> None:
         self._callback = value
 
-    @GObject.Property
+    @IgnisProperty
     def output(self) -> Any:
         """
-        - not argument, read-only
-
         The output of the callback.
 
         .. hint::

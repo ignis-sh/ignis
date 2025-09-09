@@ -1,28 +1,25 @@
 # Ignis
 
-[![docs](https://github.com/linkfrg/ignis/actions/workflows/latest_docs.yaml/badge.svg)](https://github.com/linkfrg/ignis/actions/workflows/latest_docs.yaml)
+[![docs](https://github.com/ignis-sh/ignis/actions/workflows/latest_docs.yaml/badge.svg)](https://github.com/ignis-sh/ignis/actions/workflows/latest_docs.yaml)
 [![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Linting: Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-<div align="center">
-<strong>Ignis is a modern widget system for building desktop shells using GTK4.</strong>
-</div>
+A widget framework for building desktop shells, written and configurable in Python.
 
-## Features
-- Configurable in Python
-- Uses GTK4
-- Batteries Included
-- Simplified work with widgets
+- Easy to use
+- GTK4-based
+- Batteries Included (a lot of built-in Services and Utilities!)
+- Flexible work with widgets
 
 > [!NOTE]
 > Ignis is mostly stable, but still a work in progress.
 > The API is a subject to change.
 >
-> The breaking changes tracker is available in [#60](https://github.com/linkfrg/ignis/issues/60)
+> The breaking changes tracker is available in [#60](https://github.com/ignis-sh/ignis/issues/60)
 
 ## Getting started
-See the [Documentation](https://linkfrg.github.io/ignis)
+See the [Documentation](https://ignis-sh.github.io/ignis)
 
 ## Supported Desktops
 - wlroots-based Wayland compositors (e.g., __Sway__) 
@@ -32,6 +29,12 @@ See the [Documentation](https://linkfrg.github.io/ignis)
 
 ...and all other compositors that implement the Layer Shell protocol.
 
+Ignis __is not supported__ on:
+- GNOME Wayland
+- X11
+
+...because they don't support the Layer Shell protocol.
+
 ## Examples
 * A simple bar, see [examples](./examples/bar)
 ![simple-bar](./examples/bar/simple-bar.png)
@@ -40,8 +43,10 @@ See the [Documentation](https://linkfrg.github.io/ignis)
 ![My own configuration](https://github.com/linkfrg/dotfiles/blob/main/assets/1.png?raw=true)
 
 ## Contributing
-Check out the [Developer Guide](https://linkfrg.github.io/ignis/latest/dev/index.html)
+Check out the [Developer Guide](https://ignis-sh.github.io/ignis/latest/dev/index.html)
+
+## Licensing
+Ignis is licensed under the __LGPL-2.1-or-later__.
 
 ## Special Thanks
-
 [AGS](https://github.com/aylur/ags) - for inspiration

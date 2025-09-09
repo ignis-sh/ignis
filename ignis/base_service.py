@@ -1,26 +1,11 @@
-from ignis.gobject import IgnisGObject
-from typing import TypeVar
-
-T = TypeVar("T", bound="BaseService")
+from ignis.gobject import IgnisGObjectSingleton
 
 
-class BaseService(IgnisGObject):
+# FIXME: Probably it should be deprecated due to its lack of utility.
+# But I will leave it as is for now in case I find a meaningful use for it.
+class BaseService(IgnisGObjectSingleton):
     """
-    Bases: :class:`~ignis.gobject.IgnisGObject`.
+    Bases: :class:`~ignis.gobject.IgnisGObjectSingleton`.
 
     The base class for all services.
     """
-
-    _instance: T | None = None  # type: ignore
-
-    def __init__(self) -> None:
-        super().__init__()
-
-    @classmethod
-    def get_default(cls: type[T]) -> T:
-        """
-        Returns the default Service object for this process, creating it if necessary.
-        """
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance

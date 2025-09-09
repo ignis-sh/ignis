@@ -1,5 +1,5 @@
 FileDialog
 ----------
 
-.. autoclass:: ignis.widgets.Widget.FileDialog
+.. autoclass:: ignis.widgets.FileDialog
     :members:

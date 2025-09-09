@@ -1,20 +1,30 @@
 [
     {
       "version": "dev",
-      "url": "https://linkfrg.github.io/ignis/latest/"
+      "url": "https://ignis-sh.github.io/ignis/latest/"
     },
     {
-      "name": "v0.4 (stable)",
-      "version": "v0.4",
-      "url": "https://linkfrg.github.io/ignis/stable/",
+      "name": "v0.5.1 (stable)",
+      "version": "v0.5.1",
+      "url": "https://ignis-sh.github.io/ignis/stable/",
       "preferred": true
     },
     {
+      "name": "v0.5",
+      "version": "v0.5",
+      "url": "https://ignis-sh.github.io/ignis/v0.5/"
+    },
+    {
+      "name": "v0.4",
+      "version": "v0.4",
+      "url": "https://ignis-sh.github.io/ignis/v0.4/"
+    },
+    {
       "version": "v0.3",
-      "url": "https://linkfrg.github.io/ignis/v0.3/"
+      "url": "https://ignis-sh.github.io/ignis/v0.3/"
     },
     {
       "version": "v0.2",
-      "url": "https://linkfrg.github.io/ignis/v0.2/"
+      "url": "https://ignis-sh.github.io/ignis/v0.2/"
     }
 ]

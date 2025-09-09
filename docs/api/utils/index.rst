@@ -1,15 +1,15 @@
 Utils
-========
+=====
 
 There is a list of utilities—useful tools that can help you.
 
-Use the universal ``Utils`` class to access them:
+Use the ``ignis.utils`` package to access them:
 
 .. code-block:: python
 
-   from ignis.utils import Utils
+   from ignis import utils
 
-   Utils.NAME()
+   utils.NAME()
 
 .. toctree:: 
    :glob:

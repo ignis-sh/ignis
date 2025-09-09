@@ -1,4 +1,4 @@
-from typing import Callable
+from collections.abc import Callable
 from .timeout import Timeout
 
 
@@ -7,7 +7,7 @@ class DebounceTask:
     Delays function calls until a specified time elapses after the most recent call.
 
     .. hint::
-        See the decorator for this class :func:`~ignis.utils.Utils.debounce`.
+        See the decorator for this class :func:`~ignis.utils.utils.debounce`.
 
     Parameters:
         ms: The delay time in milliseconds.
@@ -33,7 +33,7 @@ def debounce(ms: int):
     """
     A decorator to delay function execution until a set time has passed since the last call.
 
-    This is a convenient wrapper for the :class:`~ignis.utils.Utils.DebounceTask` class.
+    This is a convenient wrapper for the :class:`~ignis.utils.utils.DebounceTask` class.
 
     Args:
         ms: The delay time in milliseconds.
@@ -42,9 +42,9 @@ def debounce(ms: int):
 
     .. code-block:: python
 
-        from ignis.utils import Utils
+        from ignis import utils
 
-        @Utils.debounce(500) # delay for 500 ms (0.5 s)
+        @utils.debounce(500) # delay for 500 ms (0.5 s)
         def some_func(x) -> None:
             print("called!")
 

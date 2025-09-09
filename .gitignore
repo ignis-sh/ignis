@@ -9,6 +9,11 @@ build
 !.vscode/settings.json
 ignis/__lib_dir__.py
 ignis/__commit__.py
+subprojects/gvc
 
 .idea/*
 docs/tmp
+.artifacts
+result
+.direnv
+_version.py

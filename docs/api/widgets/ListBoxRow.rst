@@ -1,5 +1,5 @@
 ListBoxRow
 ----------
 
-.. autoclass:: ignis.widgets.Widget.ListBoxRow
+.. autoclass:: ignis.widgets.ListBoxRow
     :members:

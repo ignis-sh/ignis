@@ -1,5 +1,6 @@
-from gi.repository import Gtk, GObject  # type: ignore
+from gi.repository import Gtk  # type: ignore
 from ignis.base_widget import BaseWidget
+from ignis.gobject import IgnisProperty
 
 
 class Separator(Gtk.Separator, BaseWidget):
@@ -8,9 +9,12 @@ class Separator(Gtk.Separator, BaseWidget):
 
     A separator widget.
 
+    Args:
+        **kwargs: Properties to set.
+
     .. code-block:: python
 
-        Widget.Separator(
+        widgets.Separator(
             vertical=False,
         )
     """
@@ -22,11 +26,9 @@ class Separator(Gtk.Separator, BaseWidget):
         Gtk.Separator.__init__(self)
         BaseWidget.__init__(self, **kwargs)
 
-    @GObject.Property
+    @IgnisProperty
     def vertical(self) -> bool:
         """
-        - optional, read-write
-
         Whether the separator is vertical.
         """
         return self.get_orientation() == Gtk.Orientation.VERTICAL

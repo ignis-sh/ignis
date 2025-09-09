@@ -1,5 +1,6 @@
-from gi.repository import Gtk, GObject  # type: ignore
+from gi.repository import Gtk  # type: ignore
 from ignis.base_widget import BaseWidget
+from ignis.gobject import IgnisProperty
 
 
 class Overlay(Gtk.Overlay, BaseWidget):
@@ -9,14 +10,17 @@ class Overlay(Gtk.Overlay, BaseWidget):
     A container that places its children on top of each other.
     The ``child`` property is the main child, on which other widgets defined in ``overlays`` will be placed on top.
 
+    Args:
+        **kwargs: Properties to set.
+
     .. code-block:: python
 
-        Widget.Overlay(
-            child=Widget.Label(label="This is the main child"),
+        widgets.Overlay(
+            child=widgets.Label(label="This is the main child"),
             overlays=[
-                Widget.Label(label="Overlay child 1"),
-                Widget.Label(label="Overlay child 2"),
-                Widget.Label(label="Overlay child 3"),
+                widgets.Label(label="Overlay child 1"),
+                widgets.Label(label="Overlay child 2"),
+                widgets.Label(label="Overlay child 3"),
             ]
         )
     """
@@ -29,11 +33,9 @@ class Overlay(Gtk.Overlay, BaseWidget):
         self._overlays: list[Gtk.Widget] = []
         BaseWidget.__init__(self, **kwargs)
 
-    @GObject.Property
+    @IgnisProperty
     def overlays(self) -> list[Gtk.Widget]:
         """
-        - optional, read-write
-
         A list of overlay widgets.
         """
         return self._overlays

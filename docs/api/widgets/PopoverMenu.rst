@@ -1,5 +1,5 @@
 PopoverMenu
 -----------
 
-.. autoclass:: ignis.widgets.Widget.PopoverMenu
+.. autoclass:: ignis.widgets.PopoverMenu
     :members:

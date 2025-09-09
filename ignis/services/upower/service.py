@@ -1,8 +1,8 @@
 from ignis.base_service import BaseService
-from gi.repository import GObject  # type: ignore
 from ignis.dbus import DBusProxy
-from ignis.utils import Utils
+from ignis import utils
 from ignis.exceptions import UPowerNotRunningError
+from ignis.gobject import IgnisProperty, IgnisSignal
 from .device import UPowerDevice
 
 
@@ -10,27 +10,26 @@ class UPowerService(BaseService):
     """
     An UPower service.
     Requires ``UPower``.
-
-    Raises:
-        UPowerNotRunningError: If UPower D-Bus service is not running.
     """
 
     def __init__(self) -> None:
         super().__init__()
 
-        self._proxy = DBusProxy(
+        self._proxy = DBusProxy.new(
             name="org.freedesktop.UPower",
             object_path="/org/freedesktop/UPower",
             interface_name="org.freedesktop.UPower",
-            info=Utils.load_interface_xml("org.freedesktop.UPower"),
+            info=utils.load_interface_xml("org.freedesktop.UPower"),
             bus_type="system",
         )
 
-        if not self._proxy.has_owner:
-            raise UPowerNotRunningError()
-
         self._devices: dict[str, UPowerDevice] = {}
         self._batteries: dict[str, UPowerDevice] = {}
+
+        if not self.is_available:
+            return
+            # lines below requires running UPower
+
         self._display_device = UPowerDevice(object_path=self._proxy.GetDisplayDevice())
 
         self._proxy.signal_subscribe(
@@ -48,53 +47,58 @@ class UPowerService(BaseService):
     def __get_device_object_path(self, args) -> str:
         return args[-1].unpack()[0]  # -1 element is the device object path (Variant)
 
-    @GObject.Signal(arg_types=(UPowerDevice,))
-    def device_added(self, *args):
+    @IgnisSignal
+    def device_added(self, device: UPowerDevice):
         """
-        - Signal
-
         Emitted when a power device has been added.
 
         Args:
-            device (:class:`~ignis.services.upower.UPowerDevice`): The instance of the UPower device.
+            device: The instance of the UPower device.
         """
 
-    @GObject.Signal(arg_types=(UPowerDevice,))
-    def battery_added(self, *args):
+    @IgnisSignal
+    def battery_added(self, battery: UPowerDevice):
         """
-        - Signal
-
         Emitted when a battery has been added.
 
         Args:
-            battery (:class:`~ignis.services.upower.UPowerDevice`): The instance of the battery.
+            battery: The instance of the battery.
         """
 
-    @GObject.Property
+    @IgnisProperty
+    def is_available(self) -> bool:
+        """
+        Whether UPower is available and running.
+
+        If ``False``, this service will not be functional.
+        """
+        return self._proxy.has_owner
+
+    @IgnisProperty
     def devices(self) -> list[UPowerDevice]:
         """
-        - read-only
-
         A list of all power devices.
         """
         return list(self._devices.values())
 
-    @GObject.Property
+    @IgnisProperty
     def batteries(self) -> list[UPowerDevice]:
         """
-        - read-only
-
         A list of batteries.
         """
         return list(self._batteries.values())
 
-    @GObject.Property
+    @IgnisProperty
     def display_device(self) -> UPowerDevice:
         """
-        - read-only
-
         The currently active device intended for display.
+
+        Raises:
+            UPowerNotRunningError
         """
+        if not self.is_available:
+            raise UPowerNotRunningError()
+
         return self._display_device
 
     def __add_device(self, object_path: str) -> None:

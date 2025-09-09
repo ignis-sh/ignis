@@ -1,5 +1,4 @@
-from gi.repository import GObject  # type: ignore
-from ignis.gobject import IgnisGObject
+from ignis.gobject import IgnisGObject, IgnisProperty, IgnisSignal
 from ._imports import NM
 from .access_point import WifiAccessPoint, ActiveAccessPoint
 from .constants import STATE
@@ -14,7 +13,7 @@ class WifiDevice(IgnisGObject):
         super().__init__()
         self._device = device
         self._client = client
-        self._access_points: dict[NM.AccessPoint, WifiAccessPoint] = {}
+        self._access_points: dict[str, WifiAccessPoint] = {}  # bssid: WifiAccessPoint
 
         self._client.connect(
             "notify::wireless-enabled", lambda *args: self.notify_all()
@@ -33,81 +32,76 @@ class WifiDevice(IgnisGObject):
         for i in self._device.get_access_points():
             self.__add_access_point(None, i, False)
 
-    @GObject.Signal
+    @IgnisSignal
     def removed(self):
         """
         Emitted when this Wi-Fi device is removed.
         """
 
-    @GObject.Signal(arg_types=(WifiAccessPoint,))
-    def new_access_point(self, *args):
+    @IgnisSignal
+    def new_access_point(self, access_point: WifiAccessPoint):
         """
         Emitted when a new access point is added.
 
         Args:
-            access_point (:class:`~ignis.services.network.WifiAccessPoint`): An instance of the access point.
+            access_point: An instance of the access point.
         """
 
-    @GObject.Property
+    @IgnisProperty
     def access_points(self) -> list[WifiAccessPoint]:
         """
-        - read-only
-
         A list of access points (Wi-FI networks).
         """
         return list(self._access_points.values())
 
-    @GObject.Property
+    @IgnisProperty
     def ap(self) -> WifiAccessPoint:
         """
-        - read-only
-
         The currently active access point.
         """
         return self._ap
 
-    @GObject.Property
+    @IgnisProperty
     def state(self) -> str | None:
         """
-        - read-only
-
         The current state of the device or ``None`` if unknown.
         """
         return STATE.get(self._device.get_state(), None)
 
-    @GObject.Property
+    @IgnisProperty
     def is_connected(self) -> bool:
         """
-        - read-only
-
         Whether the device is connected to a Wi-Fi network.
         """
         return bool(self._device.get_active_connection())
 
-    def scan(self) -> None:
+    async def scan(self) -> None:
         """
         Scan for Wi-Fi networks.
         """
 
-        def finish(x, res) -> None:
-            self._device.request_scan_finish(res)
-
         if self.state == "unavailable":
             return
 
-        self._device.request_scan_async(None, finish)
+        await self._device.request_scan_async()  # type: ignore
 
     def __add_access_point(
         self, device, access_point: NM.AccessPoint, emit: bool = True
     ) -> None:
+        if access_point.props.bssid in self._access_points:
+            return
+
         obj = WifiAccessPoint(access_point, self._client, self._device)
-        self._access_points[access_point] = obj
+        self._access_points[access_point.props.bssid] = obj
 
         if emit:
             self.emit("new-access-point", obj)
             self.notify("access-points")
 
     def __remove_access_point(self, device, access_point: NM.AccessPoint) -> None:
-        obj = self._access_points.pop(access_point)
-        obj.emit("removed")
-        self.notify("access-points")
+        try:
+            obj = self._access_points.pop(access_point.props.bssid)
+            obj.emit("removed")
+            self.notify("access-points")
+        except KeyError:
+            pass

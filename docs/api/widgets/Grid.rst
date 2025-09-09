@@ -1,5 +1,5 @@
 Grid
 ----
 
-.. autoclass:: ignis.widgets.Widget.Grid
+.. autoclass:: ignis.widgets.Grid
     :members:

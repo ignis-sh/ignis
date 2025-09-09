@@ -1,5 +1,5 @@
 Box
 ---
 
-.. autoclass:: ignis.widgets.Widget.Box
+.. autoclass:: ignis.widgets.Box
     :members:

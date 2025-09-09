@@ -1,6 +1,6 @@
-from gi.repository import GObject, GLib  # type: ignore
-from ignis.gobject import IgnisGObject
-from ignis.logging import logger
+from gi.repository import GLib  # type: ignore
+from ignis.gobject import IgnisGObject, IgnisProperty, IgnisSignal
+from loguru import logger
 from ._imports import GnomeBluetooth
 
 
@@ -33,146 +33,112 @@ class BluetoothDevice(IgnisGObject):
             )
         gdevice.connect("notify::icon", lambda x, y: self.notify("icon-name"))
 
-    @GObject.Signal
+    @IgnisSignal
     def removed(self):
         """
-        - Signal
-
         Emitted when the device has been removed.
         """
 
-    @GObject.Property
+    @IgnisProperty
     def gdevice(self) -> GnomeBluetooth.Device:
         """
-        - read-only
-
         The instance of ``GnomeBluetooth.Device`` for this device.
         """
         return self._gdevice
 
-    @GObject.Property
+    @IgnisProperty
     def address(self) -> str:
         """
-        - read-only
-
         The Bluetooth device address of the device.
         """
         return self._gdevice.props.address
 
-    @GObject.Property
+    @IgnisProperty
     def alias(self) -> str:
         """
-        - read-only
-
         The name alias for the device.
         """
         return self._gdevice.props.alias
 
-    @GObject.Property
+    @IgnisProperty
     def battery_level(self) -> int:
         """
-        - read-only
-
         The current battery level of the device (if available).
         """
         return self._gdevice.props.battery_level
 
-    @GObject.Property
+    @IgnisProperty
     def battery_percentage(self) -> float:
         """
-        - read-only
-
         The current battery percentage of the device (if available).
         """
         return self._gdevice.props.battery_percentage
 
-    @GObject.Property
+    @IgnisProperty
     def connectable(self) -> bool:
         """
-        - read-only
-
         Whether it is possible to connect to the device.
         """
         return self._gdevice.props.connectable
 
-    @GObject.Property
+    @IgnisProperty
     def connected(self) -> bool:
         """
-        - read-only
-
         Whether the device is currently connected.
         """
         return self._gdevice.props.connected
 
-    @GObject.Property
+    @IgnisProperty
     def icon_name(self) -> str:
         """
-        - read-only
-
         The current icon name of the device.
         """
         return self._gdevice.props.icon
 
-    @GObject.Property
+    @IgnisProperty
     def name(self) -> str:
         """
-        - read-only
-
         The complete device name. It is better to use the ``alias`` property when displaying the device name.
         """
         return self._gdevice.props.name
 
-    @GObject.Property
+    @IgnisProperty
     def paired(self) -> bool:
         """
-        - read-only
-
         Whether the device is paired.
         """
         return self._gdevice.props.paired
 
-    @GObject.Property
+    @IgnisProperty
     def trusted(self) -> bool:
         """
-        - read-only
-
         Whether the remote is seen as trusted.
         """
         return self._gdevice.props.trusted
 
-    @GObject.Property
+    @IgnisProperty
     def device_type(self) -> str:
         """
-        - read-only
-
         The type of the device, e.g., ``"mouse"``, ``"speakers"``.
 
         For more device types, see `GnomeBluetooth.Type <https://lazka.github.io/pgi-docs/index.html#GnomeBluetooth-3.0/flags.html#GnomeBluetooth.Type>`_.
         """
         return GnomeBluetooth.type_to_string(self._gdevice.props.type)  # type: ignore
 
-    def __connect_service(self, connect: bool) -> None:
-        def callback(x, res):
-            try:
-                self._client.connect_service_finish(res)
-            except GLib.GError as gerror:  # type: ignore
-                logger.warning(gerror.message)
+    async def __connect_service(self, connect: bool) -> None:
+        try:
+            await self._client.connect_service(self._gdevice.get_object_path(), connect)  # type: ignore
+        except GLib.Error as gerror:
+            logger.warning(gerror.message)
 
-        self._client.connect_service(
-            self._gdevice.get_object_path(),
-            connect,
-            None,
-            callback,
-        )
-
-    def connect_to(self) -> None:
+    async def connect_to(self) -> None:
         """
         Connect to this device.
         """
-        self.__connect_service(True)
+        await self.__connect_service(True)
 
-    def disconnect_from(self) -> None:
+    async def disconnect_from(self) -> None:
         """
         Disconnect from this device.
         """
-        self.__connect_service(False)
+        await self.__connect_service(False)

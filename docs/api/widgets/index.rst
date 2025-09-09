@@ -1,13 +1,13 @@
 Widgets
 ==========
 
-To get widgets, use the universal ``Widget`` class.
+To access widgets, use the ``ignis.widgets`` package.
 
 .. code-block:: python
 
-   from ignis.widgets import Widget
+   from ignis import widgets
 
-   Widget.WIDGET_NAME()
+   widgets.WIDGET_NAME()
 
 Enums
 ----------------
@@ -29,9 +29,9 @@ This can be useful when you need to perform actions when the widget is initializ
 
 .. code-block:: python
 
-   from ignis.widgets import Widget
+   from ignis import widgets
 
-   Widget.Label(
+   widgets.Label(
       label="you will not see this text", 
       setup=lambda self: self.set_label("instead, you will see this")
    )

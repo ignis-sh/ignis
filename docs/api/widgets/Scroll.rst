@@ -1,5 +1,5 @@
 Scroll
 ------
 
-.. autoclass:: ignis.widgets.Widget.Scroll
+.. autoclass:: ignis.widgets.Scroll
     :members:

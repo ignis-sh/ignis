@@ -1,5 +1,5 @@
 Window
 ------
 
-.. autoclass:: ignis.widgets.Widget.Window
+.. autoclass:: ignis.widgets.Window
     :members:

@@ -1,10 +1,12 @@
-from typing import Union, Literal
-from ignis.utils import Utils
+import asyncio
+from typing import Literal
+from collections.abc import Callable
+from ignis import utils
 from ignis.dbus import DBusProxy
-from gi.repository import GLib, GObject, GdkPixbuf, Gtk, Gdk  # type: ignore
-from ignis.gobject import IgnisGObject
+from gi.repository import GLib, GdkPixbuf, Gtk  # type: ignore
+from ignis.gobject import IgnisGObject, IgnisProperty, IgnisSignal
 from ignis.dbus_menu import DBusMenu
-from ignis.exceptions import DisplayNotFoundError
+from ignis.connection_manager import ConnectionManager, DBusConnectionManager
 
 
 class SystemTrayItem(IgnisGObject):
@@ -12,41 +14,36 @@ class SystemTrayItem(IgnisGObject):
     A system tray item.
     """
 
-    def __init__(self, name: str, object_path: str):
+    def __init__(self, proxy: DBusProxy):
         super().__init__()
 
+        self._proxy = proxy
+        self._conn_mgr = ConnectionManager()
+        self._dbus_conn_mgr = DBusConnectionManager()
+
+        self._id: str | None = None
+        self._category: str | None = None
         self._title: str | None = None
-        self._icon: Union[str, GdkPixbuf.Pixbuf, None] = None
-        self._tooltip: str | None = None
         self._status: str | None = None
+        self._window_id: int = -1
+        self._icon: str | GdkPixbuf.Pixbuf | None = None
+        self._item_is_menu: bool = False
         self._menu: DBusMenu | None = None
+        self._tooltip: str | None = None
 
-        self.__dbus: DBusProxy = DBusProxy(
-            name=name,
-            object_path=object_path,
-            interface_name="org.kde.StatusNotifierItem",
-            info=Utils.load_interface_xml("org.kde.StatusNotifierItem"),
+        self._conn_mgr.connect(
+            self._proxy.gproxy, "notify::g-name-owner", lambda *_: self.__remove()
         )
-
-        if not self.__dbus.has_owner:
-            return
-
-        self.__dbus.proxy.connect(
-            "notify::g-name-owner", lambda *args: self.emit("removed")
-        )
-
-        menu_path: str = self.__dbus.Menu
-        if menu_path:
-            self._menu = DBusMenu(name=self.__dbus.name, object_path=menu_path)
 
         for signal_name in [
             "NewIcon",
             "NewAttentionIcon",
             "NewOverlayIcon",
         ]:
-            self.__dbus.signal_subscribe(
-                signal_name=signal_name,
-                callback=lambda *args: Utils.thread(self.__sync_icon),
+            self._dbus_conn_mgr.subscribe(
+                self._proxy,
+                signal_name,
+                lambda *_: asyncio.create_task(self.__sync_icon()),
             )
 
         for signal_name in [
@@ -54,141 +51,192 @@ class SystemTrayItem(IgnisGObject):
             "NewToolTip",
             "NewStatus",
         ]:
-            self.__dbus.signal_subscribe(
-                signal_name=signal_name,
-                callback=lambda *args, signal_name=signal_name: self.notify(
-                    signal_name.replace("New", "").lower()
+            self._dbus_conn_mgr.subscribe(
+                self._proxy,
+                signal_name,
+                lambda *args, signal_name=signal_name: asyncio.create_task(
+                    self.__sync_property(signal_name.replace("New", "").lower())
                 ),
             )
 
-        display = Gdk.Display.get_default()
-        if not display:
-            raise DisplayNotFoundError()
+        self._icon_theme = Gtk.IconTheme.get_for_display(utils.get_gdk_display())
+        self._conn_mgr.connect(
+            self._icon_theme,
+            "changed",
+            lambda x: asyncio.create_task(self.__sync_icon()),
+        )
 
-        self._icon_theme = Gtk.IconTheme.get_for_display(display)
-        self._icon_theme.connect("changed", lambda x: self.__sync_icon())
+    @classmethod
+    async def new_async(cls, name: str, object_path: str) -> "SystemTrayItem | None":
+        proxy = await DBusProxy.new_async(
+            name=name,
+            object_path=object_path,
+            interface_name="org.kde.StatusNotifierItem",
+            info=utils.load_interface_xml("org.kde.StatusNotifierItem"),
+        )
 
-        self.__ready()
+        if not proxy.has_owner:
+            return None
 
-    @Utils.run_in_thread
-    def __ready(self) -> None:
-        self.__sync_icon()
-        self.emit("ready")
+        obj = cls(proxy)
+        await obj._initial_sync()
+        return obj
 
-    def __sync_icon(self) -> None:
-        if self.title == "spotify":
-            self._icon = self.__get_spotify_icon()
-            self.notify("icon")
+    async def _initial_sync(self) -> None:
+        menu_path: str = await self._proxy.get_dbus_property_async("Menu")
+
+        if menu_path:
+            self._menu = await DBusMenu.new_async(
+                name=self._proxy.name, object_path=menu_path
+            )
+
+        await self.__sync_icon()
+
+        # sync all properties
+        await self.__sync_property("id")
+        await self.__sync_property("category")
+        await self.__sync_property("title")
+        await self.__sync_property("status")
+        await self.__sync_property("window_id")
+        await self.__sync_property("item_is_menu")
+        await self.__sync_property("tooltip")
+
+    def __remove(self) -> None:
+        self._conn_mgr.disconnect_all()
+        self._dbus_conn_mgr.unsubscribe_all()
+        self.emit("removed")
+
+    async def __sync_property(self, py_name: str) -> None:
+        try:
+            value = await self._proxy.get_dbus_property_async(
+                utils.snake_to_pascal(py_name)
+            )
+        except GLib.Error:
             return
 
-        icon_name = self.__dbus.IconName
-        attention_icon_name = self.__dbus.AttentionIconName
-        icon_pixmap = self.__dbus.IconPixmap
-        attention_icon_pixmap = self.__dbus.AttentionIconPixmap
+        setattr(self, f"_{py_name}", value)
+        self.notify(py_name.replace("_", "-"))
 
-        if icon_name:
-            self._icon = icon_name
+    async def __sync_icon(self) -> None:
+        async def add_to_search_path(icon_name: str) -> None:
+            search_path = self._icon_theme.get_search_path()
+            try:
+                icon_theme_path = await self._proxy.get_dbus_property_async("IconName")
+            except GLib.Error:
+                return
+            if (
+                not self._icon_theme.has_icon(icon_name)
+                and icon_theme_path is not None
+                and search_path is not None
+                and icon_theme_path not in search_path
+            ):
+                self._icon_theme.add_search_path(icon_theme_path)
 
-        elif attention_icon_name:
-            self._icon = attention_icon_name
+        async def try_set_prop(
+            property_name: str,
+            callback: Callable | None = None,
+            add_search_path: bool = False,
+        ) -> bool:
+            try:
+                value = await self._proxy.get_dbus_property_async(property_name)
+            except GLib.Error:
+                return False
 
-        elif icon_pixmap:
-            self._icon = self.__get_pixbuf(icon_pixmap)
+            if value:
+                if add_search_path:
+                    await add_to_search_path(value)
+                if callback:
+                    self._icon = callback(value)
+                else:
+                    self._icon = value
+                self.notify("icon")
+                return True
+            else:
+                return False
 
-        elif attention_icon_pixmap:
-            self._icon = self.__get_pixbuf(attention_icon_pixmap)
+        async def try_set_icon_name() -> None:
+            is_success = await try_set_prop("IconName", add_search_path=True)
+            if not is_success:
+                await try_set_attention_icon_name()
 
-        else:
-            self._icon = "image-missing"
+        async def try_set_attention_icon_name() -> None:
+            is_success = await try_set_prop("AttentionIconName", add_search_path=True)
+            if not is_success:
+                await try_set_icon_pixmap()
 
-        self.notify("icon")
+        async def try_set_icon_pixmap() -> None:
+            is_success = await try_set_prop("IconPixmap", callback=self.__get_pixbuf)
+            if not is_success:
+                await try_set_attention_icon_pixmap()
 
-    def __get_spotify_icon(self) -> str:
-        icon_name = self.__dbus.IconName
-        if self._icon_theme.has_icon(icon_name):
-            return icon_name
-        else:
-            return "/opt/spotify/icons/" + icon_name + ".png"
+        async def try_set_attention_icon_pixmap() -> None:
+            is_success = await try_set_prop(
+                "AttentionIconPixmap", callback=self.__get_pixbuf
+            )
+            if not is_success:
+                self._icon = "image-missing"
+                self.notify("icon")
 
-    @GObject.Signal
-    def ready(self): ...  # user shouldn't connect to this signal
+        await try_set_icon_name()
 
-    @GObject.Signal
+    @IgnisSignal
     def removed(self):
         """
-        - Signal
-
         Emitted when the item is removed.
         """
 
-    @GObject.Property
-    def id(self) -> str:
+    @IgnisProperty
+    def id(self) -> str | None:
         """
-        - read-only
-
         The ID of the item.
         """
-        return self.__dbus.Id
+        return self._id
 
-    @GObject.Property
-    def category(self) -> str:
+    @IgnisProperty
+    def category(self) -> str | None:
         """
-        - read-only
-
         The category of the item.
         """
-        return self.__dbus.Category
+        return self._category
 
-    @GObject.Property
-    def title(self) -> str:
+    @IgnisProperty
+    def title(self) -> str | None:
         """
-        - read-only
-
         The title of the item.
         """
-        return self.__dbus.Title
+        return self._title
 
-    @GObject.Property
-    def status(self) -> str:
+    @IgnisProperty
+    def status(self) -> str | None:
         """
-        - read-only
-
         The status of the item.
         """
-        return self.__dbus.Status
+        return self._status
 
-    @GObject.Property
+    @IgnisProperty
     def window_id(self) -> int:
         """
-        - read-only
-
         The window ID.
         """
-        return self.__dbus.WindowId
+        return self._window_id
 
-    @GObject.Property
-    def icon(self) -> Union[str, GdkPixbuf.Pixbuf, None]:
+    @IgnisProperty
+    def icon(self) -> "str | GdkPixbuf.Pixbuf | None":
         """
-        - read-only
-
         The icon name or a ``GdkPixbuf.Pixbuf``.
         """
         return self._icon
 
-    @GObject.Property
+    @IgnisProperty
     def item_is_menu(self) -> bool:
         """
-        - read-only
-
         Whether the item has a menu.
         """
-        return self.__dbus.ItemIsMenu
+        return self._item_is_menu
 
-    @GObject.Property
+    @IgnisProperty
     def menu(self) -> DBusMenu | None:
         """
-        - read-only
-
         A :class:`~ignis.dbus_menu.DBusMenu` or ``None``.
 
         .. hint::
@@ -205,15 +253,12 @@ class SystemTrayItem(IgnisGObject):
         """
         return self._menu
 
-    @GObject.Property
-    def tooltip(self) -> str:
+    @IgnisProperty
+    def tooltip(self) -> str | None:
         """
-        - read-only
-
         A tooltip, the text should be displayed when you hover cursor over the icon.
         """
-        tooltip = self.__dbus.ToolTip
-        return self.title if not tooltip else tooltip[2]
+        return self._title if not self._tooltip else self._tooltip[2]
 
     def __get_pixbuf(self, pixmap_array) -> GdkPixbuf.Pixbuf:
         pixmap = sorted(pixmap_array, key=lambda x: x[0])[-1]
@@ -245,7 +290,17 @@ class SystemTrayItem(IgnisGObject):
             x: x coordinate.
             y: y coordinate.
         """
-        self.__dbus.Activate("(ii)", x, y, result_handler=lambda *args: None)
+        self._proxy.Activate("(ii)", x, y)
+
+    async def activate_async(self, x: int = 0, y: int = 0) -> None:
+        """
+        Asynchronous version of :func:`activate`.
+
+        Args:
+            x: x coordinate.
+            y: y coordinate.
+        """
+        await self._proxy.ActivateAsync("(ii)", x, y)
 
     def secondary_activate(self, x: int = 0, y: int = 0) -> None:
         """
@@ -255,7 +310,17 @@ class SystemTrayItem(IgnisGObject):
             x: x coordinate.
             y: y coordinate.
         """
-        self.__dbus.SecondaryActivate("(ii)", x, y, result_handler=lambda *args: None)
+        self._proxy.SecondaryActivate("(ii)", x, y)
+
+    async def secondary_activate_async(self, x: int = 0, y: int = 0) -> None:
+        """
+        Asynchronous version of :func:`secondary_activate`.
+
+        Args:
+            x: x coordinate.
+            y: y coordinate.
+        """
+        await self._proxy.SecondaryActivateAsync("(ii)", x, y)
 
     def context_menu(self, x: int = 0, y: int = 0) -> None:
         """
@@ -265,7 +330,17 @@ class SystemTrayItem(IgnisGObject):
             x: x coordinate.
             y: y coordinate.
         """
-        self.__dbus.ContextMenu("(ii)", x, y, result_handler=lambda *args: None)
+        self._proxy.ContextMenu("(ii)", x, y)
+
+    async def context_menu_async(self, x: int = 0, y: int = 0) -> None:
+        """
+        Asynchronous version of :func:`context_menu`.
+
+        Args:
+            x: x coordinate.
+            y: y coordinate.
+        """
+        await self._proxy.ContextMenuAsync("(ii)", x, y)
 
     def scroll(
         self,
@@ -279,6 +354,18 @@ class SystemTrayItem(IgnisGObject):
             delta: The amount of scroll.
             orientation: The type of the orientation: horizontal or vertical.
         """
-        self.__dbus.Scroll(
-            "(is)", delta, orientation, result_handler=lambda *args: None
-        )
+        self._proxy.Scroll("(is)", delta, orientation)
+
+    async def scroll_async(
+        self,
+        delta: int = 0,
+        orientation: Literal["horizontal", "vertical"] = "horizontal",
+    ) -> None:
+        """
+        Asynchronous version of :func:`scroll`.
+
+        Args:
+            delta: The amount of scroll.
+            orientation: The type of the orientation: horizontal or vertical.
+        """
+        await self._proxy.ScrollAsync("(is)", delta, orientation)

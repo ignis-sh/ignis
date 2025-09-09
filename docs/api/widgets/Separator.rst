@@ -1,5 +1,5 @@
 Separator
 ---------
 
-.. autoclass:: ignis.widgets.Widget.Separator
+.. autoclass:: ignis.widgets.Separator
     :members:

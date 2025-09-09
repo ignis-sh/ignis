@@ -1,12 +1,46 @@
+[project]
+name = 'ignis'
+description = 'A widget framework for building desktop shells, written and configurable in Python'
+readme = 'README.md'
+license = { text = 'LGPL-2.1-or-later' }
+authors = [{ name = 'linkfrg' }]
+dynamic = ['version']
+requires-python = ">=3.11"
+dependencies = [
+    "click>=8.1.7",
+    "pycairo>=1.26.1",
+    "PyGObject>=3.50.0",
+    "loguru>=0.7.2",
+    "rich>=13.9.4",
+]
+
+[project.urls]
+Homepage = "https://ignis-sh.github.io/ignis"
+Documentation = "https://ignis-sh.github.io/ignis"
+Repository = "https://github.com/ignis-sh/ignis"
+Issues = "https://github.com/ignis-sh/ignis/issues"
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.version.raw-options]
+version_scheme = "no-guess-dev"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "ignis/_version.py"
+
 [tool.mypy]
 python_version = "3.10"
 packages = ["ignis", "examples"]
 exclude = ["venv"]
 disable_error_code = [
-    "no-redef",  # allow variable redefinition (needed for GObject.Property decorator)
-    "method-assign"  # also needed for GObject.Property
+    "no-redef",      # allow variable redefinition (needed for GObject.Property decorator)
+    "method-assign", # also needed for GObject.Property
 ]
-mypy_path = ["stubs"]
 check_untyped_defs = true
 
 [[tool.mypy.overrides]]
@@ -18,21 +52,24 @@ include = ["ignis/**/*.py", "examples/**/*.py"]
 
 [tool.ruff.lint]
 select = [
-    "F",   # pyflakes
-    "E",   # pycodestyle errors
-    "W",   # pycodestyle warnings
-    "I",   # isort
-    "UP",  # pyupgrade
-    "B",   # flake8-bugbear
-    "C4",  # flake8-comprehensions
+    "F",  # pyflakes
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "I",  # isort
+    "UP", # pyupgrade
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
 ]
 ignore = [
-    "E501",  # line too long, handled by black
-    "B008",  # do not perform function calls in argument defaults
-    "C901",  # too complex
-    "W191",  # indentation contains tabs
-    "I001",  # import block is un-sorted or un-formatted
+    "E501", # line too long, handled by black
+    "B008", # do not perform function calls in argument defaults
+    "C901", # too complex
+    "W191", # indentation contains tabs
+    "I001", # import block is un-sorted or un-formatted
 ]
 
 fixable = ["ALL"]
 unfixable = []
+
+[project.scripts]
+ignis = "ignis.main:main"

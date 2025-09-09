@@ -1,9 +1,9 @@
 import gi
-import sys
 from ignis.exceptions import NetworkManagerNotFoundError
+from ignis import is_sphinx_build
 
 try:
-    if "sphinx" not in sys.modules:
+    if not is_sphinx_build:
         gi.require_version("NM", "1.0")
     from gi.repository import NM  # type: ignore
 except (ImportError, ValueError):

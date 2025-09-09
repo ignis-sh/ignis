@@ -3,10 +3,10 @@ Ignis
 
 **Useful links**:
 `Installation <user/installation.html>`__ |
-`Source Repository <https://github.com/linkfrg/ignis>`__ |
-`Issue Tracker <https://github.com/linkfrg/ignis/issues>`__
+`Source Repository <https://github.com/ignis-sh/ignis>`__ |
+`Issue Tracker <https://github.com/ignis-sh/ignis/issues>`__
 
-Ignis is a Python framework for building desktop shells using GTK4.
+A widget framework for building desktop shells, written and configurable in Python.
 
 .. grid:: 1 1 2 2
     :gutter: 2 3 4 4

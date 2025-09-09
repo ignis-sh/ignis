@@ -13,8 +13,13 @@ Get started
 
    installation
    first_widgets
+   using_classes
    dynamic_content
    styling
+   async
    cli
+   options
    expanding_functionality
+   nix
+   troubleshooting
    faq

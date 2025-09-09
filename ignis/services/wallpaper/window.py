@@ -4,8 +4,6 @@ from gi.repository import Gtk4LayerShell as GtkLayerShell  # type: ignore
 from ignis.exceptions import LayerShellNotSupportedError
 from ignis.app import IgnisApp
 
-app = IgnisApp.get_default()
-
 
 class WallpaperLayerWindow(Gtk.Window):
     def __init__(
@@ -13,6 +11,8 @@ class WallpaperLayerWindow(Gtk.Window):
     ) -> None:
         if not GtkLayerShell.is_supported():
             raise LayerShellNotSupportedError()
+
+        app = IgnisApp.get_initialized()
 
         Gtk.Window.__init__(self, application=app)
         GtkLayerShell.init_for_window(self)

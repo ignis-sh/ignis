@@ -1,6 +1,7 @@
-from gi.repository import Gtk, GObject  # type: ignore
+from gi.repository import Gtk  # type: ignore
 from ignis.base_widget import BaseWidget
-from typing import Callable
+from collections.abc import Callable
+from ignis.gobject import IgnisProperty
 
 
 class ListBoxRow(Gtk.ListBoxRow, BaseWidget):
@@ -9,10 +10,13 @@ class ListBoxRow(Gtk.ListBoxRow, BaseWidget):
 
     A row for :class:`~ignis.widgets.listbox.ListBox`.
 
+    Args:
+        **kwargs: Properties to set.
+
     .. code-block:: python
 
-        Widget.ListBoxRow(
-            label="row 1",
+        widgets.ListBoxRow(
+            child=widgets.Label(label="row 1"),
             on_activate=lambda x: print("selected row 1"),
             selected=True
         )
@@ -27,11 +31,9 @@ class ListBoxRow(Gtk.ListBoxRow, BaseWidget):
         self._selected: bool = False
         BaseWidget.__init__(self, **kwargs)
 
-    @GObject.Property
+    @IgnisProperty
     def on_activate(self) -> Callable:
         """
-        - optional, read-write
-
         The function to call when the user selects the row.
         """
         return self._on_activate
@@ -40,11 +42,9 @@ class ListBoxRow(Gtk.ListBoxRow, BaseWidget):
     def on_activate(self, value: Callable) -> None:
         self._on_activate = value
 
-    @GObject.Property
+    @IgnisProperty
     def selected(self) -> bool:
         """
-        - optional, read-write
-
         Whether the row is selected by default.
         """
         return self._selected

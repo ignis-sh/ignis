@@ -23,10 +23,13 @@ class Revealer(Gtk.Revealer, BaseWidget):
         - swing_up: Floop in from the bottom
         - swing_down: Floop in from the top
 
+    Args:
+        **kwargs: Properties to set.
+
     .. code-block:: python
 
-        Widget.Revealer(
-            child=Widget.Label(label='animation!!!'),
+        widgets.Revealer(
+            child=widgets.Label(label='animation!!!'),
             transition_type='slideright',
             transition_duration=500,
             reveal_child=True, # Whether child is revealed.

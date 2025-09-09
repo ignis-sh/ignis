@@ -1,6 +1,7 @@
-from gi.repository import Gtk, GObject  # type: ignore
+from gi.repository import Gtk  # type: ignore
 from ignis.base_widget import BaseWidget
-from typing import Callable
+from collections.abc import Callable
+from ignis.gobject import IgnisProperty
 
 
 class DropDown(Gtk.DropDown, BaseWidget):
@@ -9,9 +10,12 @@ class DropDown(Gtk.DropDown, BaseWidget):
 
     A widget that allows the user to choose an item from a list of options.
 
+    Args:
+        **kwargs: Properties to set.
+
     .. code-block:: python
 
-        Widget.DropDown(
+        widgets.DropDown(
             items=["option 1", "option 2", "option 3"],
             on_selected=lambda x, selected: print(selected)
         )
@@ -28,11 +32,9 @@ class DropDown(Gtk.DropDown, BaseWidget):
 
         self.connect("notify::selected-item", self.__invoke_on_selected)
 
-    @GObject.Property
+    @IgnisProperty
     def items(self) -> list[str]:
         """
-        - optional, read-write
-
         A list of strings that can be selected in the popover.
         """
         return self._items
@@ -46,11 +48,9 @@ class DropDown(Gtk.DropDown, BaseWidget):
 
         self.model = model
 
-    @GObject.Property
+    @IgnisProperty
     def on_selected(self) -> Callable | None:
         """
-        - optional, read-write
-
         The function to call when the user selects an item from the list.
         """
         return self._on_selected
@@ -63,11 +63,9 @@ class DropDown(Gtk.DropDown, BaseWidget):
         if self.on_selected:
             self.on_selected(self, self.selected)
 
-    @GObject.Property
+    @IgnisProperty
     def selected(self) -> str:
         """
-        - not argument, read-only
-
         The selected string. It is a shortcut for ``self.selected_item.props.string``.
         """
         return self.selected_item.props.string

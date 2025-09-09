@@ -1,5 +1,6 @@
-from gi.repository import GObject, Gio  # type: ignore
+from gi.repository import Gio  # type: ignore
 from ignis.gobject import IgnisGObject
+from ignis.gobject import IgnisProperty
 
 
 class ApplicationAction(IgnisGObject):
@@ -14,20 +15,16 @@ class ApplicationAction(IgnisGObject):
         self._action = action
         self._name: str = app.get_action_name(action)
 
-    @GObject.Property
+    @IgnisProperty
     def action(self) -> str:
         """
-        - read-only
-
         The ID of the action.
         """
         return self._action
 
-    @GObject.Property
+    @IgnisProperty
     def name(self) -> str:
         """
-        - read-only
-
         The human-readable name of the action.
         """
         return self._name

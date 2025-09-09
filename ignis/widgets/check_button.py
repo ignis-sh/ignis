@@ -1,6 +1,7 @@
-from gi.repository import Gtk, GObject  # type: ignore
+from gi.repository import Gtk  # type: ignore
 from ignis.base_widget import BaseWidget
-from typing import Callable
+from collections.abc import Callable
+from ignis.gobject import IgnisProperty
 
 
 class CheckButton(Gtk.CheckButton, BaseWidget):
@@ -9,11 +10,14 @@ class CheckButton(Gtk.CheckButton, BaseWidget):
 
     A check button. If ``group`` is set, the check button behaves as a radio button.
 
+    Args:
+        **kwargs: Properties to set.
+
     Simple checkbutton:
 
     .. code-block:: python
 
-        Widget.CheckButton(
+        widgets.CheckButton(
             label='check button',
             active=True,
         )
@@ -22,8 +26,8 @@ class CheckButton(Gtk.CheckButton, BaseWidget):
 
     .. code-block:: python
 
-        Widget.CheckButton(
-            group=Widget.CheckButton(label='radiobutton 1'),
+        widgets.CheckButton(
+            group=widgets.CheckButton(label='radiobutton 1'),
             label='radiobutton 2',
             active=True,
         )
@@ -34,20 +38,18 @@ class CheckButton(Gtk.CheckButton, BaseWidget):
 
     def __init__(self, **kwargs):
         Gtk.CheckButton.__init__(self)
-        BaseWidget.__init__(self, **kwargs)
-
         self._on_toggled: Callable | None = None
+
+        BaseWidget.__init__(self, **kwargs)
 
         self.connect(
             "toggled",
             lambda x: self.on_toggled(x, x.active) if self.on_toggled else None,
         )
 
-    @GObject.Property
+    @IgnisProperty
     def on_toggled(self) -> Callable | None:
         """
-        - optional, read-write
-
         The function to call when button is toggled (checked/unchecked).
         """
         return self._on_toggled

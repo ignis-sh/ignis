@@ -1,5 +1,4 @@
-from .gobject import IgnisGObject
-from gi.repository import GObject  # type: ignore
+from .gobject import IgnisGObject, IgnisProperty
 from typing import Any
 
 
@@ -8,6 +7,9 @@ class Variable(IgnisGObject):
     Bases: :class:`~ignis.gobject.IgnisGObject`
 
     Simple class that holds a value.
+
+    Args:
+        value: An initial value to set.
 
     Example usage:
 
@@ -25,11 +27,9 @@ class Variable(IgnisGObject):
         self._value = value
         super().__init__()
 
-    @GObject.Property
+    @IgnisProperty
     def value(self) -> Any:
         """
-        - optional, read-write
-
         A value.
         """
         return self._value

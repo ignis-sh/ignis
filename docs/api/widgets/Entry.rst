@@ -1,5 +1,5 @@
 Entry
 -----
 
-.. autoclass:: ignis.widgets.Widget.Entry
+.. autoclass:: ignis.widgets.Entry
     :members:

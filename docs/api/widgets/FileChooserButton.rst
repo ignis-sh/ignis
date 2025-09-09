@@ -1,5 +1,5 @@
 FileChooserButton
 -----------------
 
-.. autoclass:: ignis.widgets.Widget.FileChooserButton
+.. autoclass:: ignis.widgets.FileChooserButton
     :members:

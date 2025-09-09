@@ -1,6 +1,7 @@
-from gi.repository import Gtk, GObject  # type: ignore
+from gi.repository import Gtk  # type: ignore
 from ignis.base_widget import BaseWidget
-from typing import Callable, Union
+from collections.abc import Callable
+from ignis.gobject import IgnisProperty
 
 
 class Button(Gtk.Button, BaseWidget):
@@ -9,10 +10,13 @@ class Button(Gtk.Button, BaseWidget):
 
     A button.
 
+    Args:
+        **kwargs: Properties to set.
+
     .. code-block:: python
 
-        Widget.Button(
-            child=Widget.Label(label="button"),
+        widgets.Button(
+            child=widgets.Label(label="button"),
             on_click=lambda self: print(self),
             on_right_click=lambda self: print(self),
             on_middle_click=lambda self: print(self),
@@ -28,8 +32,8 @@ class Button(Gtk.Button, BaseWidget):
         self._on_right_click: Callable | None = None
         self._on_middle_click: Callable | None = None
 
-        self.__right_click_controller: Union[Gtk.GestureClick, None] = None
-        self.__middle_click_controller: Union[Gtk.GestureClick, None] = None
+        self.__right_click_controller: Gtk.GestureClick | None = None
+        self.__middle_click_controller: Gtk.GestureClick | None = None
 
         BaseWidget.__init__(self, **kwargs)
         self.connect("clicked", lambda x: self.on_click(x) if self.on_click else None)
@@ -45,11 +49,9 @@ class Button(Gtk.Button, BaseWidget):
         controller.connect("pressed", on_pressed)
         return controller
 
-    @GObject.Property
+    @IgnisProperty
     def on_click(self) -> Callable:
         """
-        - optional, read-write
-
         The function to call on left click.
         """
         return self._on_click
@@ -58,11 +60,9 @@ class Button(Gtk.Button, BaseWidget):
     def on_click(self, value: Callable) -> None:
         self._on_click = value
 
-    @GObject.Property
+    @IgnisProperty
     def on_right_click(self) -> Callable:
         """
-        - optional, read-write
-
         The function to call on right click.
         """
         return self._on_right_click
@@ -72,14 +72,13 @@ class Button(Gtk.Button, BaseWidget):
         self._on_right_click = value
         if not self.__right_click_controller:
             self.__right_click_controller = self.__init_controller(
-                3, self._on_right_click
+                3,
+                lambda *args, **kwargs: self.on_right_click(*args, **kwargs),
             )
 
-    @GObject.Property
+    @IgnisProperty
     def on_middle_click(self) -> Callable:
         """
-        - optional, read-write
-
         The function to call on middle click.
         """
         return self._on_middle_click
@@ -89,5 +88,6 @@ class Button(Gtk.Button, BaseWidget):
         self._on_middle_click = value
         if not self.__middle_click_controller:
             self.__middle_click_controller = self.__init_controller(
-                2, self._on_middle_click
+                2,
+                lambda *args, **kwargs: self.on_middle_click(*args, **kwargs),
             )

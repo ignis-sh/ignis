@@ -1,5 +1,5 @@
 CheckButton
 -----------
 
-.. autoclass:: ignis.widgets.Widget.CheckButton
+.. autoclass:: ignis.widgets.CheckButton
     :members:

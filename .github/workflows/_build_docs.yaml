@@ -1,0 +1,39 @@
+name: Build Documentation
+
+on:
+  workflow_call:
+    inputs:
+      DOC_TAG:
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+
+    - name: Install Python dependencies
+      run: |
+        pip install -r docs/requirements.txt
+
+    - name: Build documentation
+      run: |
+        export DOC_TAG=${{ inputs.DOC_TAG }}
+        cd docs
+        make html
+
+    - name: Upload Documentation Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: documentation-${{ inputs.DOC_TAG }}
+        path: docs/_build/html
+        retention-days: 7

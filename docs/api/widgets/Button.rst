@@ -1,5 +1,5 @@
 Button
 ------
 
-.. autoclass:: ignis.widgets.Widget.Button
+.. autoclass:: ignis.widgets.Button
     :members:

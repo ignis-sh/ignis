@@ -8,12 +8,15 @@ class Scroll(Gtk.ScrolledWindow, BaseWidget):
 
     A container that accepts a single child widget and makes it scrollable.
 
+    Args:
+        **kwargs: Properties to set.
+
     .. code-block:: python
 
-        Widget.Scroll(
-            child=Widget.Box(
+        widgets.Scroll(
+            child=widgets.Box(
                 vertical=True,
-                child=[Widget.Label(i) for i in range(30)]
+                child=[widgets.Label(i) for i in range(30)]
             )
         )
     """

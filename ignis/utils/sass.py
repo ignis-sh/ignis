@@ -1,25 +1,37 @@
-import os
+import shutil
 import subprocess
-from ignis.exceptions import SassCompilationError, DartSassNotFoundError
+from typing import Literal
+from ignis.exceptions import SassCompilationError, SassNotFoundError
+from ignis import get_temp_dir
 
-TEMP_DIR = "/tmp/ignis"
-COMPILED_CSS = f"{TEMP_DIR}/compiled.css"
-os.makedirs(TEMP_DIR, exist_ok=True)
+# resolve Sass compiler paths and pick a default one
+# "sass" (dart-sass) is the default,
+# "grass" is an API-compatible drop-in replacement
+sass_compilers = {}
+for cmd in ("sass", "grass"):
+    path = shutil.which(cmd)
+    if path:
+        sass_compilers[cmd] = path
 
 
-def compile_file(path: str) -> str:
-    result = subprocess.run(["sass", path, COMPILED_CSS], capture_output=True)
+def compile_file(path: str, compiler_path: str, extra_args: list[str]) -> str:
+    compiled_css = f"{get_temp_dir()}/compiled.css"
+
+    result = subprocess.run(
+        [compiler_path, path, compiled_css, *extra_args] + extra_args,
+        capture_output=True,
+    )
 
     if result.returncode != 0:
         raise SassCompilationError(result.stderr.decode())
 
-    with open(COMPILED_CSS) as file:
+    with open(compiled_css) as file:
         return file.read()
 
 
-def compile_string(string: str) -> str:
+def compile_string(string: str, compiler_path: str, extra_args: list[str]) -> str:
     process = subprocess.Popen(
-        ["sass", "--stdin"],
+        [compiler_path, "--stdin", *extra_args],
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -32,28 +44,47 @@ def compile_string(string: str) -> str:
         return stdout.decode()
 
 
-def sass_compile(path: str | None = None, string: str | None = None) -> str:
+def sass_compile(
+    path: str | None = None,
+    string: str | None = None,
+    compiler: Literal["sass", "grass"] | None = None,
+    extra_args: list[str] | None = None,
+) -> str:
     """
     Compile a SASS/SCSS file or string.
-    Requires `Dart Sass <https://sass-lang.com/dart-sass/>`_.
+    Requires either `Dart Sass <https://sass-lang.com/dart-sass/>`_
+    or `Grass <https://github.com/connorskees/grass>`_.
 
     Args:
         path: The path to the SASS/SCSS file.
         string: A string with SASS/SCSS style.
+        compiler: The desired Sass compiler, either ``sass`` or ``grass``.
+        *extra_args: Additional arguments to pass to the Sass compiler.
 
     Raises:
         TypeError: If neither of the arguments is provided.
-        DartSassNotFoundError: If Dart Sass not found.
+        SassNotFoundError: If no Sass compiler is available.
         SassCompilationError: If an error occurred while compiling SASS/SCSS.
     """
-    if not os.path.exists("/bin/sass"):
-        raise DartSassNotFoundError()
+    if not sass_compilers:
+        raise SassNotFoundError()
+
+    if compiler and compiler not in sass_compilers:
+        raise SassNotFoundError()
+
+    if compiler:
+        compiler_path = sass_compilers[compiler]
+    else:
+        compiler_path = next(iter(sass_compilers.values()))
+
+    if not extra_args:
+        extra_args = []
 
     if string:
-        return compile_string(string)
+        return compile_string(string, compiler_path, extra_args)
 
     elif path:
-        return compile_file(path)
+        return compile_file(path, compiler_path, extra_args)
 
     else:
         raise TypeError("sass_compile() requires at least one positional argument")

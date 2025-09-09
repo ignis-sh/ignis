@@ -1,5 +1,5 @@
 EventBox
 --------
 
-.. autoclass:: ignis.widgets.Widget.EventBox
+.. autoclass:: ignis.widgets.EventBox
     :members:

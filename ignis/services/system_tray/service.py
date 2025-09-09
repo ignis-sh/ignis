@@ -1,9 +1,11 @@
-from ignis.utils import Utils
+import asyncio
+from ignis import utils
 from ignis.dbus import DBusService, DBusProxy
-from gi.repository import Gio, GLib, GObject  # type: ignore
+from gi.repository import Gio, GLib  # type: ignore
 from ignis.base_service import BaseService
 from .item import SystemTrayItem
 from ignis.exceptions import AnotherSystemTrayRunningError
+from ignis.gobject import IgnisProperty, IgnisSignal
 
 
 class SystemTrayService(BaseService):
@@ -27,11 +29,12 @@ class SystemTrayService(BaseService):
     def __init__(self):
         super().__init__()
         self._items: dict[str, SystemTrayItem] = {}
+        self._init_item_tasks: list[str] = []
 
         self.__dbus: DBusService = DBusService(
             name="org.kde.StatusNotifierWatcher",
             object_path="/StatusNotifierWatcher",
-            info=Utils.load_interface_xml("org.kde.StatusNotifierWatcher"),
+            info=utils.load_interface_xml("org.kde.StatusNotifierWatcher"),
             on_name_lost=self.__on_name_lost,
         )
 
@@ -52,31 +55,27 @@ class SystemTrayService(BaseService):
         )
 
     def __on_name_lost(self, *args) -> None:
-        proxy = DBusProxy(
+        proxy = DBusProxy.new(
             name="org.kde.StatusNotifierWatcher",
             interface_name="org.kde.StatusNotifierWatcher",
             object_path="/StatusNotifierWatcher",
-            info=Utils.load_interface_xml("org.kde.StatusNotifierWatcher"),
+            info=utils.load_interface_xml("org.kde.StatusNotifierWatcher"),
         )
-        name = proxy.proxy.get_name_owner()
+        name = proxy.gproxy.get_name_owner()
         raise AnotherSystemTrayRunningError(name)
 
-    @GObject.Signal(arg_types=(SystemTrayItem,))
-    def added(self, *args):
+    @IgnisSignal
+    def added(self, item: SystemTrayItem):
         """
-        - Signal
-
         Emitted when a new item is added.
 
         Args:
-            item (:class:`~ignis.services.system_tray.SystemTrayItem`): The instance of the system tray item.
+            item: The instance of the system tray item.
         """
 
-    @GObject.Property
+    @IgnisProperty
     def items(self) -> list[SystemTrayItem]:
         """
-        - read-only
-
         A list of system tray items.
         """
         return list(self._items.values())
@@ -103,12 +102,22 @@ class SystemTrayService(BaseService):
 
         invocation.return_value(None)
 
-        item = SystemTrayItem(bus_name, object_path)
-        item.connect("ready", self.__on_item_ready, bus_name, object_path)
+        if bus_name in self._items:
+            return
 
-    def __on_item_ready(
-        self, item: SystemTrayItem, bus_name: str, object_path: str
-    ) -> None:
+        if bus_name in self._init_item_tasks:
+            return
+
+        asyncio.create_task(self.__initialize_item(bus_name, object_path))
+
+        self._init_item_tasks.append(bus_name)
+
+    async def __initialize_item(self, bus_name: str, object_path: str) -> None:
+        item = await SystemTrayItem.new_async(bus_name, object_path)
+
+        if not item:
+            return
+
         self._items[bus_name] = item
         item.connect("removed", self.__remove_item, bus_name)
         self.emit("added", item)
@@ -117,6 +126,11 @@ class SystemTrayService(BaseService):
             "StatusNotifierItemRegistered",
             GLib.Variant("(s)", (bus_name + object_path,)),
         )
+
+        try:
+            self._init_item_tasks.remove(bus_name)
+        except ValueError:
+            pass
 
     def __remove_item(self, x, bus_name: str) -> None:
         self._items.pop(bus_name)

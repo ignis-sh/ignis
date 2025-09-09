@@ -1,9 +1,9 @@
 import os
-from gi.repository import GObject  # type: ignore
 from ignis.base_service import BaseService
 from .device import BacklightDevice
 from .constants import SYS_BACKLIGHT
-from ignis.utils import Utils
+from ignis import utils
+from ignis.gobject import IgnisProperty
 
 
 class BacklightService(BaseService):
@@ -34,7 +34,7 @@ class BacklightService(BaseService):
         self._devices: list[BacklightDevice] = []
 
         # FIXME: not working
-        Utils.FileMonitor(
+        utils.FileMonitor(
             path=SYS_BACKLIGHT,
             callback=lambda x, path, event_type: self.__sync_devices()
             if event_type == "deleted" or event_type == "created"
@@ -57,29 +57,23 @@ class BacklightService(BaseService):
 
         self.notify_all()
 
-    @GObject.Property
+    @IgnisProperty
     def available(self) -> bool:
         """
-        - read-only
-
         Whether there are controllable backlight devices.
         """
         return len(self._devices) > 0
 
-    @GObject.Property
+    @IgnisProperty
     def devices(self) -> list[BacklightDevice]:
         """
-        - read-only
-
         A list of all backlight devices.
         """
         return self._devices
 
-    @GObject.Property
+    @IgnisProperty
     def brightness(self) -> int:
         """
-        - read-write
-
         The current brightness of the first backlight device in the list, ``-1`` if there are no backlight devices.
         Setting this property will set provided brightness on ALL backlight devices.
         """
@@ -93,11 +87,19 @@ class BacklightService(BaseService):
         for device in self._devices:
             device.brightness = value
 
-    @GObject.Property
+    async def set_brightness_async(self, value: int) -> None:
+        """
+        Asynchronously set brightness for all devices.
+
+        Args:
+            value: The value to set.
+        """
+        for device in self._devices:
+            await device.set_brightness_async(value)
+
+    @IgnisProperty
     def max_brightness(self) -> int:
         """
-        - read-only
-
         The maximum brightness allowed by the first backlight device in the list, ``-1`` if there are no backlight devices.
         """
         if len(self._devices) > 0:

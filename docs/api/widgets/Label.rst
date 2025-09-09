@@ -1,5 +1,5 @@
 Label
 -----
 
-.. autoclass:: ignis.widgets.Widget.Label
+.. autoclass:: ignis.widgets.Label
     :members:

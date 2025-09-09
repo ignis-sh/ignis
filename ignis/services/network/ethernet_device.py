@@ -1,5 +1,4 @@
-from gi.repository import GObject  # type: ignore
-from ignis.gobject import IgnisGObject
+from ignis.gobject import IgnisGObject, IgnisProperty, IgnisSignal
 from ._imports import NM
 from .constants import STATE
 
@@ -27,96 +26,74 @@ class EthernetDevice(IgnisGObject):
         self._device.connect("notify::active-connection", self.__update_is_connected)
         self.__update_is_connected()
 
-    @GObject.Signal
+    @IgnisSignal
     def removed(self):
         """
         Emitted when this Ethernet device is removed.
         """
 
-    @GObject.Property
+    @IgnisProperty
     def carrier(self) -> bool:
         """
-        - read-only
-
         Whether the device has a carrier.
         """
         return self._device.props.carrier
 
-    @GObject.Property
+    @IgnisProperty
     def perm_hw_address(self) -> str:
         """
-        - read-only
-
         The permanent hardware (MAC) address of the device.
         """
         return self._device.props.perm_hw_address
 
-    @GObject.Property
+    @IgnisProperty
     def speed(self) -> int:
         """
-        - read-only
-
         The speed of the device.
         """
         return self._device.props.speed
 
-    @GObject.Property
+    @IgnisProperty
     def state(self) -> str | None:
         """
-        - read-only
-
         The current state of the device or ``None`` if unknown.
         """
         return STATE.get(self._device.get_state(), None)
 
-    @GObject.Property
+    @IgnisProperty
     def is_connected(self) -> bool:
         """
-        - read-only
-
         Whether the device is connected to the network.
         """
         return self._is_connected
 
-    @GObject.Property
+    @IgnisProperty
     def name(self) -> str | None:
         """
-        - read-only
-
         The name of the connection or ``None`` if unknown.
         """
         return self._name
 
-    def connect_to(self) -> None:
+    async def connect_to(self) -> None:
         """
         Connect this Ethernet device to the network.
         """
 
-        def finish(x, res) -> None:
-            self._client.activate_connection_finish(res)
-
-        self._client.activate_connection_async(
+        await self._client.activate_connection_async(  # type: ignore
             self._connection,
             self._device,
             None,
-            None,
-            finish,
         )
 
-    def disconnect_from(self) -> None:
+    async def disconnect_from(self) -> None:
         """
         Disconnect this Ethernet device from the network.
         """
         if not self.is_connected:
             return
 
-        def finish(x, res) -> None:
-            self._client.deactivate_connection_finish(res)
-
-        self._client.deactivate_connection_async(
+        await self._client.deactivate_connection_async(  # type: ignore
             self._device.get_active_connection(),
-            None,
-            finish,
         )
 
     def __update_is_connected(self, *args) -> None:

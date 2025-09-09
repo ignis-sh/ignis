@@ -30,10 +30,11 @@ It should look like this:
     import gi
     import sys
     from ignis.exceptions import GvcNotFoundError
+    from ignis import is_sphinx_build
 
     # Gvc is here just for example.
     try:
-        if "sphinx" not in sys.modules:  # prevent possible errors while building docs
+        if not is_sphinx_build:  # prevent possible errors while building docs
             gi.require_version("Gvc", "1.0")
         from gi.repository import Gvc  # type: ignore
     except (ImportError, ValueError):

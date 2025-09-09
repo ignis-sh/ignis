@@ -1,42 +1,46 @@
 from .window import Window
 from .revealer import Revealer
-from gi.repository import GObject  # type: ignore
-from ignis.utils import Utils
+from ignis import utils
 from typing import Any
+from ignis.gobject import IgnisProperty
 
 
 class RevealerWindow(Window):
     """
-    Bases: :class:`~ignis.widgets.Widget.Window`
+    Bases: :class:`~ignis.widgets.Window`
 
     A window with animation.
 
+    Args:
+        revealer: An instance of :class:`~ignis.widgets.Revealer`.
+        **kwargs: Properties to set.
+
     .. warning::
-        Do not set ``Widget.Revealer`` as a direct child,
+        Do not set ``widgets.Revealer`` as a direct child,
         as this can lead to various graphical bugs.
-        Instead, place `Widget.Revealer` inside a container (e.g., `Widget.Box`) and then set the container as a child.
+        Instead, place `widgets.Revealer` inside a container (e.g., `widgets.Box`) and then set the container as a child.
 
     Example usage:
 
     .. code-block:: python
 
-        from ignis.widgets import Widget
+        from ignis import widgets
 
-        revealer = Widget.Revealer(
+        revealer = widgets.Revealer(
             transition_type="slide_left",
-            child=Widget.Button(label="test"),
+            child=widgets.Button(label="test"),
             transition_duration=300,
             reveal_child=True,
         )
 
-        box = Widget.Box(child=[revealer])
+        box = widgets.Box(child=[revealer])
 
-        Widget.RevealerWindow(
+        widgets.RevealerWindow(
             visible=False,
             popup=True,
             layer="top",
             namespace="revealer-window",
-            child=box,  # do not set Widget.Revealer as a direct child!
+            child=box,  # do not set widgets.Revealer as a direct child!
             revealer=revealer,
         )
 
@@ -51,7 +55,7 @@ class RevealerWindow(Window):
             if value:
                 super().set_property(prop_name, value)
             else:
-                Utils.Timeout(
+                utils.Timeout(
                     ms=self._revealer.transition_duration,
                     target=lambda x=super(): x.set_property(prop_name, value),
                 )
@@ -60,7 +64,7 @@ class RevealerWindow(Window):
         else:
             super().set_property(prop_name, value)
 
-    @GObject.Property
+    @IgnisProperty
     def visible(self) -> bool:
         return self._revealer.reveal_child
 
@@ -68,16 +72,13 @@ class RevealerWindow(Window):
     def visible(self, value: bool) -> None:
         super().set_visible(value)
 
-    @GObject.Property
+    @IgnisProperty
     def revealer(self) -> Revealer:
         """
-        - required, read-write
-
-        An instance of :class:`~ignis.widgets.Widget.Revealer`.
+        An instance of :class:`~ignis.widgets.Revealer`.
         """
         return self._revealer
 
     @revealer.setter
     def revealer(self, value: Revealer) -> None:
         self._revealer = value
-        self.set_child(value)
