@@ -39,7 +39,7 @@ def hyprland_workspace_button(workspace: HyprlandWorkspace) -> widgets.Button:
     )
     if workspace.id == hyprland.active_workspace.id:
         widget.add_css_class("active")
-    if workspace["id"] in hyprland.urgent_workspaces:
+    if workspace.id in hyprland.urgent_workspaces:
         widget.add_css_class("urgent")
 
     return widget

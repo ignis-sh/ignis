@@ -163,7 +163,7 @@ class HyprlandService(BaseService):
         clients = json.loads(self.send_command("j/clients"))
         urgent_workspaces = []
         for i in clients:
-            if i["address"][len("0x"):] in self._urgent_windows:
+            if i["address"][len("0x") :] in self._urgent_windows:
                 urgent_workspaces.append(i["workspace"]["id"])
         return urgent_workspaces
 
@@ -395,7 +395,7 @@ class HyprlandService(BaseService):
 
         self.active_window.sync(active_window_data)
 
-        active_window_id = active_window_data['address'][len('0x'):]
+        active_window_id = active_window_data["address"][len("0x") :]
         if active_window_id in self._urgent_windows:
             self._urgent_windows.remove(active_window_id)
             self.notify("urgent_windows")
