@@ -106,8 +106,8 @@ def hyprland_workspaces() -> widgets.EventBox:
         css_classes=["workspaces"],
         spacing=5,
         child=hyprland.bind_many(  # bind also to active_workspace to regenerate workspaces list when active workspace changes
-            ["workspaces", "urgent_workspaces"],
-            transform=lambda workspaces, active_workspace: [
+            ["workspaces", "active_workspace", "urgent_workspaces"],
+            transform=lambda workspaces, active_workspace, urgent_workspaces: [
                 workspace_button(i) for i in workspaces
             ],
         ),
