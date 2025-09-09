@@ -37,8 +37,6 @@ class Binding(GObject.Object):
     @GObject.Property
     def target_properties(self) -> list[str]:
         """
-        - required, read-only
-
         The properties on the target GObject to bind.
         """
         return self._target_properties
@@ -135,16 +133,18 @@ class IgnisGObject(GObject.Object):
         """
 
         def callback(*args):
-            values = []
-            for target_property in target_properties:
-                values.append(target.get_property(target_property.replace("-", "_")))
+            values = [
+                target.get_property(target_property.replace("-", "_"))
+                for target_property in target_properties
+            ]
 
             if transform:
                 value = transform(*values)
             else:
                 if len(values) != 1:
-                    raise IndexError("No transform function on muliple binding")
+                    raise IndexError("No transform function on multiple binding")
                 value = values[0]
+
             self.set_property(source_property, value)
 
         for target_property in target_properties:
@@ -166,11 +166,11 @@ class IgnisGObject(GObject.Object):
 
     def bind_many(self, property_names: list[str], transform: Callable) -> Binding:
         """
-        Creates ``Binding`` from property name on ``self``.
+        Creates ``Binding`` from property names on ``self``.
 
         Args:
             property_names: List of property names of ``self``.
-            transform: The function that accepts a new property value and returns the processed value.
+            transform: The function that accepts a new property values and returns the processed value. The values will be passed according to the order in ``property_names``.
         Returns:
             :class:`~ignis.gobject.Binding`
         """
