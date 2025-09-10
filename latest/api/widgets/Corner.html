@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>FileDialog &#8212; Ignis documentation</title>
+    <title>Corner &#8212; Ignis documentation</title>
   
   
   
@@ -47,7 +47,7 @@
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'api/widgets/FileDialog';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/widgets/Corner';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ignis-sh.github.io/ignis/latest/_static/switcher.json';
@@ -57,8 +57,8 @@
         </script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="FileFilter" href="FileFilter.html" />
-    <link rel="prev" title="FileChooserButton" href="FileChooserButton.html" />
+    <link rel="next" title="DropDown" href="DropDown.html" />
+    <link rel="prev" title="CheckButton" href="CheckButton.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -395,12 +395,12 @@
 <li class="toctree-l2"><a class="reference internal" href="Calendar.html">Calendar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CenterBox.html">CenterBox</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CheckButton.html">CheckButton</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Corner.html">Corner</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Corner</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DropDown.html">DropDown</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Entry.html">Entry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="EventBox.html">EventBox</a></li>
 <li class="toctree-l2"><a class="reference internal" href="FileChooserButton.html">FileChooserButton</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">FileDialog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FileDialog.html">FileDialog</a></li>
 <li class="toctree-l2"><a class="reference internal" href="FileFilter.html">FileFilter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Grid.html">Grid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="HeaderBar.html">HeaderBar</a></li>
@@ -507,7 +507,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Widgets</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">FileDialog</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Corner</span></li>
   </ul>
 </nav>
 </div>
@@ -524,120 +524,48 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="filedialog">
-<h1>FileDialog<a class="headerlink" href="#filedialog" title="Link to this heading">#</a></h1>
+  <section id="corner">
+<h1>Corner<a class="headerlink" href="#corner" title="Link to this heading">#</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="ignis.widgets.FileDialog">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.widgets.</span></span><span class="sig-name descname"><span class="pre">FileDialog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ignis.widgets.FileDialog" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://lazka.github.io/pgi-docs/Gtk-4.0/classes/FileDialog.html#Gtk.FileDialog" title="(in Gtk 4.0 v4.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Gtk.FileDialog</span></code></a></p>
-<div class="admonition danger">
-<p class="admonition-title">Danger</p>
-<p>This is not a regular widget.
-It doesn't support common widget properties and cannot be added as a child to a container.</p>
-</div>
-<p>A window that allows the user to select a file.</p>
+<dt class="sig sig-object py" id="ignis.widgets.Corner">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.widgets.</span></span><span class="sig-name descname"><span class="pre">Corner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ignis.widgets.Corner" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lazka.github.io/pgi-docs/Gtk-4.0/classes/DrawingArea.html#Gtk.DrawingArea" title="(in Gtk 4.0 v4.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Gtk.DrawingArea</span></code></a></p>
+<p>A corner widget that renders rounded corners.
+Useful in bars and panels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>**kwargs</strong> -- Properties to set.</p>
 </dd>
 </dl>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">widgets</span><span class="o">.</span><span class="n">FileDialog</span><span class="p">(</span>
-    <span class="n">initial_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/.config&quot;</span><span class="p">),</span>
-    <span class="n">on_file_set</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">get_path</span><span class="p">()),</span>
-    <span class="n">select_folder</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">filters</span><span class="o">=</span><span class="p">[</span>
-        <span class="n">widgets</span><span class="o">.</span><span class="n">FileFilter</span><span class="p">(</span>
-            <span class="n">mime_types</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image/jpeg&quot;</span><span class="p">,</span> <span class="s2">&quot;image/png&quot;</span><span class="p">],</span>
-            <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Images JPEG/PNG&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-    <span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ignis</span><span class="w"> </span><span class="kn">import</span> <span class="n">widgets</span>
+
+<span class="n">widgets</span><span class="o">.</span><span class="n">Corner</span><span class="p">(</span>
+    <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;top-left&quot;</span><span class="p">,</span>
+    <span class="c1"># It&#39;s mandatory to explicitly set the width and the height</span>
+    <span class="c1"># Otherwise, the widget will be invisible</span>
+    <span class="c1"># Alternativly, you can set them in CSS using `min-width` and `min-height` properties</span>
+    <span class="n">width_request</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">height_request</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<dl class="py method">
-<dt class="sig sig-object py" id="ignis.widgets.FileDialog.open_dialog">
-<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">open_dialog</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.widgets.FileDialog.open_dialog" title="Link to this definition">#</a></dt>
-<dd><p>Open dialog.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dl class="py gproperty">
+<dt class="sig sig-object py" id="ignis.widgets.Corner.orientation">
+<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">orientation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'top-left'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'top-right'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'bottom-left'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'bottom-right'</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ignis.widgets.Corner.orientation" title="Link to this definition">#</a></dt>
+<dd><ul class="simple">
+<li><p>read-write</p></li>
+</ul>
+<p>The corner orientation.</p>
+<dl class="simple">
+<dt>Orientation:</dt><dd><ul class="simple">
+<li><p>top-left</p></li>
+<li><p>top-right</p></li>
+<li><p>bottom-left</p></li>
+<li><p>bottom-right</p></li>
+</ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py signal">
-<dt class="sig sig-object py" id="ignis.widgets.FileDialog.file_set">
-<em class="property"><span class="pre">signal</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">file_set</span></span><a class="headerlink" href="#ignis.widgets.FileDialog.file_set" title="Link to this definition">#</a></dt>
-<dd><p>Emitted when a file or directory is selected.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">File</span></code></span>) -- The instance of <a class="reference external" href="https://lazka.github.io/pgi-docs/Gio-2.0/classes/File.html#Gio.File" title="(in Gio 2.0 v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Gio.File</span></code></a> for this file or directory.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py gproperty">
-<dt class="sig sig-object py" id="ignis.widgets.FileDialog.file">
-<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://lazka.github.io/pgi-docs/Gio-2.0/classes/File.html#Gio.File" title="(in Gio 2.0 v2.0)"><span class="pre">Gio.File</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#ignis.widgets.FileDialog.file" title="Link to this definition">#</a></dt>
-<dd><ul class="simple">
-<li><p>read-only</p></li>
-</ul>
-<p>The selected <code class="docutils literal notranslate"><span class="pre">Gio.File</span></code>.</p>
-<div class="admonition hint">
-<p class="admonition-title">Hint</p>
-<p>Use the <code class="docutils literal notranslate"><span class="pre">get_path</span></code> method on the <code class="docutils literal notranslate"><span class="pre">Gio.File</span></code> to get the path.</p>
-</div>
-</dd></dl>
-
-<dl class="py gproperty">
-<dt class="sig sig-object py" id="ignis.widgets.FileDialog.on_file_set">
-<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">on_file_set</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a></em><a class="headerlink" href="#ignis.widgets.FileDialog.on_file_set" title="Link to this definition">#</a></dt>
-<dd><ul class="simple">
-<li><p>read-write</p></li>
-</ul>
-<p>A function to call when user selects a file.</p>
-</dd></dl>
-
-<dl class="py gproperty">
-<dt class="sig sig-object py" id="ignis.widgets.FileDialog.filters">
-<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">filters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="FileFilter.html#ignis.widgets.FileFilter" title="ignis.widgets.file_filter.FileFilter"><span class="pre">FileFilter</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ignis.widgets.FileDialog.filters" title="Link to this definition">#</a></dt>
-<dd><ul class="simple">
-<li><p>read-write</p></li>
-</ul>
-<p>A list of file filters.</p>
-</dd></dl>
-
-<dl class="py gproperty">
-<dt class="sig sig-object py" id="ignis.widgets.FileDialog.initial_path">
-<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">initial_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#ignis.widgets.FileDialog.initial_path" title="Link to this definition">#</a></dt>
-<dd><ul class="simple">
-<li><p>read-write</p></li>
-</ul>
-<p>The path to the folder or file that will be selected by default.</p>
-</dd></dl>
-
-<dl class="py gproperty">
-<dt class="sig sig-object py" id="ignis.widgets.FileDialog.select_folder">
-<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">select_folder</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#ignis.widgets.FileDialog.select_folder" title="Link to this definition">#</a></dt>
-<dd><ul class="simple">
-<li><p>read-write</p></li>
-</ul>
-<p>Whether the dialog should allow selecting folders instead of files.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ignis.widgets.FileDialog.add_filter">
-<span class="sig-name descname"><span class="pre">add_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="FileFilter.html#ignis.widgets.FileFilter" title="ignis.widgets.file_filter.FileFilter"><span class="pre">FileFilter</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.widgets.FileDialog.add_filter" title="Link to this definition">#</a></dt>
-<dd><p>Add a filter.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filter</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="FileFilter.html#ignis.widgets.FileFilter" title="ignis.widgets.file_filter.FileFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileFilter</span></code></a></span>) -- The instance of filter to add.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
-</dd>
-</dl>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">top-left</span></code></p>
 </dd></dl>
 
 </dd></dl>
@@ -655,20 +583,20 @@ It doesn't support common widget properties and cannot be added as a child to a 
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="FileChooserButton.html"
+       href="CheckButton.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">FileChooserButton</p>
+        <p class="prev-next-title">CheckButton</p>
       </div>
     </a>
     <a class="right-next"
-       href="FileFilter.html"
+       href="DropDown.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">FileFilter</p>
+        <p class="prev-next-title">DropDown</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -691,15 +619,8 @@ It doesn't support common widget properties and cannot be added as a child to a 
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.widgets.FileDialog"><code class="docutils literal notranslate"><span class="pre">FileDialog</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.widgets.FileDialog.open_dialog"><code class="docutils literal notranslate"><span class="pre">FileDialog.open_dialog()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.widgets.FileDialog.file_set"><code class="docutils literal notranslate"><span class="pre">FileDialog.file_set</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.widgets.FileDialog.file"><code class="docutils literal notranslate"><span class="pre">FileDialog.file</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.widgets.FileDialog.on_file_set"><code class="docutils literal notranslate"><span class="pre">FileDialog.on_file_set</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.widgets.FileDialog.filters"><code class="docutils literal notranslate"><span class="pre">FileDialog.filters</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.widgets.FileDialog.initial_path"><code class="docutils literal notranslate"><span class="pre">FileDialog.initial_path</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.widgets.FileDialog.select_folder"><code class="docutils literal notranslate"><span class="pre">FileDialog.select_folder</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.widgets.FileDialog.add_filter"><code class="docutils literal notranslate"><span class="pre">FileDialog.add_filter()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.widgets.Corner"><code class="docutils literal notranslate"><span class="pre">Corner</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.widgets.Corner.orientation"><code class="docutils literal notranslate"><span class="pre">Corner.orientation</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -709,7 +630,7 @@ It doesn't support common widget properties and cannot be added as a child to a 
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/ignis-sh/ignis/edit/main/docs/api/widgets/FileDialog.rst">
+    <a href="https://github.com/ignis-sh/ignis/edit/main/docs/api/widgets/Corner.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -725,7 +646,7 @@ It doesn't support common widget properties and cannot be added as a child to a 
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/api/widgets/FileDialog.rst.txt"
+      <li><a href="../../_sources/api/widgets/Corner.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>
