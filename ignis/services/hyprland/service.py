@@ -144,7 +144,7 @@ class HyprlandService(BaseService):
         return list(self._workspaces.values())
 
     @IgnisProperty
-    def urgent_windows(self) -> list[str]:
+    def urgent_windows(self) -> list[HyprlandWindow]:
         """
         A list of urgent windows.
         """
@@ -395,7 +395,10 @@ class HyprlandService(BaseService):
         self.active_window.sync(active_window_data)
 
         active_window_id = active_window_data["address"]
-        if active_window_id in self._windows and self._windows[active_window_id]._urgent:
+        if (
+            active_window_id in self._windows
+            and self._windows[active_window_id]._urgent
+        ):
             self._windows[active_window_id]._urgent = False
             self.notify("urgent_windows")
             self.notify("urgent_workspaces")
