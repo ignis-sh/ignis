@@ -63,7 +63,6 @@ class HyprlandService(BaseService):
         self._windows: dict[str, HyprlandWindow] = {}
         self._active_window: HyprlandWindow = HyprlandWindow()
         self._monitors: dict[str, HyprlandMonitor] = {}
-        self._urgent_windows = set()
 
         self._OBJ_TYPES: dict[str, _HyprlandObjDesc] = {
             "workspace": _HyprlandObjDesc(
@@ -147,23 +146,22 @@ class HyprlandService(BaseService):
     @IgnisProperty
     def urgent_windows(self) -> list[str]:
         """
-        - read-only
-
         A list of urgent windows.
         """
-        return list(self._urgent_windows)
+        return [i for i in self._windows.values() if i.is_urgent]
 
     @IgnisProperty
     def urgent_workspaces(self) -> list[str]:
         """
-        - read-only
-
         A list of urgent workspaces.
         """
         clients = json.loads(self.send_command("j/clients"))
         urgent_workspaces = []
         for i in clients:
-            if i["address"][len("0x") :] in self._urgent_windows:
+            address = i["address"]
+            if address not in self._windows:
+                continue
+            if self._windows[address].is_urgent:
                 urgent_workspaces.append(i["workspace"]["id"])
         return urgent_workspaces
 
@@ -219,7 +217,7 @@ class HyprlandService(BaseService):
 
         match event_type:
             case "urgent":
-                self.__sync_urgent(value_list[0])
+                self.__sync_urgent(get_full_w_addr(value_list[0]))
             case "destroyworkspacev2":
                 self.__destroy_workspace(int(value_list[0]))
             case "createworkspacev2":
@@ -384,9 +382,10 @@ class HyprlandService(BaseService):
         self._main_keyboard.sync({"active_keymap": layout})
 
     def __sync_urgent(self, urgent_window) -> None:
-        self._urgent_windows.add(urgent_window)
-        self.notify("urgent_windows")
-        self.notify("urgent_workspaces")
+        if urgent_window in self._windows:
+            self._windows[urgent_window]._urgent = True
+            self.notify("urgent_windows")
+            self.notify("urgent_workspaces")
 
     def __sync_active_window(self) -> None:
         active_window_data = json.loads(self.send_command("j/activewindow"))
@@ -395,9 +394,9 @@ class HyprlandService(BaseService):
 
         self.active_window.sync(active_window_data)
 
-        active_window_id = active_window_data["address"][len("0x") :]
-        if active_window_id in self._urgent_windows:
-            self._urgent_windows.remove(active_window_id)
+        active_window_id = active_window_data["address"]
+        if active_window_id in self._windows and self._windows[active_window_id]._urgent:
+            self._windows[active_window_id]._urgent = False
             self.notify("urgent_windows")
             self.notify("urgent_workspaces")
 
