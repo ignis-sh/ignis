@@ -1,4 +1,5 @@
 from ignis.gobject import IgnisProperty, IgnisSignal, DataGObject
+from .window import HyprlandWindow
 
 MATCH_DICT = {
     "monitorID": "monitor_id",
@@ -69,6 +70,13 @@ class HyprlandWorkspace(DataGObject):
         return self._windows
 
     @IgnisProperty
+    def window_objs(self) -> list[HyprlandWindow]:
+        """
+        All window objects on the workspace (parsed)
+        """
+        return [i for i in self.__service._windows.values() if i.workspace_id == self._id]
+
+    @IgnisProperty
     def has_fullscreen(self) -> bool:
         """
         Whether the workspace has a fullscreen window.
@@ -95,6 +103,10 @@ class HyprlandWorkspace(DataGObject):
         Whether the workspace is persistent.
         """
         return self._is_persistent
+
+    @IgnisProperty
+    def is_urgent(self):
+        return any(i.is_urgent for i in self.window_objs)
 
     def switch_to(self) -> None:
         """

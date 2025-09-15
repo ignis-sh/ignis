@@ -151,19 +151,11 @@ class HyprlandService(BaseService):
         return [i for i in self._windows.values() if i.is_urgent]
 
     @IgnisProperty
-    def urgent_workspaces(self) -> list[str]:
+    def urgent_workspaces(self) -> list[HyprlandWorkspace]:
         """
         A list of urgent workspaces.
         """
-        clients = json.loads(self.send_command("j/clients"))
-        urgent_workspaces = []
-        for i in clients:
-            address = i["address"]
-            if address not in self._windows:
-                continue
-            if self._windows[address].is_urgent:
-                urgent_workspaces.append(i["workspace"]["id"])
-        return urgent_workspaces
+        return [i for i in self._workspaces.values() if i.is_urgent]
 
     @IgnisProperty
     def active_workspace(self) -> HyprlandWorkspace:
