@@ -74,7 +74,9 @@ class HyprlandWorkspace(DataGObject):
         """
         All window objects on the workspace (parsed)
         """
-        return [i for i in self.__service._windows.values() if i.workspace_id == self._id]
+        return [
+            i for i in self.__service._windows.values() if i.workspace_id == self._id
+        ]
 
     @IgnisProperty
     def has_fullscreen(self) -> bool:
