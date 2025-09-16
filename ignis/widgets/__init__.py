@@ -36,6 +36,7 @@ from .stack_switcher import StackSwitcher
 from .stack_page import StackPage
 from .animated_gif import AnimatedGif
 from ignis._deprecation import deprecated_getattribute
+from .corner import Corner
 
 
 @deprecated_getattribute(
@@ -78,6 +79,7 @@ class Widget:
     StackSwitcher: TypeAlias = StackSwitcher
     StackPage = StackPage
     AnimatedGif: TypeAlias = AnimatedGif
+    Corner: TypeAlias = Corner
 
 
 __all__ = [
@@ -88,6 +90,7 @@ __all__ = [
     "Calendar",
     "CenterBox",
     "CheckButton",
+    "Corner",
     "DropDown",
     "Entry",
     "EventBox",

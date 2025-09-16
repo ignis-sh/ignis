@@ -166,6 +166,8 @@ class NiriService(BaseService):
                 self.__update_window(event_data)
             case "WindowsChanged":
                 self.__update_windows(event_data)
+            case "WindowLayoutsChanged":
+                self.__update_window_layouts(event_data)
             case "WorkspaceActivated":
                 self.__update_active_workspace(event_data)
             case "WorkspaceActiveWindowChanged":
@@ -272,6 +274,18 @@ class NiriService(BaseService):
         self.__sort_windows()
 
         self.notify("active-window")
+        self.notify("windows")
+
+    def __update_window_layouts(self, data: dict) -> None:
+        changes = data["changes"]
+        for item in changes:
+            id, layout = item
+            self._windows[id].sync({"layout": layout})
+
+            if id == self._active_window.id:
+                self._active_window.sync({"layout": layout})
+                self.notify("active-window")
+
         self.notify("windows")
 
     def __sort_workspaces(self) -> None:
