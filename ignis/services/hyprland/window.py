@@ -43,6 +43,7 @@ class HyprlandWindow(DataGObject):
         self._swallowing: str = ""
         self._focus_history_id: int = -1
         self._inhibiting_idle: bool = False
+        self._urgent: bool = False
 
     def sync(self, data: dict[str, Any]) -> None:
         """
@@ -227,3 +228,10 @@ class HyprlandWindow(DataGObject):
         The inhibiting idle status.
         """
         return self._inhibiting_idle
+
+    @IgnisProperty
+    def is_urgent(self) -> bool:
+        """
+        Whether this window is urgent or not
+        """
+        return self._urgent
