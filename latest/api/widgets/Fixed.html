@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>RevealerWindow &#8212; Ignis documentation</title>
+    <title>Fixed &#8212; Ignis documentation</title>
   
   
   
@@ -47,7 +47,7 @@
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'api/widgets/RevealerWindow';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/widgets/Fixed';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ignis-sh.github.io/ignis/latest/_static/switcher.json';
@@ -57,8 +57,8 @@
         </script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Scale" href="Scale.html" />
-    <link rel="prev" title="Revealer" href="Revealer.html" />
+    <link rel="next" title="Grid" href="Grid.html" />
+    <link rel="prev" title="FileFilter" href="FileFilter.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -402,7 +402,7 @@
 <li class="toctree-l2"><a class="reference internal" href="FileChooserButton.html">FileChooserButton</a></li>
 <li class="toctree-l2"><a class="reference internal" href="FileDialog.html">FileDialog</a></li>
 <li class="toctree-l2"><a class="reference internal" href="FileFilter.html">FileFilter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Fixed.html">Fixed</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Fixed</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Grid.html">Grid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="HeaderBar.html">HeaderBar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Icon.html">Icon</a></li>
@@ -414,7 +414,7 @@
 <li class="toctree-l2"><a class="reference internal" href="PopoverMenu.html">PopoverMenu</a></li>
 <li class="toctree-l2"><a class="reference internal" href="RegularWindow.html">RegularWindow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Revealer.html">Revealer</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">RevealerWindow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RevealerWindow.html">RevealerWindow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Scale.html">Scale</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Scroll.html">Scroll</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Separator.html">Separator</a></li>
@@ -508,7 +508,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Widgets</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">RevealerWindow</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Fixed</span></li>
   </ul>
 </nav>
 </div>
@@ -525,56 +525,73 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="revealerwindow">
-<h1>RevealerWindow<a class="headerlink" href="#revealerwindow" title="Link to this heading">#</a></h1>
+  <section id="fixed">
+<h1>Fixed<a class="headerlink" href="#fixed" title="Link to this heading">#</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="ignis.widgets.RevealerWindow">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.widgets.</span></span><span class="sig-name descname"><span class="pre">RevealerWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">revealer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="Revealer.html#ignis.widgets.Revealer" title="ignis.widgets.revealer.Revealer"><span class="pre">Revealer</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.widgets.RevealerWindow" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="Window.html#ignis.widgets.Window" title="ignis.widgets.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">Window</span></code></a></p>
-<p>A window with animation.</p>
+<dt class="sig sig-object py" id="ignis.widgets.fixed.Fixed">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.widgets.fixed.</span></span><span class="sig-name descname"><span class="pre">Fixed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ignis.widgets.fixed.Fixed" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lazka.github.io/pgi-docs/Gtk-4.0/classes/Fixed.html#Gtk.Fixed" title="(in Gtk 4.0 v4.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Gtk.Fixed</span></code></a></p>
+<p>A fixed container widget that allows positioning child widgets at specific coordinates.
+Unlike other containers with an automatic layout, <code class="docutils literal notranslate"><span class="pre">Fixed</span></code> use absolute coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>revealer</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="Revealer.html#ignis.widgets.Revealer" title="ignis.widgets.revealer.Revealer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Revealer</span></code></a></span>) -- An instance of <a class="reference internal" href="Revealer.html#ignis.widgets.Revealer" title="ignis.widgets.Revealer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Revealer</span></code></a>.</p></li>
-<li><p><strong>**kwargs</strong> -- Properties to set.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>**kwargs</strong> -- Properties to set.</p>
 </dd>
 </dl>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Do not set <code class="docutils literal notranslate"><span class="pre">widgets.Revealer</span></code> as a direct child,
-as this can lead to various graphical bugs.
-Instead, place <cite>widgets.Revealer</cite> inside a container (e.g., <cite>widgets.Box</cite>) and then set the container as a child.</p>
-</div>
-<p>Example usage:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ignis</span><span class="w"> </span><span class="kn">import</span> <span class="n">widgets</span>
 
-<span class="n">revealer</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Revealer</span><span class="p">(</span>
-    <span class="n">transition_type</span><span class="o">=</span><span class="s2">&quot;slide_left&quot;</span><span class="p">,</span>
-    <span class="n">child</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">),</span>
-    <span class="n">transition_duration</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
-    <span class="n">reveal_child</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">box</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="n">child</span><span class="o">=</span><span class="p">[</span><span class="n">revealer</span><span class="p">])</span>
-
-<span class="n">widgets</span><span class="o">.</span><span class="n">RevealerWindow</span><span class="p">(</span>
-    <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">popup</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">layer</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span>
-    <span class="n">namespace</span><span class="o">=</span><span class="s2">&quot;revealer-window&quot;</span><span class="p">,</span>
-    <span class="n">child</span><span class="o">=</span><span class="n">box</span><span class="p">,</span>  <span class="c1"># do not set widgets.Revealer as a direct child!</span>
-    <span class="n">revealer</span><span class="o">=</span><span class="n">revealer</span><span class="p">,</span>
+<span class="n">widgets</span><span class="o">.</span><span class="n">Fixed</span><span class="p">(</span>
+    <span class="n">child</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">widgets</span><span class="o">.</span><span class="n">FixedChild</span><span class="p">(</span>
+            <span class="n">widget</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Top Left&quot;</span><span class="p">),</span>
+            <span class="n">x</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="mi">10</span>
+        <span class="p">),</span>
+        <span class="n">widgets</span><span class="o">.</span><span class="n">FixedChild</span><span class="p">(</span>
+            <span class="n">widget</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Center&quot;</span><span class="p">),</span>
+            <span class="n">x</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="mi">50</span>
+        <span class="p">),</span>
+        <span class="n">widgets</span><span class="o">.</span><span class="n">FixedChild</span><span class="p">(</span>
+            <span class="n">widget</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">Icon</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="s2">&quot;settings&quot;</span><span class="p">),</span>
+            <span class="n">x</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="mi">200</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <dl class="py gproperty">
-<dt class="sig sig-object py" id="ignis.widgets.RevealerWindow.revealer">
-<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">revealer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="Revealer.html#ignis.widgets.Revealer" title="ignis.widgets.revealer.Revealer"><span class="pre">Revealer</span></a></em><a class="headerlink" href="#ignis.widgets.RevealerWindow.revealer" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="ignis.widgets.fixed.Fixed.child">
+<em class="property"><span class="pre">gproperty</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">child</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ignis.widgets.fixed.FixedChild" title="ignis.widgets.fixed.FixedChild"><span class="pre">FixedChild</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ignis.widgets.fixed.Fixed.child" title="Link to this definition">#</a></dt>
 <dd><ul class="simple">
 <li><p>read-write</p></li>
 </ul>
-<p>An instance of <a class="reference internal" href="Revealer.html#ignis.widgets.Revealer" title="ignis.widgets.Revealer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Revealer</span></code></a>.</p>
+<p>The list of child widgets with their positions.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ignis.widgets.fixed.FixedChild">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ignis.widgets.fixed.</span></span><span class="sig-name descname"><span class="pre">FixedChild</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">gi.repository.Gtk.Widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#ignis.widgets.fixed.FixedChild" title="Link to this definition">#</a></dt>
+<dd><p>A data class representing a child widget positioned in a Fixed container.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ignis.widgets.fixed.FixedChild.widget">
+<span class="sig-name descname"><span class="pre">widget</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Widget</span></code></em><a class="headerlink" href="#ignis.widgets.fixed.FixedChild.widget" title="Link to this definition">#</a></dt>
+<dd><p>The GTK widget to be positioned.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ignis.widgets.fixed.FixedChild.x">
+<span class="sig-name descname"><span class="pre">x</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></em><a class="headerlink" href="#ignis.widgets.fixed.FixedChild.x" title="Link to this definition">#</a></dt>
+<dd><p>The horizontal position (x-coordinate) in pixels.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ignis.widgets.fixed.FixedChild.y">
+<span class="sig-name descname"><span class="pre">y</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></em><a class="headerlink" href="#ignis.widgets.fixed.FixedChild.y" title="Link to this definition">#</a></dt>
+<dd><p>The vertical position (y-coordinate) in pixels.</p>
 </dd></dl>
 
 </dd></dl>
@@ -592,20 +609,20 @@ Instead, place <cite>widgets.Revealer</cite> inside a container (e.g., <cite>wid
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="Revealer.html"
+       href="FileFilter.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Revealer</p>
+        <p class="prev-next-title">FileFilter</p>
       </div>
     </a>
     <a class="right-next"
-       href="Scale.html"
+       href="Grid.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Scale</p>
+        <p class="prev-next-title">Grid</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -628,8 +645,14 @@ Instead, place <cite>widgets.Revealer</cite> inside a container (e.g., <cite>wid
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.widgets.RevealerWindow"><code class="docutils literal notranslate"><span class="pre">RevealerWindow</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.widgets.RevealerWindow.revealer"><code class="docutils literal notranslate"><span class="pre">RevealerWindow.revealer</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.widgets.fixed.Fixed"><code class="docutils literal notranslate"><span class="pre">Fixed</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.widgets.fixed.Fixed.child"><code class="docutils literal notranslate"><span class="pre">Fixed.child</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.widgets.fixed.FixedChild"><code class="docutils literal notranslate"><span class="pre">FixedChild</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.widgets.fixed.FixedChild.widget"><code class="docutils literal notranslate"><span class="pre">FixedChild.widget</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.widgets.fixed.FixedChild.x"><code class="docutils literal notranslate"><span class="pre">FixedChild.x</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignis.widgets.fixed.FixedChild.y"><code class="docutils literal notranslate"><span class="pre">FixedChild.y</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -639,7 +662,7 @@ Instead, place <cite>widgets.Revealer</cite> inside a container (e.g., <cite>wid
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/ignis-sh/ignis/edit/main/docs/api/widgets/RevealerWindow.rst">
+    <a href="https://github.com/ignis-sh/ignis/edit/main/docs/api/widgets/Fixed.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -655,7 +678,7 @@ Instead, place <cite>widgets.Revealer</cite> inside a container (e.g., <cite>wid
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/api/widgets/RevealerWindow.rst.txt"
+      <li><a href="../../_sources/api/widgets/Fixed.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>
