@@ -31,6 +31,7 @@ class Scale(Gtk.Scale, BaseWidget):
             step=1,
             value=20,
             on_change=lambda x: print(x.value),
+            on_release=lambda x: print(x.value),
             draw_value=True,
             value_pos='top'
         )
@@ -46,6 +47,7 @@ class Scale(Gtk.Scale, BaseWidget):
         )
         self._dragging: bool = False
         self._on_change: Callable | None = None
+        self._on_release: Callable | None = None
         self.override_enum("value_pos", Gtk.PositionType)
         BaseWidget.__init__(self, **kwargs)
 
@@ -117,6 +119,17 @@ class Scale(Gtk.Scale, BaseWidget):
         self._on_change = value
 
     @IgnisProperty
+    def on_release(self) -> Callable:
+        """
+        The function to call when the value changes.
+        """
+        return self._on_release
+
+    @on_release.setter
+    def on_release(self, value: Callable) -> None:
+        self._on_release = value
+
+    @IgnisProperty
     def step(self) -> float:
         """
         Step increment.
@@ -141,6 +154,10 @@ class Scale(Gtk.Scale, BaseWidget):
         else:
             self.set_property("orientation", Gtk.Orientation.HORIZONTAL)
 
+    def __invoke_on_release(self):
+        if self.on_release:
+            self.on_release(self)
+
     def __invoke_on_change(self):
         if self._dragging and self.on_change:
             self.on_change(self)
@@ -155,12 +172,14 @@ class Scale(Gtk.Scale, BaseWidget):
                 self._dragging = True
             case Gdk.EventType.BUTTON_RELEASE | Gdk.EventType.TOUCH_END:
                 self._dragging = False
+                self.__invoke_on_release()
 
     def __on_key_press(self, *args):
         self._dragging = True
 
     def __on_key_release(self, *args):
         self._dragging = False
+        self.__invoke_on_release()
 
     def __on_scroll(
         self, event_controller: Gtk.EventControllerScroll, dx: float, dy: float
@@ -172,3 +191,4 @@ class Scale(Gtk.Scale, BaseWidget):
             super().set_value(self.value + self.step)
 
         self._dragging = False
+        self.__invoke_on_release()
