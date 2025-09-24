@@ -46,6 +46,7 @@ class NiriService(BaseService):
         self._workspaces: dict[int, NiriWorkspace] = {}
         self._active_output: str = ""
         self._overview_opened = False
+        self._config_load_failed: bool = False
 
         if self.is_available:
             self.__start_event_stream()
@@ -118,6 +119,13 @@ class NiriService(BaseService):
         """
         return self._overview_opened
 
+    @IgnisProperty
+    def config_load_failed(self) -> bool:
+        """
+        Whether the configuration loading failed.
+        """
+        return self._config_load_failed
+
     def __start_event_stream(self) -> None:
         # Initialize socket connection
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -128,10 +136,10 @@ class NiriService(BaseService):
         IgnisApp.get_initialized().connect("shutdown", lambda *_: sock.close())
 
         # Launch an unthreaded event stream to ensure all variables get initialized
-        # before returning from __init__ . OverviewOpenedOrClosed is the last
+        # before returning from __init__ . ConfigLoaded is the last
         # event to be sent during initialization of the Niri event stream, so once
         # it is received, we are ready to launch a threaded (non blocking) version.
-        self.__listen_events(sock=sock, break_on="OverviewOpenedOrClosed")
+        self.__listen_events(sock=sock, break_on="ConfigLoaded")
 
         utils.thread(lambda: self.__listen_events(sock=sock))
         # No need to send any other commands after event stream initialization:
@@ -176,6 +184,8 @@ class NiriService(BaseService):
                 self.__update_workspaces(event_data)
             case "OverviewOpenedOrClosed":
                 self.__update_overview_opened(event_data)
+            case "ConfigLoaded":
+                self.__update_config_load_failed(event_data)
 
     def __update_current_layout(self, data: dict) -> None:
         self._keyboard_layouts.sync({"current_idx": data["idx"]})
@@ -343,6 +353,10 @@ class NiriService(BaseService):
     def __update_overview_opened(self, data: dict) -> None:
         self._overview_opened = data["is_open"]
         self.notify("overview_opened")
+
+    def __update_config_load_failed(self, data: dict) -> None:
+        self._config_load_failed = data["failed"]
+        self.notify("config_load_failed")
 
     def send_command(self, cmd: dict | str) -> str:
         """
