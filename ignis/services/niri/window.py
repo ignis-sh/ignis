@@ -19,6 +19,7 @@ class NiriWindow(DataGObject):
         self._workspace_id: int = -1
         self._is_focused: bool = False
         self._is_floating: bool = False
+        self._is_urgent: bool = False
         self._layout: NiriWindowLayout = NiriWindowLayout()
 
     def sync(self, data: dict[str, Any]) -> None:
@@ -91,6 +92,13 @@ class NiriWindow(DataGObject):
         Whether the window is floating.
         """
         return self._is_floating
+
+    @IgnisProperty
+    def is_urgent(self) -> bool:
+        """
+        Whether this window requests your attention.
+        """
+        return self._is_urgent
 
     @IgnisProperty
     def layout(self) -> NiriWindowLayout:

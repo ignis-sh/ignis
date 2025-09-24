@@ -162,6 +162,8 @@ class NiriService(BaseService):
                 self.__destroy_window(event_data)
             case "WindowFocusChanged":
                 self.__update_window_focus(event_data)
+            case "WindowUrgencyChanged":
+                self.__update_window_urgency(event_data)
             case "WindowOpenedOrChanged":
                 self.__update_window(event_data)
             case "WindowsChanged":
@@ -174,6 +176,8 @@ class NiriService(BaseService):
                 self.__update_workspace_active_window(event_data)
             case "WorkspacesChanged":
                 self.__update_workspaces(event_data)
+            case "WorkspaceUrgencyChanged":
+                self.__update_workspace_urgency(event_data)
             case "OverviewOpenedOrClosed":
                 self.__update_overview_opened(event_data)
 
@@ -230,6 +234,19 @@ class NiriService(BaseService):
             self._active_window.sync(window_skeleton.data)
 
         self.notify("active-window")
+        self.notify("windows")
+
+    def __update_window_urgency(self, data: dict) -> None:
+        urgent_id = data["id"]
+        is_urgent = data["urgent"]
+        self._windows[urgent_id].sync(
+            {"is_urgent": is_urgent}
+        )
+
+        if urgent_id == self._active_window.id:
+            self._active_window.sync({"is_urgent": is_urgent})
+            self.notify("active-window")
+
         self.notify("windows")
 
     def __update_niri_obj(
@@ -339,6 +356,12 @@ class NiriService(BaseService):
         self._workspaces[data["workspace_id"]].sync(
             {"active_window_id": data["active_window_id"]}
         )
+
+    def __update_workspace_urgency(self, data: dict) -> None:
+        self._workspaces[data["id"]].sync(
+            {"is_urgent": data["urgent"]}
+        )
+        self.notify("workspaces")
 
     def __update_overview_opened(self, data: dict) -> None:
         self._overview_opened = data["is_open"]
