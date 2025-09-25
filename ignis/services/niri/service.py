@@ -239,9 +239,7 @@ class NiriService(BaseService):
     def __update_window_urgency(self, data: dict) -> None:
         urgent_id = data["id"]
         is_urgent = data["urgent"]
-        self._windows[urgent_id].sync(
-            {"is_urgent": is_urgent}
-        )
+        self._windows[urgent_id].sync({"is_urgent": is_urgent})
 
         if urgent_id == self._active_window.id:
             self._active_window.sync({"is_urgent": is_urgent})
@@ -358,9 +356,7 @@ class NiriService(BaseService):
         )
 
     def __update_workspace_urgency(self, data: dict) -> None:
-        self._workspaces[data["id"]].sync(
-            {"is_urgent": data["urgent"]}
-        )
+        self._workspaces[data["id"]].sync({"is_urgent": data["urgent"]})
         self.notify("workspaces")
 
     def __update_overview_opened(self, data: dict) -> None:
