@@ -13,6 +13,7 @@ class NiriWorkspace(DataGObject):
         self._idx: int = -1
         self._name: str = ""
         self._output: str = ""
+        self._is_urgent: bool = False
         self._is_active: bool = False
         self._is_focused: bool = False
         self._active_window_id: int = -1
@@ -50,6 +51,13 @@ class NiriWorkspace(DataGObject):
         The name of the output on which the workspace is placed.
         """
         return self._output
+
+    @IgnisProperty
+    def is_urgent(self) -> bool:
+        """
+        Whether the workspace currently has an urgent window in its output.
+        """
+        return self._is_urgent
 
     @IgnisProperty
     def is_active(self) -> bool:
