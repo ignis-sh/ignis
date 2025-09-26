@@ -1,4 +1,4 @@
-from gi.repository import Gio  # type: ignore
+from gi.repository import GioUnix  # type: ignore
 from ignis.gobject import IgnisGObject
 from ignis.gobject import IgnisProperty
 
@@ -8,7 +8,7 @@ class ApplicationAction(IgnisGObject):
     Application action.
     """
 
-    def __init__(self, app: Gio.DesktopAppInfo, action: str):
+    def __init__(self, app: GioUnix.DesktopAppInfo, action: str):
         super().__init__()
 
         self._app = app

@@ -2,7 +2,7 @@ import os
 import re
 import asyncio
 import subprocess
-from gi.repository import Gio, GLib  # type: ignore
+from gi.repository import GLib, GioUnix  # type: ignore
 from ignis.gobject import IgnisGObject, IgnisProperty, IgnisSignal
 from ignis.options import options
 from .action import ApplicationAction
@@ -13,7 +13,7 @@ class Application(IgnisGObject):
     An application object.
     """
 
-    def __init__(self, app: Gio.DesktopAppInfo):
+    def __init__(self, app: GioUnix.DesktopAppInfo):
         super().__init__()
 
         self._app = app
@@ -35,9 +35,9 @@ class Application(IgnisGObject):
         """
 
     @IgnisProperty
-    def app(self) -> Gio.DesktopAppInfo:
+    def app(self) -> GioUnix.DesktopAppInfo:
         """
-        An instance of :class:`Gio.DesktopAppInfo`.
+        An instance of :class:`GioUnix.DesktopAppInfo`.
         """
         return self._app
 
