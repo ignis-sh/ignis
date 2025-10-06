@@ -1,5 +1,6 @@
 from gi.repository import GdkPixbuf, GLib, Gtk  # type: ignore
 
+from ignis._deprecation import ignore_deprecation_warnings
 from ignis.base_widget import BaseWidget
 from ignis.gobject import IgnisProperty
 
@@ -161,7 +162,9 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
         # Update the displayed frame
         current_pixbuf = self.__iter.get_pixbuf()
         scaled_pixbuf = self.__scale_pixbuf(current_pixbuf)
-        self.set_pixbuf(scaled_pixbuf)
+
+        with ignore_deprecation_warnings():
+            self.set_pixbuf(scaled_pixbuf)
 
         # Check duration limit
         if self._duration_ms > 0 and self.__elapsed_ms() >= self._duration_ms:
