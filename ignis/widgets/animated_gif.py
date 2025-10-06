@@ -20,8 +20,8 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
 
         widgets.AnimatedGif(
             image="path/to/animation.gif",
-            width=200,
-            height=150,
+            width_request=200,
+            height_request=150,
             duration_ms=5000,  # Auto-stop after 5 seconds
             loop=False,        # Play once only
         )
@@ -30,33 +30,19 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
     __gtype_name__ = "IgnisAnimatedGif"
     __gproperties__ = {**BaseWidget.gproperties}
 
-    def __init__(
-        self,
-        width: int = 100,
-        height: int = 100,
-        duration_ms: int = 0,
-        loop: bool = True,
-        **kwargs,
-    ):
+    def __init__(self, **kwargs):
         Gtk.Picture.__init__(self)
 
-        # Initialize variables before BaseWidget.__init__
         self._image: str | None = None
-        self._width = width
-        self._height = height
-        self._duration_ms = duration_ms
-        self._loop = loop
-        self.__interp = GdkPixbuf.InterpType.BILINEAR
+        self._duration_ms: int = 0
+        self._loop: bool = False
 
         # Animation state
+        self.__interp = GdkPixbuf.InterpType.BILINEAR
         self.__anim: GdkPixbuf.PixbufAnimation | None = None
         self.__iter: GdkPixbuf.PixbufAnimationIter | None = None
         self.__timeout_id: int | None = None
         self.__start_time = 0
-
-        # Set initial widget size
-        self.width_request = width if width > 0 else -1
-        self.height_request = height if height > 0 else -1
 
         BaseWidget.__init__(self, **kwargs)
 
@@ -72,30 +58,6 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
         if self._image != value:
             self._image = value
             self.__load_animation()
-
-    @IgnisProperty
-    def width(self) -> int:
-        """
-        Width of the animated GIF in pixels.
-        """
-        return self._width
-
-    @width.setter
-    def width(self, value: int) -> None:
-        self._width = value
-        self.width_request = value if value > 0 else -1
-
-    @IgnisProperty
-    def height(self) -> int:
-        """
-        Height of the animated GIF in pixels.
-        """
-        return self._height
-
-    @height.setter
-    def height(self, value: int) -> None:
-        self._height = value
-        self.height_request = value if value > 0 else -1
 
     @IgnisProperty
     def duration_ms(self) -> int:
@@ -148,7 +110,6 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
             self.start()
 
     def __load_animation(self) -> None:
-        """Load the GIF animation from file."""
         if not self._image:
             return
 
@@ -166,28 +127,30 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
 
     @staticmethod
     def __get_current_time() -> GLib.TimeVal:
-        """Get current time as GLib.TimeVal."""
         usec = GLib.get_monotonic_time()
         tv = GLib.TimeVal()
         tv.tv_sec, tv.tv_usec = divmod(usec, 1_000_000)
         return tv
 
     def __elapsed_ms(self) -> int:
-        """Get elapsed time in milliseconds since animation start."""
         return (GLib.get_monotonic_time() // 1000) - self.__start_time
 
     def __scale_pixbuf(self, pixbuf: GdkPixbuf.Pixbuf) -> GdkPixbuf.Pixbuf:
-        """Scale pixbuf to target dimensions if needed."""
-        if self._width <= 0 or self._height <= 0:
+        if self.width_request <= 0 or self.height_request <= 0:
             return pixbuf
 
         current_width = pixbuf.get_width()
         current_height = pixbuf.get_height()
 
-        if current_width == self._width and current_height == self._height:
+        if (
+            current_width == self.width_request
+            and current_height == self.height_request
+        ):
             return pixbuf
 
-        scaled = pixbuf.scale_simple(self._width, self._height, self.__interp)
+        scaled = pixbuf.scale_simple(
+            self.width_request, self.height_request, self.__interp
+        )
         return scaled if scaled is not None else pixbuf
 
     def __tick(self) -> bool:
@@ -220,6 +183,6 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
         return False  # Don't repeat this timeout (new one scheduled)
 
     def do_unroot(self) -> None:
-        """Clean up animation when widget is removed."""
+        # Clean up animation when widget is removed.
         self.stop()
         super().do_unroot()
