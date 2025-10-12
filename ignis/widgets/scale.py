@@ -121,7 +121,7 @@ class Scale(Gtk.Scale, BaseWidget):
     @IgnisProperty
     def on_release(self) -> Callable:
         """
-        The function to call when the value changes.
+        The function to call when any user action ends.
         """
         return self._on_release
 
