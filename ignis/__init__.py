@@ -127,14 +127,13 @@ def _require_versions() -> None:
     gi.require_version("GdkPixbuf", "2.0")
 
 
-_GVC_LIB_DIR = "/usr/lib/ignis-gvc"
+_GVC_LIB_DIR_PATHS = ["/usr/lib64/ignis-gvc", "/usr/lib/ignis-gvc"]
 
 
 def _prepend_gvc() -> None:
-    if not os.path.exists(_GVC_LIB_DIR):
-        return
-
-    _prepend_to_repo(path=_GVC_LIB_DIR)
+    for directory in _GVC_LIB_DIR_PATHS:
+        if os.path.exists(directory):
+            _prepend_to_repo(path=directory)
 
 
 def _init() -> None:
