@@ -444,7 +444,7 @@
 <p>Some I/O-bound and high-latency tasks can block the main thread and make your application unresponsive.
 To work around this, it's better to run these tasks independently of the main program flow.
 Asynchronous programming allows you to wait until a task is finished in the background while keeping your application responsive.</p>
-<p>Ignis (and PyGObject in general) integrates with Python's <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.13)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> module and provides convenient <code class="docutils literal notranslate"><span class="pre">async/await</span></code> syntax support.</p>
+<p>Ignis (and PyGObject in general) integrates with Python's <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.14)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> module and provides convenient <code class="docutils literal notranslate"><span class="pre">async/await</span></code> syntax support.</p>
 <p>Asynchronous functions in the Ignis documentation are prefixed with the <code class="docutils literal notranslate"><span class="pre">async</span></code> word before their name.</p>
 <section id="calling-asynchronous-functions">
 <h2>Calling Asynchronous Functions<a class="headerlink" href="#calling-asynchronous-functions" title="Link to this heading">#</a></h2>
@@ -452,7 +452,7 @@ Asynchronous programming allows you to wait until a task is finished in the back
 <ol class="arabic simple">
 <li><p>From a synchronous function</p></li>
 </ol>
-<p>Use <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.create_task" title="(in Python v3.13)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.create_task()</span></code></a> to schedule execution.</p>
+<p>Use <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.create_task" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.create_task()</span></code></a> to schedule execution.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">ignis</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
 
@@ -478,13 +478,13 @@ Asynchronous programming allows you to wait until a task is finished in the back
 <p>The best approach depends on your needs:</p>
 <ul class="simple">
 <li><p>If you need to retrieve the function's output and/or control execution order, define a custom async function and use await.</p></li>
-<li><p>Otherwise, if execution timing is not critical, use <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.create_task" title="(in Python v3.13)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.create_task()</span></code></a> to run the task in the background.</p></li>
+<li><p>Otherwise, if execution timing is not critical, use <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.create_task" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.create_task()</span></code></a> to run the task in the background.</p></li>
 </ul>
 </section>
 </section>
 <section id="cancelling-tasks">
 <h2>Cancelling tasks<a class="headerlink" href="#cancelling-tasks" title="Link to this heading">#</a></h2>
-<p>Since <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.create_task" title="(in Python v3.13)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.create_task()</span></code></a> schedules execution for the future, you can cancel a task if needed.</p>
+<p>Since <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.create_task" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.create_task()</span></code></a> schedules execution for the future, you can cancel a task if needed.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">some_func</span><span class="p">())</span>
 <span class="c1"># cancel task</span>
 <span class="n">task</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
@@ -495,7 +495,7 @@ Asynchronous programming allows you to wait until a task is finished in the back
 <p>The following resources may be useful to you:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://pygobject.gnome.org/guide/asynchronous.html">PyGObject Asynchronous Guide</a></p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.13)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> documentation</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.14)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> documentation</p></li>
 </ul>
 </div>
 </section>
