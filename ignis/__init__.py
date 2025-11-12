@@ -131,11 +131,9 @@ _GVC_LIB_DIR_PATHS = ["/usr/lib64/ignis-gvc", "/usr/lib/ignis-gvc"]
 
 
 def _prepend_gvc() -> None:
-    if os.path.exists(_GVC_LIB_DIR_PATHS[0]):
-        _prepend_to_repo(path=_GVC_LIB_DIR_PATHS[0])
-    elif os.path.exists(_GVC_LIB_DIR_PATHS[1]):
-        _prepend_to_repo(path=_GVC_LIB_DIR_PATHS[1])
-    else:
+    for directory in _GVC_LIB_DIR_PATHS:
+        if os.path.exists(directory):
+            _prepend_to_repo(path=directory)
         return
 
 
