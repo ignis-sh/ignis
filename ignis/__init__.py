@@ -134,7 +134,6 @@ def _prepend_gvc() -> None:
     for directory in _GVC_LIB_DIR_PATHS:
         if os.path.exists(directory):
             _prepend_to_repo(path=directory)
-        return
 
 
 def _init() -> None:
