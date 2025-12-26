@@ -32,9 +32,9 @@ class NotificationService(BaseService):
 
     .. code-block:: python
 
-        from ignis.services.notifications import NotificationsService
+        from ignis.services.notifications import NotificationService
 
-        notifications = NotificationsService.get_default()
+        notifications = NotificationService.get_default()
 
         notifications.connect("notified", lambda x, notification: print(notification.app_name, notification.summary))
     """
