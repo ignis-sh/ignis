@@ -12,7 +12,7 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
     A widget that displays animated GIF files.
 
     The widget automatically scales each frame to the specified dimensions and provides
-    control over animation duration, looping behavior.
+    control over animation duration.
 
     Args:
         **kwargs: Properties to set.
@@ -24,7 +24,6 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
             width_request=200,
             height_request=150,
             duration_ms=5000,  # Auto-stop after 5 seconds
-            loop=False,        # Play once only
         )
     """
 
@@ -36,7 +35,6 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
 
         self._image: str | None = None
         self._duration_ms: int = 0
-        self._loop: bool = False
 
         # Animation state
         self.__interp = GdkPixbuf.InterpType.BILINEAR
@@ -72,17 +70,6 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
     @duration_ms.setter
     def duration_ms(self, value: int) -> None:
         self._duration_ms = value
-
-    @IgnisProperty
-    def loop(self) -> bool:
-        """
-        Whether to loop the animation continuously.
-        """
-        return self._loop
-
-    @loop.setter
-    def loop(self, value: bool) -> None:
-        self._loop = value
 
     def start(self) -> None:
         """
@@ -174,8 +161,8 @@ class AnimatedGif(Gtk.Picture, BaseWidget):
         # Advance to next frame
         at_end = not self.__iter.advance(self.__get_current_time())
 
-        # Check if animation ended and shouldn't loop
-        if at_end and not self._loop:
+        # Check if animation ended
+        if at_end:
             self.__timeout_id = None
             return False
 
