@@ -8,6 +8,7 @@ $bg-light: #261d1e;
 $fg: #f0dedf;
 $active: #ffb2bc;
 $unactive: #d7c1c3;
+$urgent: #eb6f92;
 
 .bar {
     padding: 0.4rem 1rem;
@@ -51,6 +52,11 @@ $unactive: #d7c1c3;
 
 .workspace.active {
     background-color: $active;
+    color: $bg;
+}
+
+.workspace.urgent {
+    background-color: $urgent;
     color: $bg;
 }
 
@@ -98,3 +104,4 @@ popover.menu {
 
     }
 }
+

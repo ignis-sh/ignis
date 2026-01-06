@@ -144,6 +144,20 @@ class HyprlandService(BaseService):
         return list(self._workspaces.values())
 
     @IgnisProperty
+    def urgent_windows(self) -> list[HyprlandWindow]:
+        """
+        A list of urgent windows.
+        """
+        return [i for i in self._windows.values() if i.is_urgent]
+
+    @IgnisProperty
+    def urgent_workspaces(self) -> list[HyprlandWorkspace]:
+        """
+        A list of urgent workspaces.
+        """
+        return [i for i in self._workspaces.values() if i.is_urgent]
+
+    @IgnisProperty
     def active_workspace(self) -> HyprlandWorkspace:
         """
         The currently active workspace.
@@ -194,6 +208,8 @@ class HyprlandService(BaseService):
         value_list = event_value.split(",")
 
         match event_type:
+            case "urgent":
+                self.__sync_urgent(get_full_w_addr(value_list[0]))
             case "destroyworkspacev2":
                 self.__destroy_workspace(int(value_list[0]))
             case "createworkspacev2":
@@ -357,12 +373,28 @@ class HyprlandService(BaseService):
     def __sync_active_layout(self, layout: str) -> None:
         self._main_keyboard.sync({"active_keymap": layout})
 
+    def __sync_urgent(self, urgent_window) -> None:
+        if urgent_window in self._windows:
+            self._windows[urgent_window]._urgent = True
+            self.notify("urgent_windows")
+            self.notify("urgent_workspaces")
+
     def __sync_active_window(self) -> None:
         active_window_data = json.loads(self.send_command("j/activewindow"))
         if active_window_data == {}:
             active_window_data = HyprlandWindow().data
 
         self.active_window.sync(active_window_data)
+
+        active_window_id = active_window_data["address"]
+        if (
+            active_window_id in self._windows
+            and self._windows[active_window_id]._urgent
+        ):
+            self._windows[active_window_id]._urgent = False
+            self.notify("urgent_windows")
+            self.notify("urgent_workspaces")
+
         self.notify("active-window")
 
     def __open_window(self, address: str) -> None:
