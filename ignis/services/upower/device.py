@@ -40,6 +40,8 @@ class UPowerDevice(IgnisGObject):
         self.__watch_property("TimeToFull", "time-remaining")
         self.__watch_property("TimeToEmpty", "time-remaining")
 
+        self.__watch_property("Online", "online")
+
     def __watch_property(self, dbus_property: str, *prop_names: str) -> None:
         self.__watching_props[dbus_property] = prop_names
 
@@ -91,6 +93,13 @@ class UPowerDevice(IgnisGObject):
         Whether the device is available.
         """
         return self._proxy.IsPresent
+
+    @IgnisProperty
+    def online(self) -> bool:
+        """
+        Whether the device is online.
+        """
+        return self._proxy.Online
 
     @IgnisProperty
     def percent(self) -> float:
