@@ -1,5 +1,3 @@
-from typing import Any
-
 from ignis.gobject import DataGObject, IgnisProperty, IgnisSignal
 
 
