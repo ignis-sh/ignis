@@ -15,3 +15,6 @@ Niri
 
 .. autoclass:: ignis.services.niri.NiriWorkspace
     :members:
+
+.. autoclass:: ignis.services.niri.NiriCast
+    :members:

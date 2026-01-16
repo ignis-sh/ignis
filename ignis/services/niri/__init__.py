@@ -1,9 +1,10 @@
-from .service import NiriService
+from .cast import NiriCast
+from .constants import NIRI_SOCKET
 from .keyboard import NiriKeyboardLayouts
+from .service import NiriService
 from .window import NiriWindow
 from .window_layout import NiriWindowLayout
 from .workspace import NiriWorkspace
-from .constants import NIRI_SOCKET
 
 __all__ = [
     "NiriService",
@@ -11,5 +12,6 @@ __all__ = [
     "NiriWindow",
     "NiriWindowLayout",
     "NiriWorkspace",
+    "NiriCast",
     "NIRI_SOCKET",
 ]
