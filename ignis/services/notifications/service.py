@@ -220,6 +220,7 @@ class NotificationService(BaseService):
             timeout=options.notifications.popup_timeout if timeout == -1 else timeout,
             time=datetime.now().timestamp(),
             popup=not options.notifications.dnd,
+            transient=hints.get("transient", False),
         )
 
         if len(self.popups) >= options.notifications.max_popups_count:
