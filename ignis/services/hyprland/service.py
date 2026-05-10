@@ -92,7 +92,10 @@ class HyprlandService(BaseService):
             ),
         }
 
+        self._uses_lua_config: bool = False
+
         if self.is_available:
+            self._uses_lua_config = self.__detect_lua_config()
             self.__listen_events()
 
             self.__initial_sync_obj_list(type_="workspace")
@@ -135,6 +138,13 @@ class HyprlandService(BaseService):
         Whether Hyprland IPC is available.
         """
         return os.path.exists(HYPR_SOCKET_DIR)
+
+    @IgnisProperty
+    def uses_lua_config(self) -> bool:
+        """
+        Whether Hyprland is using a Lua config.
+        """
+        return self._uses_lua_config
 
     @IgnisProperty
     def workspaces(self) -> list[HyprlandWorkspace]:
@@ -438,6 +448,13 @@ class HyprlandService(BaseService):
             data={"specialWorkspace": {"id": workspace_id, "name": workspace_name}},
         )
 
+    def __detect_lua_config(self) -> bool:
+        status = self.send_command("status")
+        for line in status.splitlines():
+            if line.startswith("configProvider:"):
+                return line.split(":", 1)[1].strip() == "lua"
+        return False
+
     def send_command(self, cmd: str) -> str:
         """
         Send a command to the Hyprland IPC.
@@ -467,7 +484,10 @@ class HyprlandService(BaseService):
         Args:
             workspace_id: The ID of the workspace to switch to.
         """
-        self.send_command(f"dispatch workspace {workspace_id}")
+        if self._uses_lua_config:
+            self.send_command(f"dispatch hl.dsp.focus({{workspace = {workspace_id}}})")
+        else:
+            self.send_command(f"dispatch workspace {workspace_id}")
 
     def get_workspace_by_id(self, workspace_id: int) -> HyprlandWorkspace | None:
         """

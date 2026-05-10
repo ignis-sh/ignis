@@ -65,7 +65,7 @@ def workspace_button(workspace) -> widgets.Button:
 
 
 def hyprland_scroll_workspaces(direction: str) -> None:
-    current = hyprland.active_workspace["id"]
+    current = hyprland.active_workspace.id
     if direction == "up":
         target = current - 1
         hyprland.switch_to_workspace(target)
@@ -299,7 +299,10 @@ def create_exec_task(cmd: str) -> None:
 
 def logout() -> None:
     if hyprland.is_available:
-        create_exec_task("hyprctl dispatch exit 0")
+        if hyprland.uses_lua_config:
+            create_exec_task("hyprctl dispatch 'hl.dsp.exit(0)'")
+        else:
+            create_exec_task("hyprctl dispatch exit 0")
     elif niri.is_available:
         create_exec_task("niri msg action quit")
     else:
