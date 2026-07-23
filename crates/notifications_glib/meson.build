@@ -44,6 +44,7 @@ cargo_build = custom_target(
   command: [
     cargo,
     'build',
+    cargo_options,
     '--manifest-path', meson.project_source_root() / 'Cargo.toml',
     '--target-dir', cargo_target_dir,
     '&&',
