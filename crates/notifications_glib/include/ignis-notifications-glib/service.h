@@ -1,0 +1,176 @@
+#ifndef __SERVICE_H__
+#define __SERVICE_H__
+
+#include <glib-object.h>
+#include <gio/gio.h>
+
+G_BEGIN_DECLS
+
+/**
+ * IgnisNotificationsGLibService:
+ * 
+ * A notification daemon which follows XDG Desktop Notifications Specification.
+ *
+ * Since: 0.1
+ */
+#define IGNIS_NOTIFICATIONS_GLIB_TYPE_SERVICE    (ignis_notifications_glib_service_get_type())
+
+G_DECLARE_FINAL_TYPE (IgnisNotificationsGLibService, ignis_notifications_glib_service, IGNIS_NOTIFICATIONS_GLIB, SERVICE, GObject)
+
+/**
+ * ignis_notifications_glib_service_new:
+ *
+ * Creates a new instance of service.
+ *
+ * If loading the notification history fails, an error is reported and the new instance is constructed without file I/O support.
+ *
+ * Returns: (transfer full): a newly created `Service`
+ *
+ * Since: 0.1
+ */
+IgnisNotificationsGLibService * ignis_notifications_glib_service_new         (void);
+
+
+/**
+ * ignis_notifications_glib_service_run_async:
+ * @self: a `IgnisNotificationsGLibService`
+ * @cancellable: (nullable): a `GCancellable` to cancel the operation, or %NULL
+ * @callback: (scope async) (closure user_data): callback to invoke when the operation is complete
+ * @user_data: data to pass to @callback
+ *
+ * Runs the service. Must be called only once.
+ *
+ * Fails if another notification daemon is running, the function was called twice or other D-Bus error occured.
+ *
+ * Since: 0.1
+ */
+void        ignis_notifications_glib_service_run_async  (IgnisNotificationsGLibService * self, GCancellable *cancellable, GAsyncReadyCallback callback, gpointer user_data);
+
+/**
+ * ignis_notifications_glib_service_run_finish:
+ * @self: a `IgnisNotificationsGLibService`
+ * @result: a `GAsyncResult`
+ * @error: return location for a [enum@IgnisNotificationsGLib.Error] error
+ *
+ * Finishes call to [method@IgnisNotificationsGLib.Service.run_async].
+ * 
+ * Returns: %TRUE on success.
+ *
+ * Since: 0.1
+ */
+gboolean    ignis_notifications_glib_service_run_finish (IgnisNotificationsGLibService * self, GAsyncResult *result, GError **error);
+
+
+/**
+ * ignis_notifications_glib_service_get_notifications:
+ * @self: a `IgnisNotificationsGLibService`
+ *
+ * Returns a list of notifications.
+ *
+ * Returns: (transfer container) (element-type IgnisNotificationsGLibNotification): A list of notifications.
+ *
+ * Since: 0.1
+ */
+GList* ignis_notifications_glib_service_get_notifications(IgnisNotificationsGLibService* self);
+
+
+/**
+ * ignis_notifications_glib_service_dismiss_async:
+ * @self: a `IgnisNotificationsGLibService`
+ * @notification_id: The ID of the notification to dismiss.
+ * @cancellable: (nullable): a `GCancellable` to cancel the operation, or %NULL
+ * @callback: (scope async) (closure user_data): callback to invoke when the operation is complete
+ * @user_data: data to pass to @callback
+ *
+ * Dismisses a notification by its ID.
+ *
+ * The notification is removed from the history and application that sent the notification is notified through D-Bus.
+ *
+ * Fails if notification is already removed.
+ *
+ * Since: 0.1
+ */
+void ignis_notifications_glib_service_dismiss_notification_async(IgnisNotificationsGLibService* self, guint32 notification_id, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer user_data);
+
+/**
+ * ignis_notifications_glib_service_dismiss_finish:
+ * @self: a `IgnisNotificationsGLibService`
+ * @result: a `GAsyncResult`
+ * @error: return location for a [enum@IgnisNotificationsGLib.Error] error
+ *
+ * Finishes call to [method@IgnisNotificationsGLib.Service.dismiss_finish].
+ * 
+ * Returns: %TRUE on success.
+ *
+ * Since: 0.1
+ */
+gboolean    ignis_notifications_glib_service_dismiss_notification_finish (IgnisNotificationsGLibService * self, GAsyncResult *result, GError **error);
+
+
+/**
+ * ignis_notifications_glib_service_invoke_action_async:
+ * @self: a `IgnisNotificationsGLibService`
+ * @notification_id: The ID of the notification.
+ * @action_key: The key of the action.
+ * @cancellable: (nullable): a `GCancellable` to cancel the operation, or %NULL
+ * @callback: (scope async) (closure user_data): callback to invoke when the operation is complete
+ * @user_data: data to pass to @callback
+ *
+ * Dismisses a notification.
+ *
+ * Invokes an action by its action key and notification ID it belongs to.
+ *
+ * Since: 0.1
+ */
+void ignis_notifications_glib_service_invoke_action_async(IgnisNotificationsGLibService* self, guint32 notification_id, gchar* action_key, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer user_data);
+
+/**
+ * ignis_notifications_glib_service_invoke_action_finish:
+ * @self: a `IgnisNotificationsGLibService`
+ * @result: a `GAsyncResult`
+ * @error: return location for a [enum@IgnisNotificationsGLib.Error] error
+ *
+ * Finishes call to [method@IgnisNotificationsGLib.Service.invoke_action_async].
+ * 
+ * Returns: %TRUE on success.
+ *
+ * Since: 0.1
+ */
+gboolean    ignis_notifications_glib_service_invoke_action_finish (IgnisNotificationsGLibService * self, GAsyncResult *result, GError **error);
+
+/**
+ * ignis_notifications_glib_service_clear_notifications_async:
+ * @self: a `IgnisNotificationsGLibService`
+ * @cancellable: (nullable): a `GCancellable` to cancel the operation, or %NULL
+ * @callback: (scope async) (closure user_data): callback to invoke when the operation is complete
+ * @user_data: data to pass to @callback
+ *
+ * Clears the notification history.
+ *
+ * It dismisses each notification and notifies applications.
+ *
+ * # Warning
+ *
+ * It does **NOT** emit `closed` signal for each notification. It emits `notifications-cleared` instead.
+ *
+ * Since: 0.1
+ */
+void ignis_notifications_glib_service_clear_notifications_async(IgnisNotificationsGLibService* self, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer user_data);
+
+/**
+ * ignis_notifications_glib_service_clear_notifications_finish:
+ * @self: a `IgnisNotificationsGLibService`
+ * @result: a `GAsyncResult`
+ * @error: return location for a [enum@IgnisNotificationsGLib.Error] error
+ *
+ * Finishes call to [method@IgnisNotificationsGLib.Service.clear_notifications_async].
+ * 
+ * Returns: %TRUE on success.
+ *
+ * Since: 0.1
+ */
+gboolean    ignis_notifications_glib_service_clear_notifications_finish (IgnisNotificationsGLibService * self, GAsyncResult *result, GError **error);
+
+G_END_DECLS
+
+#endif /* __SERVICE_H__ */

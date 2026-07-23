@@ -8,24 +8,40 @@
       url = "github:ignis-sh/ignis-gvc";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
     self,
     nixpkgs,
     ignis-gvc,
+    rust-overlay,
     ...
   }: let
     systems = ["x86_64-linux" "aarch64-linux"];
     forAllSystems = nixpkgs.lib.genAttrs systems;
     version = import ./nix/version.nix {inherit self;};
+
+    overlays = [
+      rust-overlay.overlays.default
+    ];
   in {
-    packages = forAllSystems (system: {
-      ignis = nixpkgs.legacyPackages.${system}.callPackage ./nix {
+    packages = forAllSystems (system: let
+      pkgs = import nixpkgs {
+        inherit system;
+      };
+    in {
+      ignis = pkgs.callPackage ./nix {
         inherit version;
         ignis-gvc = ignis-gvc.packages.${system}.ignis-gvc;
       };
       default = self.packages.${system}.ignis;
+
+      ignis-notifications-glib = pkgs.callPackage ./crates/notifications_glib {};
     });
 
     formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
@@ -33,7 +49,9 @@
     devShells = forAllSystems (system:
       import ./nix/devshell.nix {
         inherit self;
-        pkgs = nixpkgs.legacyPackages.${system};
+        pkgs = import nixpkgs {
+          inherit system overlays;
+        };
         ignis-gvc = ignis-gvc.packages.${system}.ignis-gvc;
       });
 

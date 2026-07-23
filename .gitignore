@@ -17,3 +17,6 @@ docs/tmp
 result
 .direnv
 _version.py
+
+target/
+outputs/
