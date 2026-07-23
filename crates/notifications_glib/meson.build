@@ -41,6 +41,8 @@ cargo_build = custom_target(
   'cargo-build',
   output: LIB_NAME,
   console: true,
+  install: true,
+  install_dir: get_option('libdir'),
   command: [
     cargo,
     'build',
