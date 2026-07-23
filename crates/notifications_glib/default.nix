@@ -12,7 +12,6 @@
   glib,
   dbus,
 }:
-
 stdenv.mkDerivation (finalAttrs: {
   pname = "ignis-notifications-glib";
   version = "0.1";
@@ -22,7 +21,7 @@ stdenv.mkDerivation (finalAttrs: {
   cargoDeps = rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) src;
     name = "ignis-notifications-${finalAttrs.version}";
-    hash = "sha256-ixE9RNm6/9ylQLJ/IwFcAJoAxcXbteO5qB862F0mbXM=";
+    hash = "sha256-yzvK4JJJkOHH3/HPkqOTzwkXxv8vMnIMiB8xeWMyJ3o=";
   };
 
   nativeBuildInputs = [
