@@ -56,6 +56,11 @@ jobs:
       - name: Rust cache
         uses: Swatinem/rust-cache@v2
 
+      - name: System dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y libglib-2.0-dev libgdk-pixbuf-2.0-dev
+
       - name: Run tests
         run: dbus-run-session cargo test -p notifications -- --test-threads=1 
 
