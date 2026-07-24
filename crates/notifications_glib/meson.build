@@ -120,7 +120,7 @@ pkgconfig.generate(
   libraries: [LIB_NAME],
 )
 
-py = import('python').find_installation('python3')
+py = import('python').find_installation('python3', required: false)
 
 test_env = environment()
 test_env.prepend('GI_TYPELIB_PATH', meson.current_build_dir())
