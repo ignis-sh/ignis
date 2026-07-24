@@ -32,7 +32,8 @@ macro_rules! glib_async_method {
             let imp = unsafe { (*this).imp() };
             let obj = unsafe { &<$wrapper_type>::from_glib_none(this) };
 
-            let cancellable = unsafe { gio::Cancellable::from_glib_none(cancellable) };
+            let cancellable: Option<gio::Cancellable> =
+                unsafe { glib::translate::from_glib_none(cancellable) };
 
             let closure = move |task: gio::LocalTask<bool>, _: Option<&$wrapper_type>| {
                 let result: *mut gio::ffi::GAsyncResult =
@@ -43,7 +44,7 @@ macro_rules! glib_async_method {
                 }
             };
 
-            let task = unsafe { gio::LocalTask::new(Some(obj), Some(&cancellable), closure) };
+            let task = unsafe { gio::LocalTask::new(Some(obj), cancellable.as_ref(), closure) };
 
             glib::MainContext::ref_thread_default().spawn_local(async move {
                 let _guard = runtime().enter();
