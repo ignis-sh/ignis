@@ -16,7 +16,6 @@ pub struct GNotificationServiceImp {
 
 impl Default for GNotificationServiceImp {
     fn default() -> Self {
-        let _guard = runtime().enter();
         let service = notifications::NotificationService::new(None).unwrap_or_else(|e| {
             glib::g_error!(
                 "ignis-notifications-glib",
