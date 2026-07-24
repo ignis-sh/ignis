@@ -4,15 +4,9 @@
   ignis-gvc,
 }: let
   pythonDeps = with pkgs; [
-    python3Packages.venvShellHook
-
-    (python3.withPackages (
-      ps:
-        with ps; [
-          python
-          ruff
-        ]
-    ))
+    python313Packages.venvShellHook
+    python313
+    ruff
   ];
 
   extraDeps = with pkgs; [
