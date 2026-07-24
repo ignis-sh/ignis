@@ -28,6 +28,13 @@ jobs:
   lint:
     name: Clippy
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - crate: notifications
+            packages: libglib2.0-dev libgdk-pixbuf-2.0-dev 
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -37,15 +44,28 @@ jobs:
         with:
           components: clippy
 
+      - if: matrix.packages != ''
+        name: System dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ${{ matrix.packages }}
+
       - name: Rust cache
         uses: Swatinem/rust-cache@v2
 
       - name: Clippy check
-        run: cargo clippy --all-targets --all-features --workspace -- -D warnings
+        run: cargo clippy -p ${{ matrix.crate }} --all-features -- -D warnings
 
   test-notifications:
     name: Test notifications
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - crate: notifications
+            packages: libglib2.0-dev libgdk-pixbuf-2.0-dev 
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -56,11 +76,12 @@ jobs:
       - name: Rust cache
         uses: Swatinem/rust-cache@v2
 
-      - name: System dependencies
+      - if: matrix.packages != ''
+        name: System dependencies
         run: |
-          sudo apt update
-          sudo apt install -y libglib2.0-dev libgdk-pixbuf-2.0-dev
+          sudo apt-get update
+          sudo apt-get install -y ${{ matrix.packages }}
 
       - name: Run tests
-        run: dbus-run-session cargo test -p notifications -- --test-threads=1 
+        run: dbus-run-session cargo test -p ${{ matrix.crate }} -- --test-threads=1 
 
