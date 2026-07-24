@@ -98,7 +98,7 @@ impl DBusService {
 
                     // Notification can be closed by user before timeout ends
                     // Do not try to expire it if it is already removed
-                    if let Ok(_) = service.inner.data.remove_notification(id) {
+                    if service.inner.data.remove_notification(id).is_ok() {
                         let reason = CloseReason::Expired;
 
                         if let Ok(interface) = service.get_dbus_interface().await {
@@ -108,7 +108,7 @@ impl DBusService {
                         let _ = service
                             .inner
                             .tx
-                            .send(Event::NotificationClosed { id, reason: reason });
+                            .send(Event::NotificationClosed { id, reason });
                     };
                 });
             }

@@ -102,13 +102,13 @@ impl NotificationService {
     }
 
     pub(crate) fn get_connection(&self) -> Result<Connection> {
-        Ok(self
+        self
             .inner
             .connection
             .get()
             .ok_or(Error::NoConnection)?
             .to_owned()
-            .ok_or(Error::NoConnection)?)
+            .ok_or(Error::NoConnection)
     }
 
     pub(crate) async fn get_dbus_interface(&self) -> Result<InterfaceRef<DBusService>> {
