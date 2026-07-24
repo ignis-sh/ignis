@@ -102,8 +102,7 @@ impl NotificationService {
     }
 
     pub(crate) fn get_connection(&self) -> Result<Connection> {
-        self
-            .inner
+        self.inner
             .connection
             .get()
             .ok_or(Error::NoConnection)?
