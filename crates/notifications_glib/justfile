@@ -2,7 +2,7 @@ clean:
     rm -R ./build
 
 build:
-    meson setup ./build
+    meson setup ./build -Dprofile=debug
     meson compile -C ./build
 
 test: build
