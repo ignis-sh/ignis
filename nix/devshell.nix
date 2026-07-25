@@ -32,6 +32,7 @@
     libnotify
     python313Packages.pytest
     python313Packages.pygobject3
+    just
   ];
 in {
   default = pkgs.mkShell {

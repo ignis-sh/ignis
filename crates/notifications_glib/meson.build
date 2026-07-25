@@ -119,16 +119,3 @@ pkgconfig.generate(
   requires: PKG_DEPS,
   libraries: [LIB_NAME],
 )
-
-py = import('python').find_installation('python3', required: false)
-
-test_env = environment()
-test_env.prepend('GI_TYPELIB_PATH', meson.current_build_dir())
-test_env.prepend('LD_LIBRARY_PATH', meson.current_build_dir())
-
-test(
-  'python-tests',
-  find_program('dbus-run-session'),
-  args: ['--', py, '-m', 'pytest', meson.current_source_dir() / 'tests'],
-  env: test_env,
-)

@@ -33,7 +33,7 @@ jobs:
       matrix:
         include:
           - crate: notifications
-            packages: libglib2.0-dev libgdk-pixbuf-2.0-dev 
+            packages: libglib2.0-dev libgdk-pixbuf-2.0-dev
 
     steps:
       - name: Checkout repository
@@ -64,8 +64,7 @@ jobs:
       matrix:
         include:
           - crate: notifications
-            packages: libglib2.0-dev libgdk-pixbuf-2.0-dev 
-            command: dbus-run-session cargo test -p ${{ matrix.crate }} -- --test-threads=1 
+            packages: libglib2.0-dev libgdk-pixbuf-2.0-dev
 
     steps:
       - name: Checkout repository
@@ -81,8 +80,10 @@ jobs:
         name: System dependencies
         run: |
           sudo apt-get update
+          sudo apt-get install just
           sudo apt-get install -y ${{ matrix.packages }}
 
       - name: Run tests
-        run: ${{ matrix.command }}
-
+        run: |
+          cd crates/${{ matrix.crate }}
+          just test
