@@ -70,7 +70,7 @@ jobs:
           - crate: notifications
             packages: libglib2.0-dev libgdk-pixbuf-2.0-dev
           - crate: notifications_glib
-            packages: libglib2.0-dev libgdk-pixbuf-2.0-dev meson ninja
+            packages: libglib2.0-dev libgdk-pixbuf-2.0-dev meson ninja-build python3 python3-pytest python3-gi
 
     steps:
       - name: Checkout repository
