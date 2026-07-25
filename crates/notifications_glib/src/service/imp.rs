@@ -140,7 +140,11 @@ impl ObjectImpl for GNotificationServiceImp {
                                 );
 
                             if let Some(pos) = position {
-                                notif_store.splice(pos, 1, std::slice::from_ref(&g_desktop_notification));
+                                notif_store.splice(
+                                    pos,
+                                    1,
+                                    std::slice::from_ref(&g_desktop_notification),
+                                );
                             } else {
                                 notif_store.append(&g_desktop_notification);
                             }
