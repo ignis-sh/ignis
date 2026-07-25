@@ -112,11 +112,10 @@ impl GDesktopNotificationImp {
     pub fn get_actions(&self) -> Vec<GAction> {
         let mut res = Vec::new();
         for i in 0..self.actions.n_items() {
-            if let Some(item) = self.actions.item(i) {
-                if let Ok(action) = item.downcast::<GAction>() {
+            if let Some(item) = self.actions.item(i)
+                && let Ok(action) = item.downcast::<GAction>() {
                     res.push(action);
                 }
-            }
         }
 
         res

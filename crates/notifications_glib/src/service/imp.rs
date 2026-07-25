@@ -117,7 +117,7 @@ impl ObjectImpl for GNotificationServiceImp {
         glib::MainContext::default().spawn_local(async move {
             let notif_store = &obj.imp().notifications;
 
-            while let Some(signal) = obj.imp().service.subscribe().recv().await.ok() {
+            while let Ok(signal) = obj.imp().service.subscribe().recv().await {
                 match signal {
                     Event::NotificationClosed { id, reason } => {
                         obj.imp().remove_notification(id, reason.into())
@@ -140,7 +140,7 @@ impl ObjectImpl for GNotificationServiceImp {
                                 );
 
                             if let Some(pos) = position {
-                                notif_store.splice(pos, 1, &[g_desktop_notification.clone()]);
+                                notif_store.splice(pos, 1, std::slice::from_ref(&g_desktop_notification));
                             } else {
                                 notif_store.append(&g_desktop_notification);
                             }
