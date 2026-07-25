@@ -34,6 +34,10 @@ jobs:
         include:
           - crate: notifications
             packages: libglib2.0-dev libgdk-pixbuf-2.0-dev
+          - crate: notifications_glib
+            packages: libglib2.0-dev libgdk-pixbuf-2.0-dev
+          - crate: glib_utils
+            packages: libglib2.0-dev
 
     steps:
       - name: Checkout repository
@@ -65,6 +69,8 @@ jobs:
         include:
           - crate: notifications
             packages: libglib2.0-dev libgdk-pixbuf-2.0-dev
+          - crate: notifications_glib
+            packages: libglib2.0-dev libgdk-pixbuf-2.0-dev meson ninja
 
     steps:
       - name: Checkout repository
