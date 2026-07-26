@@ -1,0 +1,44 @@
+name: Rust Doc
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  doc:
+    name: Build & Deploy Rust doc
+    runs-on: ubuntu-latest
+
+    matrix:
+      include:
+        - crate: notifications
+          packages: libglib2.0-dev libgdk-pixbuf-2.0-dev
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+
+      - if: matrix.packages != ''
+        name: System dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ${{ matrix.packages }}
+
+      - name: Build documentation
+        run: cargo doc -p ${{ matrix.crate }} --all-features --no-deps
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.RUST_DOC_DEPLOY_TOKEN }}
+          external_repository: ignis-sh/rust-doc
+          publish_branch: main
+          publish_dir: ./target/doc
