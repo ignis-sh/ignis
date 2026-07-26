@@ -243,6 +243,8 @@ impl GNotificationServiceImp {
         self.notifications.remove_all();
         self.obj()
             .emit_by_name_with_values("notifications-cleared", &[]);
+
+        self.obj().notify("notifications");
         Ok(())
     }
 }
