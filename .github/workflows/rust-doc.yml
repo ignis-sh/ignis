@@ -43,5 +43,5 @@ jobs:
         with:
           personal_token: ${{ secrets.RUST_DOC_DEPLOY_TOKEN }}
           external_repository: ignis-sh/rust-doc
-          publish_branch: main
+          publish_branch: gh-pages
           publish_dir: ./public
