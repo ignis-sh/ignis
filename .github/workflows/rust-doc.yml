@@ -11,12 +11,6 @@ jobs:
     name: Build & Deploy Rust doc
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        include:
-          - crate: notifications
-            packages: libglib2.0-dev libgdk-pixbuf-2.0-dev
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,13 +25,18 @@ jobs:
         name: System dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ${{ matrix.packages }}
+          sudo apt-get install -y libglib2.0-dev libgdk-pixbuf-2.0-dev
 
       - name: Build documentation
         run: |
-          cargo doc -p ${{ matrix.crate }} --all-features --no-deps
-          mkdir -p public/${{ matrix.crate }}
-          cp -r ./target/doc/* public/${{ matrix.crate }}
+          cargo doc --all-features --no-deps \
+                    -p notifications
+
+          mkdir -p ./public
+          cp -r ./target/doc/* ./public
+
+          echo '<meta http-equiv="refresh" content="0; url=notifications/index.html">' > ./public/index.html
+          touch ./public/.nojekyll
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
