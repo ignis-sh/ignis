@@ -34,7 +34,10 @@ jobs:
           sudo apt-get install -y ${{ matrix.packages }}
 
       - name: Build documentation
-        run: cargo doc -p ${{ matrix.crate }} --all-features --no-deps
+        run: |
+          cargo doc -p ${{ matrix.crate }} --all-features --no-deps
+          mkdir -p public/${{ matrix.crate }}
+          cp -r ./target/doc/* public/${{ matrix.crate }}
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
@@ -42,4 +45,4 @@ jobs:
           personal_token: ${{ secrets.RUST_DOC_DEPLOY_TOKEN }}
           external_repository: ignis-sh/rust-doc
           publish_branch: main
-          publish_dir: ./target/doc
+          publish_dir: ./public
