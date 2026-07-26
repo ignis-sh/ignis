@@ -11,10 +11,11 @@ jobs:
     name: Build & Deploy Rust doc
     runs-on: ubuntu-latest
 
-    matrix:
-      include:
-        - crate: notifications
-          packages: libglib2.0-dev libgdk-pixbuf-2.0-dev
+    strategy:
+      matrix:
+        include:
+          - crate: notifications
+            packages: libglib2.0-dev libgdk-pixbuf-2.0-dev
 
     steps:
       - name: Checkout repository
