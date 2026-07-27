@@ -65,7 +65,8 @@ jobs:
 
           sudo apt-get install -y just \
           libgirepository-2.0-dev gcc libcairo2-dev pkg-config python3-dev \
-          libglib2.0-dev gobject-introspection meson ninja-build
+          libglib2.0-dev gobject-introspection meson ninja-build \
+          libgdk-pixbuf-2.0-dev
 
       - name: Set up Python
         uses: actions/setup-python@v5
