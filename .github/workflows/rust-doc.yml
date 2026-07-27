@@ -59,8 +59,7 @@ jobs:
       - name: Rust cache
         uses: Swatinem/rust-cache@v2
 
-      - if: matrix.packages != ''
-        name: System dependencies
+      - name: System dependencies
         run: |
           sudo apt-get update
 
