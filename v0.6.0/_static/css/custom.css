@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+html {
+    --pst-font-family-base: "JetBrains Mono", var(--pst-font-family-base-system);
+    --pst-font-family-heading: "JetBrains Mono", var(--pst-font-family-base-system);
+    --pst-font-family-monospace: "JetBrains Mono", var(--pst-font-family-monospace-system);
+}
+
+a {
+    text-decoration: none;
+}
+
+pre, code {
+    font-family: "JetBrains Mono";
+    line-height: 1.5;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+pre {
+    font-size: 1rem;
+}
+
+
+html[data-theme=dark] .bd-content img:not(.only-dark) {
+    background: transparent;
+    border-radius: 0;
+    filter: none;
+}
+
+html[data-theme="light"] {
+    --pst-color-primary: #35618e;
+    --pst-color-secondary: #535f70;
+    --pst-color-danger: #ba1a1a;
+    --pst-color-background: #ffffff;
+    --pst-color-on-background: #f2f3f9;
+    --pst-color-surface: #f8f9ff;
+    --pst-color-on-surface: #e6e8ee;
+}
+
+html[data-theme="dark"] {
+    --pst-color-primary: #a0cafd;
+    --pst-color-secondary: #bac8db;
+    --pst-color-danger: #ffb4ab;
+    --pst-color-background: #0b0e13;
+    --pst-color-on-background: #191c20;
+    --pst-color-surface: #101418;
+    --pst-color-on-surface: #272a2f;
+}
