@@ -11,4 +11,6 @@ test: build
     dbus-run-session -- pytest -s ./tests
 
 gen-doc: build
-    gi-docgen generate ./build/IgnisNotificationsGLib-0.1.gir --no-namespace-dir --output-dir ./_build --add-include-path=/usr/share/gir-1.0
+    gi-docgen generate ./build/IgnisNotificationsGLib-0.1.gir --no-namespace-dir --output-dir ./_build \
+        --add-include-path=/usr/share/gir-1.0 \
+        --add-include-path=/usr/lib/x86_64-linux-gnu/gir-1.0
