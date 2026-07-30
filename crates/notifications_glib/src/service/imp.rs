@@ -76,6 +76,7 @@ impl ObjectImpl for GNotificationServiceImp {
                     .build(),
                 glib::ParamSpecBoolean::builder("follow-xdg-timeout").build(),
                 glib::ParamSpecUInt::builder("default-timeout").build(),
+                glib::ParamSpecBoolean::builder("expire-by-default").build(),
             ]
         })
     }
@@ -85,6 +86,7 @@ impl ObjectImpl for GNotificationServiceImp {
             "notifications" => self.notifications.to_value(),
             "follow-xdg-timeout" => self.service.settings().follow_xdg_timeout().to_value(),
             "default-timeout" => self.service.settings().default_timeout().to_value(),
+            "expire-by-default" => self.service.settings().expire_by_default().to_value(),
             _ => unimplemented!(),
         }
     }
@@ -103,6 +105,14 @@ impl ObjectImpl for GNotificationServiceImp {
                     .expect("got wrong type for 'default-timeout' property");
 
                 self.service.settings().set_default_timeout(value);
+            }
+
+            "expire-by-default" => {
+                let value: bool = _value
+                    .get_owned()
+                    .expect("got wrong type for 'expire-by-default' property");
+
+                self.service.settings().set_expire_by_default(value);
             }
 
             _ => unimplemented!(),

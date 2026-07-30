@@ -451,6 +451,7 @@ mod tests {
 
     async fn check_timeout(ms: i32) {
         let ctx = setup().await;
+        ctx.service.settings().set_expire_by_default(true);
 
         create_random_notification()
             .timeout(ms)

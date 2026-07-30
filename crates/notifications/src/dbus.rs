@@ -84,7 +84,13 @@ impl DBusService {
 
         if self.service.inner.settings.follow_xdg_timeout() {
             let actual_timeout = match timeout {
-                -1 => self.service.inner.settings.default_timeout(),
+                -1 => {
+                    if self.service.inner.settings.expire_by_default() {
+                        self.service.inner.settings.default_timeout()
+                    } else {
+                        0
+                    }
+                }
                 _ => timeout.try_into().unwrap_or(0), // do not do anything if timeout is negative
                                                       // and not -1
             };

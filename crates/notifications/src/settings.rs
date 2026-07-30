@@ -5,6 +5,7 @@ use std::sync::RwLock;
 struct SettingsInner {
     follow_xdg_timeout: bool,
     default_timeout: u32,
+    expire_by_default: bool,
 }
 
 impl Default for SettingsInner {
@@ -12,6 +13,7 @@ impl Default for SettingsInner {
         Self {
             follow_xdg_timeout: true,
             default_timeout: 3000,
+            expire_by_default: false,
         }
     }
 }
@@ -28,7 +30,7 @@ pub struct Settings {
 impl Settings {
     /// Returns whether to respect XDG Specification for timeout.
     ///
-    /// If set to `False`, notifications never expire despite the [`NotificationHandle::timeout()`].
+    /// If set to `false`, notifications never expire despite the value of [`NotificationHandle::timeout()`].
     /// Otherwise, behavior is based on notification's timeout:
     /// * `-1` - timeout value is taken from [`Settings::default_timeout()`].
     /// * `0` - the notification never expire
@@ -36,17 +38,25 @@ impl Settings {
     ///
     /// Default: `True`.
     pub fn follow_xdg_timeout(&self) -> bool {
-        self.inner.write().unwrap().follow_xdg_timeout
+        self.inner.read().unwrap().follow_xdg_timeout
     }
 
-    /// Returns the default timeout.
+    /// Returns the default timeout which is used when a notification doesn't specify timeout (-1).
     ///
-    /// Has effect only if [`Settings::follow_xdg_timeout()`] is `false` and
-    /// [`NotificationHandle::timeout()`] is `0`.
+    /// Has effect only if [`Settings::follow_xdg_timeout()`] and [`Settings::expire_by_default()`] are both `true`.
     ///
     /// Default: `3000`.
     pub fn default_timeout(&self) -> u32 {
-        self.inner.write().unwrap().default_timeout
+        self.inner.read().unwrap().default_timeout
+    }
+
+    /// Returns whether to expire notifications if the timeout is not specified (when timeout is -1).
+    ///
+    /// If `true`, notifications expire after the timeout defined in [`Settings::default_timeout()`].
+    ///
+    /// Default: `false`.
+    pub fn expire_by_default(&self) -> bool {
+        self.inner.read().unwrap().expire_by_default
     }
 
     /// Sets [`Settings::follow_xdg_timeout()`] setting.
@@ -57,5 +67,10 @@ impl Settings {
     /// Sets [`Settings::default_timeout()`] setting.
     pub fn set_default_timeout(&self, value: u32) {
         self.inner.write().unwrap().default_timeout = value;
+    }
+
+    /// Sets [`Settings::expire_by_default()`] setting.
+    pub fn set_expire_by_default(&self, value: bool) {
+        self.inner.write().unwrap().expire_by_default = value;
     }
 }

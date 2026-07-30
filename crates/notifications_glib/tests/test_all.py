@@ -255,9 +255,11 @@ def test_action():
 def test_settings(notification_service):
     notification_service.props.follow_xdg_timeout = False
     notification_service.props.default_timeout = 2000
+    notification_service.props.expire_by_default = True
 
     assert notification_service.props.follow_xdg_timeout is False
     assert notification_service.props.default_timeout == 2000
+    assert notification_service.props.expire_by_default is True
 
 
 def test_error():
