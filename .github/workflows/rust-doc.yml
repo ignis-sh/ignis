@@ -104,7 +104,7 @@ jobs:
           touch ./public/.nojekyll
 
       - name: Deploy
-        # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.GI_DOC_DEPLOY_TOKEN }}
