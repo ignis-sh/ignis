@@ -41,6 +41,7 @@ G_BEGIN_DECLS
  * IgnisNotificationsGLibService:expire-by-default:
  *
  * Whether to expire notifications if the timeout is not specified (when timeout is -1).
+ *
  * If `True`, notifications expire after the timeout defined in [property@IgnisNotificationsGLib.Service:default-timeout].
  */
 
@@ -141,7 +142,7 @@ GList* ignis_notifications_glib_service_get_notifications(IgnisNotificationsGLib
 
 
 /**
- * ignis_notifications_glib_service_dismiss_async:
+ * ignis_notifications_glib_service_dismiss_notification_async:
  * @self: a `IgnisNotificationsGLibService`
  * @notification_id: The ID of the notification to dismiss.
  * @cancellable: (nullable): a `GCancellable` to cancel the operation, or %NULL
@@ -159,12 +160,12 @@ GList* ignis_notifications_glib_service_get_notifications(IgnisNotificationsGLib
 void ignis_notifications_glib_service_dismiss_notification_async(IgnisNotificationsGLibService* self, guint32 notification_id, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer user_data);
 
 /**
- * ignis_notifications_glib_service_dismiss_finish:
+ * ignis_notifications_glib_service_dismiss_notification_finish:
  * @self: a `IgnisNotificationsGLibService`
  * @result: a `GAsyncResult`
  * @error: return location for a [enum@IgnisNotificationsGLib.Error] error
  *
- * Finishes call to [method@IgnisNotificationsGLib.Service.dismiss_finish].
+ * Finishes call to [method@IgnisNotificationsGLib.Service.dismiss_notification_finish].
  * 
  * Returns: %TRUE on success.
  *
@@ -181,8 +182,6 @@ gboolean    ignis_notifications_glib_service_dismiss_notification_finish (IgnisN
  * @cancellable: (nullable): a `GCancellable` to cancel the operation, or %NULL
  * @callback: (scope async) (closure user_data): callback to invoke when the operation is complete
  * @user_data: data to pass to @callback
- *
- * Dismisses a notification.
  *
  * Invokes an action by its action key and notification ID it belongs to.
  *
