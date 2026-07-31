@@ -74,9 +74,15 @@ impl ObjectImpl for GNotificationServiceImp {
                 glib::ParamSpecObject::builder::<gio::ListStore>("notifications")
                     .read_only()
                     .build(),
-                glib::ParamSpecBoolean::builder("follow-xdg-timeout").build(),
-                glib::ParamSpecUInt::builder("default-timeout").build(),
-                glib::ParamSpecBoolean::builder("expire-by-default").build(),
+                glib::ParamSpecBoolean::builder("follow-xdg-timeout")
+                    .default_value(true)
+                    .build(),
+                glib::ParamSpecUInt::builder("default-timeout")
+                    .default_value(3000)
+                    .build(),
+                glib::ParamSpecBoolean::builder("expire-by-default")
+                    .default_value(false)
+                    .build(),
             ]
         })
     }

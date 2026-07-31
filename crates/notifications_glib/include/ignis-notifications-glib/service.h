@@ -6,6 +6,72 @@
 
 G_BEGIN_DECLS
 
+// Usually properties and signals are documented in C sources
+// but we just do it here
+
+/**
+ * IgnisNotificationsGLibService:notifications:
+ *
+ * The `GListStore` containing notifications.
+ */
+
+/**
+ * IgnisNotificationsGLibService:follow-xdg-timeout:
+ *
+ * Whether to respect XDG Specification for timeout.
+ *
+ * If set to `FALSE`, notifications never expire despite the value of [property@IgnisNotificationsGLibNotification:timeout].
+ *
+ * Otherwise, behavior is based on notification's timeout:
+ *
+ * - `-1` - timeout value is taken from [property@IgnisNotificationsGLibService:default-timeout].
+ * - `0` - the notification never expire
+ * - `>=0` - this timeout is used to expire the notification
+ */
+
+/**
+ * IgnisNotificationsGLibService:default-timeout:
+ *
+ * The default timeout which is used when a notification doesn't specify timeout (-1).
+ *
+ * Has effect only if [property@IgnisNotificationsGLib.Service:follow_xdg_timeout] and [property@IgnisNotificationsGLibService:expire-by-default] are both `TRUE`.
+ */
+
+/**
+ * IgnisNotificationsGLibService:expire-by-default:
+ *
+ * Whether to expire notifications if the timeout is not specified (when timeout is -1).
+ * If `True`, notifications expire after the timeout defined in [property@IgnisNotificationsGLib.Service:default-timeout].
+ */
+
+/**
+ * IgnisNotificationsGLibService::notified:
+ * @self: the #IgnisNotificationsGLibService
+ * @id: The id of the notification
+ * @notification: The `IgnisNotificationsGLibNotification` instance
+ * @replace: Whether it replaces the old notification with the same ID
+ *
+ * A new notification was sent by an application.
+ */
+
+/**
+ * IgnisNotificationsGLibService::closed:
+ * @self: the #IgnisNotificationsGLibService
+ * @id: The id of the notification
+ * @reason: The reason why the notification was closed.
+ *
+ * A notification was closed.
+ */
+
+/**
+ * IgnisNotificationsGLibService::notifications-cleared:
+ * @self: the #IgnisNotificationsGLibService
+ *
+ * The notification history was cleared. 
+ *
+ * Emitted by a call to [method@IgnisNotificationsGLib.Service.clear_notifications_async].
+ */
+
 /**
  * IgnisNotificationsGLibService:
  * 

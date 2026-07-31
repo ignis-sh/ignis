@@ -7,6 +7,14 @@
 
 G_BEGIN_DECLS
 
+/**
+ * IgnisNotificationsGLibNotification::closed:
+ * @self: The #IgnisNotificationsGLibNotification
+ * @reason: The reason why the notification was closed
+ *
+ * This notification was closed.
+ */
+
 /** 
  * IgnisNotificationsGLibNotification:
  *
