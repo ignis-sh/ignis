@@ -12,7 +12,7 @@ test: build
 
 doc: build
     gi-docgen generate ./build/IgnisNotificationsGLib-0.1.gir \
-        -C ./IgnisNotificationsGLib.toml
+        --config ./IgnisNotificationsGLib.toml \
         --no-namespace-dir \
         --output-dir ./_build \
         --add-include-path=/usr/share/gir-1.0 \
