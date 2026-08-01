@@ -5,6 +5,10 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Linting: Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
+> [!WARNING]
+> Ignis is currently being rewritten in Rust.
+> See the [rust-rewrite](https://github.com/ignis-sh/ignis/tree/rust-rewrite) branch.
+
 A widget framework for building desktop shells, written and configurable in Python.
 
 - Easy to use
@@ -19,34 +23,41 @@ A widget framework for building desktop shells, written and configurable in Pyth
 > The breaking changes tracker is available in [#60](https://github.com/ignis-sh/ignis/issues/60)
 
 ## Getting started
+
 See the [Documentation](https://ignis-sh.github.io/ignis)
 
 ## Supported Desktops
-- wlroots-based Wayland compositors (e.g., __Sway__) 
-- __Hyprland__
-- Smithay based compositors (e.g., __COSMIC__)
-- __KDE Plasma__ on wayland
+
+- wlroots-based Wayland compositors (e.g., **Sway**)
+- **Hyprland**
+- Smithay based compositors (e.g., **COSMIC**)
+- **KDE Plasma** on wayland
 
 ...and all other compositors that implement the Layer Shell protocol.
 
-Ignis __is not supported__ on:
+Ignis **is not supported** on:
+
 - GNOME Wayland
 - X11
 
 ...because they don't support the Layer Shell protocol.
 
 ## Examples
-* A simple bar, see [examples](./examples/bar)
-![simple-bar](./examples/bar/simple-bar.png)
 
-* [My own configuration](https://github.com/linkfrg/dotfiles/)
-![My own configuration](https://github.com/linkfrg/dotfiles/blob/main/assets/1.png?raw=true)
+- A simple bar, see [examples](./examples/bar)
+  ![simple-bar](./examples/bar/simple-bar.png)
+
+- [My own configuration](https://github.com/linkfrg/dotfiles/)
+  ![My own configuration](https://github.com/linkfrg/dotfiles/blob/main/assets/1.png?raw=true)
 
 ## Contributing
+
 Check out the [Developer Guide](https://ignis-sh.github.io/ignis/latest/dev/index.html)
 
 ## Licensing
-Ignis is licensed under the __LGPL-2.1-or-later__.
+
+Ignis is licensed under the **LGPL-2.1-or-later**.
 
 ## Special Thanks
+
 [AGS](https://github.com/aylur/ags) - for inspiration
