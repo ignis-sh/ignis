@@ -1,0 +1,19 @@
+clean:
+    rm -R ./build
+
+build:
+    meson setup ./build -Dprofile=debug
+    meson compile -C ./build
+
+test: build
+    LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}./build" \
+    GI_TYPELIB_PATH="${GI_TYPELIB_PATH:+$GI_TYPELIB_PATH:}./build" \
+    dbus-run-session -- pytest -s ./tests
+
+doc: build
+    gi-docgen generate ./build/IgnisNotificationsGLib-0.1.gir \
+        --config ./IgnisNotificationsGLib.toml \
+        --no-namespace-dir \
+        --output-dir ./_build \
+        --add-include-path=/usr/share/gir-1.0 \
+        --add-include-path=/usr/lib/x86_64-linux-gnu/gir-1.0
