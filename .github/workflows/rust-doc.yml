@@ -94,7 +94,7 @@ jobs:
           for crate in notifications_glib; do
               (
                   cd "crates/$crate"
-                  just gen-doc
+                  just doc
                   mkdir -p "../../public/$crate"
                   cp -r ./_build/* "../../public/$crate/"
               )

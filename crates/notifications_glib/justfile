@@ -10,7 +10,10 @@ test: build
     GI_TYPELIB_PATH="${GI_TYPELIB_PATH:+$GI_TYPELIB_PATH:}./build" \
     dbus-run-session -- pytest -s ./tests
 
-gen-doc: build
-    gi-docgen generate ./build/IgnisNotificationsGLib-0.1.gir --no-namespace-dir --output-dir ./_build \
+doc: build
+    gi-docgen generate ./build/IgnisNotificationsGLib-0.1.gir \
+        -C ./IgnisNotificationsGLib.toml
+        --no-namespace-dir \
+        --output-dir ./_build \
         --add-include-path=/usr/share/gir-1.0 \
         --add-include-path=/usr/lib/x86_64-linux-gnu/gir-1.0
