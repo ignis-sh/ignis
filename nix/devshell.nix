@@ -33,6 +33,7 @@
     python313Packages.pytest
     python313Packages.pygobject3
     just
+    gi-docgen
   ];
 in {
   default = pkgs.mkShell {
