@@ -2,7 +2,10 @@ name: Rust Doc
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - rust-rewrite
+
   pull_request:
 
 jobs:
@@ -37,7 +40,7 @@ jobs:
           touch ./public/.nojekyll
 
       - name: Deploy
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'ref/heads/rust-rewrite')
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.RUST_DOC_DEPLOY_TOKEN }}
@@ -104,7 +107,7 @@ jobs:
           touch ./public/.nojekyll
 
       - name: Deploy
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'ref/heads/rust-rewrite')
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.GI_DOC_DEPLOY_TOKEN }}

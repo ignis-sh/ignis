@@ -2,7 +2,9 @@ name: Rust CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - rust-rewrite
   pull_request:
 
 jobs:
