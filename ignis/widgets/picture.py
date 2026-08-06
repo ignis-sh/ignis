@@ -38,7 +38,12 @@ class Picture(Gtk.Picture, BaseWidget):
     __gproperties__ = {**BaseWidget.gproperties}
 
     def __init__(
-        self, content_fit: str = "contain", width: int = -1, height: int = -1, **kwargs
+        self,
+        content_fit: str = "contain",
+        width: int = -1,
+        height: int = -1,
+        blur_radius: int = 0,
+        **kwargs,
     ):
         Gtk.Picture.__init__(self)
         self.override_enum("content_fit", Gtk.ContentFit)
@@ -47,6 +52,7 @@ class Picture(Gtk.Picture, BaseWidget):
         self._image: str | GdkPixbuf.Pixbuf | None = None
         self._width = width
         self._height = height
+        self._blur_radius = blur_radius
         self.width_request = width
         self.height_request = height
 
@@ -91,6 +97,25 @@ class Picture(Gtk.Picture, BaseWidget):
         self._height = value
         self.height_request = value
         self.__draw(self.image)
+
+    @IgnisProperty
+    def blur_radius(self) -> int:
+        """
+        The blur radius of the image in pixels.
+        """
+        return self._blur_radius
+
+    @blur_radius.setter
+    def blur_radius(self, value: int) -> None:
+        self._blur_radius = value
+        self.queue_draw()
+
+    def do_snapshot(self, snapshot: Gtk.Snapshot) -> None:
+        snapshot.push_blur(self._blur_radius)
+
+        Gtk.Picture.do_snapshot(self, snapshot)
+
+        snapshot.pop()
 
     def __draw(self, image: "str | GdkPixbuf.Pixbuf") -> None:
         if isinstance(image, GdkPixbuf.Pixbuf):
