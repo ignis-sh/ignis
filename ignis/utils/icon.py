@@ -1,5 +1,5 @@
 import os
-from gi.repository import Gtk, Gio  # type: ignore
+from gi.repository import Gtk, Gio, GioUnix  # type: ignore
 from ignis import utils
 
 
@@ -69,7 +69,7 @@ def get_app_icon_name(app_id: str) -> str | None:
         The application icon name, or ``None`` if the application with the given ID doesn't exist or has no icon.
     """
     try:
-        app_info = Gio.DesktopAppInfo.new(app_id + ".desktop")
+        app_info = GioUnix.DesktopAppInfo.new(app_id + ".desktop")
     except TypeError:
         return None
 

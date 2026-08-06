@@ -1,4 +1,4 @@
-from gi.repository import Gio  # type: ignore
+from gi.repository import Gio, GioUnix  # type: ignore
 from ignis.base_service import BaseService
 from .application import Application
 from ignis.options import options
@@ -59,13 +59,13 @@ class ApplicationsService(BaseService):
         self._apps = {}
 
         for app in Gio.AppInfo.get_all():
-            if isinstance(app, Gio.DesktopAppInfo):
+            if isinstance(app, GioUnix.DesktopAppInfo):
                 self.__add_app(app)
 
         self.notify("apps")
         self.notify("pinned")
 
-    def __add_app(self, app: Gio.DesktopAppInfo) -> None:
+    def __add_app(self, app: GioUnix.DesktopAppInfo) -> None:
         if app.get_nodisplay():
             return
 
@@ -91,7 +91,7 @@ class ApplicationsService(BaseService):
         """
         return [
             entry
-            for result in Gio.DesktopAppInfo.search(query)
+            for result in GioUnix.DesktopAppInfo.search(query)
             for entry in apps
             if entry.id in result
         ]
