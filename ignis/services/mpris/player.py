@@ -15,9 +15,10 @@ class MprisPlayer(IgnisGObject):
     A media player object.
     """
 
-    def __init__(self, mpris_proxy: DBusProxy, player_proxy: DBusProxy):
+    def __init__(self, name: str, mpris_proxy: DBusProxy, player_proxy: DBusProxy):
         super().__init__()
 
+        self.name = name
         self.__mpris_proxy = mpris_proxy
         self.__player_proxy = player_proxy
         self._conn_mgr = ConnectionManager()
@@ -79,7 +80,7 @@ class MprisPlayer(IgnisGObject):
             info=utils.load_interface_xml("org.mpris.MediaPlayer2.Player"),
         )
 
-        obj = cls(mpris_proxy=mpris_proxy, player_proxy=player_proxy)
+        obj = cls(name=name, mpris_proxy=mpris_proxy, player_proxy=player_proxy)
         await obj._initial_sync()
         return obj
 
