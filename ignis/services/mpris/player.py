@@ -153,7 +153,7 @@ class MprisPlayer(IgnisGObject):
         self.__sync_metadata_property(
             "xesam:artist",
             "artist",
-            lambda artist: "".join(artist) if isinstance(artist, list) else artist,
+            lambda artist: ", ".join(artist) if isinstance(artist, list) else artist,
         )
         self.__sync_metadata_property("xesam:title", "title")
         self.__sync_metadata_property("xesam:url", "url")
