@@ -1,11 +1,14 @@
 import json
 import os
 import socket
+
 from ignis import utils
-from ignis.exceptions import NiriIPCNotFoundError
-from ignis.base_service import BaseService
-from ignis.gobject import IgnisProperty, IgnisSignal
 from ignis.app import IgnisApp
+from ignis.base_service import BaseService
+from ignis.exceptions import NiriIPCNotFoundError
+from ignis.gobject import IgnisProperty, IgnisSignal
+
+from .cast import NiriCast
 from .constants import NIRI_SOCKET
 from .keyboard import NiriKeyboardLayouts
 from .window import NiriWindow
@@ -46,6 +49,7 @@ class NiriService(BaseService):
         self._workspaces: dict[int, NiriWorkspace] = {}
         self._active_output: str = ""
         self._overview_opened = False
+        self._casts: dict[int, NiriCast] = {}
 
         if self.is_available:
             self.__start_event_stream()
@@ -107,7 +111,7 @@ class NiriService(BaseService):
     @IgnisProperty
     def active_output(self) -> str:
         """
-        The currenly focused output.
+        The currently focused output.
         """
         return self._active_output
 
@@ -118,6 +122,13 @@ class NiriService(BaseService):
         """
         return self._overview_opened
 
+    @IgnisProperty
+    def casts(self) -> list[NiriCast]:
+        """
+        A list of casts.
+        """
+        return list(self._casts.values())
+
     def __start_event_stream(self) -> None:
         # Initialize socket connection
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -126,12 +137,6 @@ class NiriService(BaseService):
 
         # Close socket gracefully on app quit
         IgnisApp.get_initialized().connect("shutdown", lambda *_: sock.close())
-
-        # Launch an unthreaded event stream to ensure all variables get initialized
-        # before returning from __init__ . OverviewOpenedOrClosed is the last
-        # event to be sent during initialization of the Niri event stream, so once
-        # it is received, we are ready to launch a threaded (non blocking) version.
-        self.__listen_events(sock=sock, break_on="OverviewOpenedOrClosed")
 
         utils.thread(lambda: self.__listen_events(sock=sock))
         # No need to send any other commands after event stream initialization:
@@ -176,6 +181,12 @@ class NiriService(BaseService):
                 self.__update_workspaces(event_data)
             case "OverviewOpenedOrClosed":
                 self.__update_overview_opened(event_data)
+            case "CastsChanged":
+                self.__update_casts(event_data)
+            case "CastStartedOrChanged":
+                self.__update_cast(event_data)
+            case "CastStopped":
+                self.__destroy_cast(event_data)
 
     def __update_current_layout(self, data: dict) -> None:
         self._keyboard_layouts.sync({"current_idx": data["idx"]})
@@ -236,21 +247,29 @@ class NiriService(BaseService):
         self,
         niri_obj: dict,
         fresh_data: list,
-        obj_type: type[NiriWindow] | type[NiriWorkspace],
+        obj_type: type[NiriWindow] | type[NiriWorkspace] | type[NiriCast],
     ) -> None:
         for fresh_item in fresh_data:
-            obj = niri_obj.get(fresh_item["id"], None)
+            if obj_type is NiriCast:
+                fresh_item_id = fresh_item["stream_id"]
+            else:
+                fresh_item_id = fresh_item["id"]
+            obj = niri_obj.get(fresh_item_id, None)
             if obj is None:
                 obj = obj_type(self)
 
             obj.sync(fresh_item)
-            niri_obj[fresh_item["id"]] = obj
+            niri_obj[fresh_item_id] = obj
 
     def __cleanup_niri_obj(self, niri_obj: dict, fresh_data: list) -> None:
         for id_, item in niri_obj.copy().items():
             still_exists = False
             for fresh_item in fresh_data:
-                if fresh_item["id"] == id_:
+                if "stream_id" in fresh_item:
+                    fresh_item_id = fresh_item["stream_id"]
+                else:
+                    fresh_item_id = fresh_item["id"]
+                if fresh_item_id == id_:
                     still_exists = True
                     break
 
@@ -343,6 +362,36 @@ class NiriService(BaseService):
     def __update_overview_opened(self, data: dict) -> None:
         self._overview_opened = data["is_open"]
         self.notify("overview_opened")
+
+    def __update_casts(self, data: dict) -> None:
+        casts = data["casts"]
+        # CastsChanged means a full replacement of window configuration.
+        # Update every window accordingly.
+        self.__update_niri_obj(self._casts, casts, NiriCast)
+
+        # Drop casts that don't exist anymore.
+        self.__cleanup_niri_obj(self._casts, casts)
+
+        self.__sort_windows()
+
+        self.notify("casts")
+
+    def __update_cast(self, data: dict) -> None:
+        cast_data = data["cast"]
+        cast = self._casts.get(cast_data["stream_id"], None)
+        if cast is None:
+            cast = NiriCast(self)
+
+        cast.sync(cast_data)
+        self._casts[cast_data["stream_id"]] = cast
+
+        self.notify("casts")
+
+    def __destroy_cast(self, data: dict) -> None:
+        cast = self._casts.pop(data["stream_id"])
+        if cast:
+            cast.emit("destroyed")
+            self.notify("casts")
 
     def send_command(self, cmd: dict | str) -> str:
         """
