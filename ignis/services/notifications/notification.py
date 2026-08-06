@@ -23,6 +23,7 @@ class Notification(IgnisGObject):
         timeout: int,
         time: float,
         popup: bool,
+        transient: bool,
     ):
         super().__init__()
 
@@ -36,6 +37,7 @@ class Notification(IgnisGObject):
         self._time = time
         self._urgency = urgency
         self._popup = popup
+        self._transient = transient
         self._actions = [
             NotificationAction(
                 id=str(actions[i]),
@@ -136,6 +138,13 @@ class Notification(IgnisGObject):
         Whether the notification is a popup.
         """
         return self._popup
+
+    @IgnisProperty
+    def transient(self) -> bool:
+        """
+        Whether the notification is transient (ignored in any notification center implementation).
+        """
+        return self._transient
 
     @IgnisProperty
     def json(self) -> dict:
