@@ -354,6 +354,12 @@ class HyprlandService(BaseService):
 
         self.notify("main-keyboard")
 
+    def update_main_keyboard(self) -> None:
+        """
+        Update the `main_keyboard` property for the service (there is no passive/reactive way to do this).
+        """
+        self.__sync_main_keyboard()
+
     def __sync_active_layout(self, layout: str) -> None:
         self._main_keyboard.sync({"active_keymap": layout})
 
