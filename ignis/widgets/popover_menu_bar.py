@@ -4,25 +4,20 @@ from ignis.gobject import IgnisProperty
 from ignis.menu_model import IgnisMenuModel
 
 
-class PopoverMenu(Gtk.PopoverMenu, BaseWidget):
+class PopoverMenuBar(Gtk.PopoverMenuBar, BaseWidget):
     """
-    Bases: :class:`Gtk.PopoverMenu`
+    Bases: :class:`Gtk.PopoverMenuBar`
 
-    A dropdown menu.
-    It must be added as a child to a container.
-    To display it, call the ``popup()`` method.
-
-    .. note::
-        The Popover Menu points to the widget to which it was added.
+    A dropdown menu bar.
 
     Args:
         **kwargs: Properties to set.
-
+    
     .. code-block:: python
 
         from ignis.menu_model import IgnisMenuModel, IgnisMenuItem, IgnisMenuSeparator
 
-        widgets.PopoverMenu(
+        widgets.PopoverMenuBar(
             model=IgnisMenuModel(
                 IgnisMenuItem(
                     label="Just item",
@@ -49,14 +44,13 @@ class PopoverMenu(Gtk.PopoverMenu, BaseWidget):
         )
     """
 
-    __gtype_name__ = "IgnisPopoverMenu"
+    __gtype_name__ = "IgnisPopoverMenuBar"
     __gproperties__ = {**BaseWidget.gproperties}
 
     def __init__(self, **kwargs):
-        Gtk.PopoverMenu.__init__(self)
+        Gtk.PopoverMenuBar.__init__(self)
         self._model: IgnisMenuModel | None = None
-        BaseWidget.__init__(self, visible=False, **kwargs)
-        self._nested = False
+        BaseWidget.__init__(self, **kwargs)
 
     @IgnisProperty
     def model(self) -> IgnisMenuModel | None:
@@ -72,22 +66,6 @@ class PopoverMenu(Gtk.PopoverMenu, BaseWidget):
 
         self._model = value
         self.set_menu_model(value.gmenu)
-    
-    @IgnisProperty
-    def nested(self) -> bool:
-        """
-        Whether or not submenus are presented as traditional, nested popovers.
-        """
-        return self._nested
-    
-    @nested.setter
-    def nested(self, value: bool) -> None:
-        if value:
-            self.set_flags(Gtk.PopoverMenuFlags.NESTED)
-        else:
-            self.set_flags(Gtk.PopoverMenuFlags.SLIDING)
-        self._nested = value
-
 
     def __del__(self) -> None:
         if self._model:
