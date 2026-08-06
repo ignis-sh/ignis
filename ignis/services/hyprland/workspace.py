@@ -100,4 +100,4 @@ class HyprlandWorkspace(DataGObject):
         """
         Switch to this workspace.
         """
-        self.__service.send_command(f"dispatch workspace {self.id}")
+        self.__service.switch_to_workspace(self.id)
