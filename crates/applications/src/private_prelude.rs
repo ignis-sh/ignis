@@ -1,5 +1,7 @@
 pub(crate) use crate::action::Action;
 pub(crate) use crate::desktopapp::DesktopApp;
+
+#[allow(unused_imports)]
 pub(crate) use crate::locale::SystemLocale;
 pub(crate) use crate::utils;
 

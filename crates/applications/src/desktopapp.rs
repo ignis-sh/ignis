@@ -44,7 +44,7 @@ impl DesktopApp {
                     a.split(";")
                         .into_iter()
                         .filter(|a| !a.is_empty())
-                        .filter_map(|id| Action::new(id, &ini))
+                        .filter_map(|id| Action::new(String::from(id), ini.clone()))
                         .map(|action| Arc::new(action))
                         .collect(),
                 )
@@ -59,6 +59,7 @@ impl DesktopApp {
     }
 }
 
+#[derive(Clone)]
 pub struct DesktopAppHandle {
     pub(crate) inner: Arc<DesktopApp>,
     pub(crate) service: ApplicationService,
@@ -138,6 +139,7 @@ impl DesktopAppHandle {
             .iter()
             .map(|action| ActionHandle {
                 inner: action.clone(),
+                service: self.service.clone(),
             })
             .collect()
     }
