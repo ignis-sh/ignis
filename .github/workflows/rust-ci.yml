@@ -71,6 +71,9 @@ jobs:
           - crate: notifications
             packages: libglib2.0-dev libgdk-pixbuf-2.0-dev
 
+          - crate: applications
+            packages: ""
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
