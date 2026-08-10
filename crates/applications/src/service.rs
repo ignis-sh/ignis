@@ -1,0 +1,240 @@
+use crate::locale::SystemLocale;
+use crate::private_prelude::*;
+use notify::{EventKind, INotifyWatcher, RecursiveMode, Watcher};
+use std::sync::mpsc;
+use std::thread;
+use std::{collections::HashMap, env, fs, path::PathBuf, sync::RwLock};
+
+pub(crate) struct ApplicationServiceInner {
+    applications: RwLock<HashMap<String, Arc<DesktopApp>>>,
+    watcher: RwLock<Option<INotifyWatcher>>,
+    app_dirs: Vec<PathBuf>,
+    pub(crate) locale: SystemLocale,
+}
+
+#[derive(Clone)]
+pub struct ApplicationService {
+    pub(crate) inner: Arc<ApplicationServiceInner>,
+}
+
+impl ApplicationService {
+    pub fn new() -> Self {
+        Self::new_with_env(
+            env::var_os("XDG_DATA_DIRS")
+                .into_iter()
+                .flat_map(|value| env::split_paths(&value).collect::<Vec<_>>())
+                .map(|path| path.join("applications"))
+                .collect(),
+            ["LC_MESSAGES", "LC_ALL", "LANG"]
+                .iter()
+                .find_map(|name| env::var(name).ok())
+                .unwrap_or_default()
+                .as_ref(),
+        )
+    }
+
+    pub(crate) fn new_with_env(app_dirs: Vec<PathBuf>, locale_string: &str) -> Self {
+        Self {
+            inner: Arc::new(ApplicationServiceInner {
+                applications: RwLock::new(Self::init_apps(&app_dirs)),
+                watcher: RwLock::new(None),
+                app_dirs,
+                locale: SystemLocale::new(&locale_string),
+            }),
+        }
+    }
+
+    pub fn watch(&self) -> Result<()> {
+        let (tx, rx) = mpsc::channel();
+
+        let mut watcher = notify::recommended_watcher(tx)?;
+
+        for path in &self.inner.app_dirs {
+            watcher.watch(&path, RecursiveMode::NonRecursive)?;
+        }
+
+        *self.inner.watcher.write().unwrap() = Some(watcher);
+
+        let service = self.clone();
+
+        thread::spawn(move || {
+            fn refresh(service: ApplicationService) {
+                *service.inner.applications.write().unwrap() =
+                    ApplicationService::init_apps(&service.inner.app_dirs);
+
+                tracing::debug!("Apps are refreshed");
+            }
+
+            for res in rx {
+                let service = service.clone();
+                match res {
+                    Ok(event) => match event.kind {
+                        // EventKind::Create(_) => refresh(service),
+                        // EventKind::Remove(_) => refresh(service),
+                        EventKind::Modify(_) => refresh(service),
+                        _ => {}
+                    },
+                    Err(e) => {
+                        tracing::warn!("Watch error: {}", e)
+                    }
+                }
+            }
+        });
+
+        Ok(())
+    }
+
+    fn init_apps(app_dirs: &Vec<PathBuf>) -> HashMap<String, Arc<DesktopApp>> {
+        app_dirs
+            .into_iter()
+            .filter_map(|dir| fs::read_dir(dir).ok())
+            .flatten()
+            .filter_map(|entry| entry.ok())
+            .filter(|entry| entry.file_name().to_string_lossy().ends_with(".desktop"))
+            .filter_map(|entry| {
+                DesktopApp::new(
+                    entry.file_name().to_string_lossy().replace(".desktop", ""),
+                    fs::read_to_string(entry.path()).ok()?,
+                )
+            })
+            .map(|app| (app.app_id.clone(), Arc::new(app)))
+            .fold(HashMap::new(), |mut map, (app_id, app)| {
+                // use the first appearance of the desktop file
+                map.entry(app_id).or_insert(app);
+                map
+            })
+    }
+
+    pub fn apps(&self) -> Vec<DesktopAppHandle> {
+        self.inner
+            .applications
+            .read()
+            .unwrap()
+            .values()
+            .map(|app| DesktopAppHandle {
+                inner: app.clone(),
+                service: self.clone(),
+            })
+            .collect()
+    }
+
+    pub fn app_by_id(&self, app_id: &str) -> Option<DesktopAppHandle> {
+        self.inner
+            .applications
+            .read()
+            .unwrap()
+            .get(app_id)
+            .and_then(|app| {
+                Some(DesktopAppHandle {
+                    inner: app.clone(),
+                    service: self.clone(),
+                })
+            })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::time::Duration;
+
+    use tempfile::TempDir;
+
+    use super::*;
+    use fake::Fake;
+    use fake::faker::lorem::en::Sentence;
+    use tracing_subscriber::EnvFilter;
+    use uuid::Uuid;
+
+    struct TestContext {
+        tmp_dir: TempDir,
+        apps_dir: PathBuf,
+    }
+
+    impl TestContext {
+        fn new() -> Self {
+            tracing_subscriber::fmt()
+                .with_env_filter(EnvFilter::new("debug"))
+                .try_init()
+                .ok();
+
+            let mut tmp_dir = TempDir::new().unwrap();
+
+            if std::env::var_os("NO_TMP_CLEANUP")
+                .unwrap_or_default()
+                .to_string_lossy()
+                == "1"
+            {
+                tmp_dir.disable_cleanup(true);
+            }
+
+            let apps_dir = tmp_dir.path().to_owned().join("applications");
+            std::fs::create_dir(&apps_dir).unwrap();
+
+            Self { tmp_dir, apps_dir }
+        }
+
+        fn add_random_entry(&self, application_type: &str, no_display: bool) {
+            let name: String = Sentence(1..4).fake();
+            let app_id = Uuid::new_v4().to_string();
+
+            let contents = format!(
+                r#"[Desktop Entry]
+Name={}
+Type={}
+NoDisplay={}
+                "#,
+                name, application_type, no_display
+            );
+
+            std::fs::write(self.apps_dir.join(format!("{}.desktop", app_id)), contents).unwrap();
+        }
+
+        fn init_service(&self) -> ApplicationService {
+            ApplicationService::new_with_env(
+                vec![self.tmp_dir.path().to_owned().join("applications")],
+                "",
+            )
+        }
+    }
+
+    #[test]
+    fn test_new() {
+        let ctx = TestContext::new();
+        let service = ctx.init_service();
+
+        assert_eq!(service.apps().len(), 0);
+    }
+
+    #[test]
+    fn test_apps() {
+        let ctx = TestContext::new();
+        for _ in 0..10 {
+            ctx.add_random_entry("Application", false);
+        }
+
+        for _ in 0..5 {
+            ctx.add_random_entry("Link", false);
+        }
+
+        ctx.add_random_entry("Application", true);
+
+        let service = ctx.init_service();
+
+        assert_eq!(service.apps().len(), 10);
+    }
+
+    #[test]
+    fn test_watch() {
+        let ctx = TestContext::new();
+        ctx.add_random_entry("Application", false);
+        let service = ctx.init_service();
+
+        assert_eq!(service.apps().len(), 1);
+
+        service.watch().unwrap();
+        ctx.add_random_entry("Application", false);
+
+        thread::sleep(Duration::from_millis(500));
+        assert_eq!(service.apps().len(), 2);
+    }
+}
