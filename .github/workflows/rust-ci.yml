@@ -84,11 +84,14 @@ jobs:
       - name: Rust cache
         uses: Swatinem/rust-cache@v2
 
-      - if: matrix.packages != ''
-        name: System dependencies
+      - name: Install just
         run: |
           sudo apt-get update
           sudo apt-get install -y just
+
+      - if: matrix.packages != ''
+        name: System dependencies
+        run: |
           sudo apt-get install -y ${{ matrix.packages }}
 
       - name: Run tests
