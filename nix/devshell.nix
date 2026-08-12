@@ -34,6 +34,7 @@
     python313Packages.pygobject3
     just
     gi-docgen
+    maturin
   ];
 in {
   default = pkgs.mkShell {

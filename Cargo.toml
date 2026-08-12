@@ -2,6 +2,7 @@
 members = ["crates/applications","crates/glib_utils",
     "crates/notifications",
     "crates/notifications_glib",
+    "crates/py_applications",
 ]
 
 resolver = "3"
