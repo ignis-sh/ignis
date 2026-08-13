@@ -42,6 +42,7 @@
       default = self.packages.${system}.ignis;
 
       ignis-notifications-glib = pkgs.callPackage ./crates/notifications_glib {};
+      py-ignis-applications = pkgs.callPackage ./crates/py_applications {};
     });
 
     formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
