@@ -1,6 +1,6 @@
-use configparser::ini::Ini;
-
 use crate::{locale::SystemLocale, private_prelude::*};
+use configparser::ini::Ini;
+use std::process::{Command, Stdio};
 
 pub(crate) fn run_from_exec_string(exec_string: Option<String>) -> Result<()> {
     let args: Vec<String> = exec_string
@@ -10,8 +10,12 @@ pub(crate) fn run_from_exec_string(exec_string: Option<String>) -> Result<()> {
         .collect();
 
     let executable = args.get(0).ok_or(Error::ExecEmpty)?;
-    std::process::Command::new(executable)
+
+    Command::new(executable)
         .args(&args[1..])
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
         .spawn()?;
 
     Ok(())
