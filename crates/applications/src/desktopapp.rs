@@ -144,7 +144,7 @@ impl DesktopAppHandle {
             .collect()
     }
 
-    pub async fn run(&self) -> Result<()> {
+    pub fn run(&self) -> Result<()> {
         utils::run_from_exec_string(self.exec())
     }
 }
@@ -264,6 +264,6 @@ Exec=ls
 "#,
         );
         let handle = new_handle(contents, "");
-        handle.run().await.unwrap();
+        handle.run().unwrap();
     }
 }

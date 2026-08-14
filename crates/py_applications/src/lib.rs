@@ -63,11 +63,8 @@ mod ignis_applications {
 
     #[pymethods]
     impl DesktopApp {
-        fn run<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
-            let inner = self.inner.clone();
-            pyo3_async_runtimes::tokio::future_into_py(py, async move {
-                inner.run().await.map_err(to_py_err)
-            })
+        fn run(&self) -> PyResult<()> {
+            self.inner.run().map_err(to_py_err)
         }
 
         #[getter]

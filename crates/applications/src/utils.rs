@@ -10,7 +10,7 @@ pub(crate) fn run_from_exec_string(exec_string: Option<String>) -> Result<()> {
         .collect();
 
     let executable = args.get(0).ok_or(Error::ExecEmpty)?;
-    tokio::process::Command::new(executable)
+    std::process::Command::new(executable)
         .args(&args[1..])
         .spawn()?;
 
