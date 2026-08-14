@@ -1,7 +1,8 @@
 use crate::locale::SystemLocale;
 use crate::private_prelude::*;
 use notify::{EventKind, INotifyWatcher, RecursiveMode, Watcher};
-use std::sync::mpsc;
+use nucleo_matcher::{Config, Matcher, Utf32Str};
+use std::sync::{Mutex, mpsc};
 use std::thread;
 use std::{collections::HashMap, env, fs, path::PathBuf, sync::RwLock};
 
@@ -10,6 +11,7 @@ pub(crate) struct ApplicationServiceInner {
     watcher: RwLock<Option<INotifyWatcher>>,
     app_dirs: Vec<PathBuf>,
     pub(crate) locale: SystemLocale,
+    matcher: Mutex<Matcher>,
 }
 
 #[derive(Clone)]
@@ -40,6 +42,7 @@ impl ApplicationService {
                 watcher: RwLock::new(None),
                 app_dirs,
                 locale: SystemLocale::new(&locale_string),
+                matcher: Mutex::new(Matcher::new(Config::DEFAULT)),
             }),
         }
     }
@@ -131,6 +134,33 @@ impl ApplicationService {
                 })
             })
     }
+
+    pub fn search_by_name(&self, query: &str) -> Vec<DesktopAppHandle> {
+        let mut query_buf = Vec::new();
+        let needle = Utf32Str::new(query, &mut query_buf);
+
+        let mut results = Vec::new();
+
+        for app in self.apps() {
+            let mut app_buf = Vec::new();
+            let name = app.name();
+            let haystack = Utf32Str::new(&name, &mut app_buf);
+
+            if let Some(score) = self
+                .inner
+                .matcher
+                .lock()
+                .unwrap()
+                .fuzzy_match(haystack, needle)
+            {
+                results.push((app, score))
+            }
+        }
+
+        results.sort_unstable_by_key(|(_, score)| std::cmp::Reverse(*score));
+
+        results.into_iter().map(|(handle, _)| handle).collect()
+    }
 }
 
 #[cfg(test)]
@@ -189,6 +219,19 @@ NoDisplay={}
             std::fs::write(self.apps_dir.join(format!("{}.desktop", app_id)), contents).unwrap();
         }
 
+        fn add_app_entry(&self, name: &str) {
+            let app_id = Uuid::new_v4().to_string();
+            let contents = format!(
+                r#"[Desktop Entry]
+Name={}
+Type=Application
+                "#,
+                name
+            );
+
+            std::fs::write(self.apps_dir.join(format!("{}.desktop", app_id)), contents).unwrap();
+        }
+
         fn init_service(&self) -> ApplicationService {
             ApplicationService::new_with_env(
                 vec![self.tmp_dir.path().to_owned().join("applications")],
@@ -236,5 +279,32 @@ NoDisplay={}
 
         thread::sleep(Duration::from_millis(500));
         assert_eq!(service.apps().len(), 2);
+    }
+
+    #[test]
+    fn test_search() {
+        let ctx = TestContext::new();
+        ctx.add_app_entry("Firefox");
+        ctx.add_app_entry("Steam");
+        ctx.add_app_entry("Ignis");
+
+        let service = ctx.init_service();
+
+        assert_eq!(
+            service.search_by_name("Firefox").get(0).unwrap().name(),
+            "Firefox"
+        );
+
+        assert_eq!(
+            service.search_by_name("fire").get(0).unwrap().name(),
+            "Firefox"
+        );
+
+        assert_eq!(service.search_by_name("sm").get(0).unwrap().name(), "Steam");
+
+        assert_eq!(
+            service.search_by_name("igns").get(0).unwrap().name(),
+            "Ignis"
+        );
     }
 }

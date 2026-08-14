@@ -73,12 +73,12 @@ mod ignis_applications {
         }
 
         #[getter]
-        fn name(&self) -> Option<String> {
+        fn name(&self) -> String {
             self.inner.name()
         }
 
         #[getter]
-        pub fn name_locale(&self) -> Option<String> {
+        pub fn name_locale(&self) -> String {
             self.inner.name_locale()
         }
 
@@ -164,6 +164,14 @@ mod ignis_applications {
             Some(DesktopApp {
                 inner: self.inner.app_by_id(app_id)?,
             })
+        }
+
+        fn search_by_name(&self, query: &str) -> Vec<DesktopApp> {
+            self.inner
+                .search_by_name(query)
+                .into_iter()
+                .map(|handle| DesktopApp { inner: handle })
+                .collect()
         }
     }
 }
