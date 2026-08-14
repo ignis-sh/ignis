@@ -16,6 +16,7 @@ pub(crate) struct DesktopApp {
     pub(crate) app_id: String,
     pub(crate) ini: Ini,
     pub(crate) actions: Vec<Arc<Action>>,
+    pub(crate) name: String,
 }
 
 impl DesktopApp {
@@ -51,10 +52,13 @@ impl DesktopApp {
             })
             .unwrap_or_else(|| Vec::new());
 
+        let name = ini.get("Desktop Entry", "Name")?;
+
         Some(Self {
             app_id,
             ini,
             actions,
+            name,
         })
     }
 }
@@ -91,12 +95,12 @@ impl DesktopAppHandle {
         self.inner.app_id.clone()
     }
 
-    pub fn name(&self) -> Option<String> {
-        self.get_value("Name")
+    pub fn name(&self) -> String {
+        self.inner.name.clone()
     }
 
-    pub fn name_locale(&self) -> Option<String> {
-        self.get_value_locale("Name")
+    pub fn name_locale(&self) -> String {
+        self.get_value_locale("Name").unwrap_or_else(|| self.name())
     }
 
     pub fn generic_name(&self) -> Option<String> {
@@ -178,7 +182,7 @@ Type=Application
         );
 
         let handle = new_handle(contents, "");
-        assert_eq!(handle.name().unwrap(), "Some Name");
+        assert_eq!(handle.name(), "Some Name");
         assert_eq!(handle.generic_name().unwrap(), "This feels too generic");
         assert_eq!(handle.icon().unwrap(), "some-icon");
         assert_eq!(handle.keywords(), vec!["One", "Two", "Three"]);
@@ -200,19 +204,19 @@ Type=Application
         );
         let handle = new_handle(contents.clone(), "en_US@Idk");
 
-        assert_eq!(handle.name_locale().unwrap(), "Lang Country Modifier");
+        assert_eq!(handle.name_locale(), "Lang Country Modifier");
 
         let handle = new_handle(contents.clone(), "en_US");
-        assert_eq!(handle.name_locale().unwrap(), "Lang Country");
+        assert_eq!(handle.name_locale(), "Lang Country");
 
         let handle = new_handle(contents.clone(), "en@Idk");
-        assert_eq!(handle.name_locale().unwrap(), "Lang Modifier");
+        assert_eq!(handle.name_locale(), "Lang Modifier");
 
         let handle = new_handle(contents.clone(), "en");
-        assert_eq!(handle.name_locale().unwrap(), "Lang Only");
+        assert_eq!(handle.name_locale(), "Lang Only");
 
         let handle = new_handle(contents, "invalid");
-        assert_eq!(handle.name_locale().unwrap(), "Some Name");
+        assert_eq!(handle.name_locale(), "Some Name");
 
         let contents = String::from(
             r#"[Desktop Entry]
@@ -226,7 +230,7 @@ Name[en]=Lang Only
 
         let handle = new_handle(contents.clone(), "en_US@Idk");
 
-        assert_eq!(handle.name_locale().unwrap(), "Lang Country");
+        assert_eq!(handle.name_locale(), "Lang Country");
     }
 
     #[test]
