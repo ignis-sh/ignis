@@ -29,6 +29,11 @@
     overlays = [
       rust-overlay.overlays.default
     ];
+
+    mkPythonPkg = pkgs: pythonPackages: path:
+      pkgs.callPackage path {
+        inherit pythonPackages;
+      };
   in {
     packages = forAllSystems (system: let
       pkgs = import nixpkgs {
@@ -42,7 +47,18 @@
       default = self.packages.${system}.ignis;
 
       ignis-notifications-glib = pkgs.callPackage ./crates/notifications_glib {};
-      py-ignis-applications = pkgs.callPackage ./crates/py_applications {};
+
+      python313Packages.ignis-applications =
+        mkPythonPkg
+        pkgs
+        pkgs.python313Packages
+        ./crates/py_applications;
+
+      python314Packages.ignis-applications =
+        mkPythonPkg
+        pkgs
+        pkgs.python314Packages
+        ./crates/py_applications;
     });
 
     formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);

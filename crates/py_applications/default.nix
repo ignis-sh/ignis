@@ -1,8 +1,8 @@
 {
-  python3Packages,
+  pythonPackages,
   rustPlatform,
 }:
-python3Packages.buildPythonPackage {
+pythonPackages.buildPythonPackage {
   pname = "py-ignis-applications";
   version = "0.1.0";
 
