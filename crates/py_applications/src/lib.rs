@@ -26,8 +26,8 @@ mod ignis_applications {
 
     #[pymethods]
     impl Action {
-        fn run(&self) -> PyResult<()> {
-            self.inner.run().map_err(to_py_err)
+        fn launch(&self) -> PyResult<()> {
+            self.inner.launch().map_err(to_py_err)
         }
 
         #[getter]
@@ -63,8 +63,8 @@ mod ignis_applications {
 
     #[pymethods]
     impl DesktopApp {
-        fn run(&self) -> PyResult<()> {
-            self.inner.run().map_err(to_py_err)
+        fn launch(&self) -> PyResult<()> {
+            self.inner.launch().map_err(to_py_err)
         }
 
         #[getter]

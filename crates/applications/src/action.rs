@@ -65,8 +65,8 @@ impl ActionHandle {
         self.get_value("Exec")
     }
 
-    pub fn run(&self) -> Result<()> {
-        utils::run_from_exec_string(self.exec())
+    pub fn launch(&self) -> Result<()> {
+        utils::launch_from_exec_string(self.exec())
     }
 }
 

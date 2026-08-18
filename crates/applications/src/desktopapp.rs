@@ -148,8 +148,8 @@ impl DesktopAppHandle {
             .collect()
     }
 
-    pub fn run(&self) -> Result<()> {
-        utils::run_from_exec_string(self.exec())
+    pub fn launch(&self) -> Result<()> {
+        utils::launch_from_exec_string(self.exec())
     }
 }
 
@@ -268,6 +268,6 @@ Exec=ls
 "#,
         );
         let handle = new_handle(contents, "");
-        handle.run().unwrap();
+        handle.launch().unwrap();
     }
 }

@@ -2,7 +2,7 @@ use crate::{locale::SystemLocale, private_prelude::*};
 use configparser::ini::Ini;
 use std::process::{Command, Stdio};
 
-pub(crate) fn run_from_exec_string(exec_string: Option<String>) -> Result<()> {
+pub(crate) fn launch_from_exec_string(exec_string: Option<String>) -> Result<()> {
     let args: Vec<String> = exec_string
         .ok_or(Error::ExecEmpty)?
         .split(" ")
