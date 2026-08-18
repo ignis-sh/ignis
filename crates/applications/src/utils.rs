@@ -14,11 +14,20 @@ fn parse_exec(input: &str) -> Result<(String, Vec<String>)> {
     Ok((executable, args[1..].to_owned()))
 }
 
-pub(crate) fn launch_from_exec_string(exec_string: Option<String>) -> Result<()> {
+pub(crate) fn launch_from_exec_string(exec_string: Option<String>, terminal: bool) -> Result<()> {
     let (executable, args) = parse_exec(&exec_string.ok_or(Error::ExecEmpty)?)?;
 
-    Command::new(executable)
-        .args(&args)
+    let mut command = if terminal {
+        let mut command = Command::new("xdg-terminal-exec");
+        command.arg("--").arg(executable).args(&args);
+        command
+    } else {
+        let mut command = Command::new(executable);
+        command.args(&args);
+        command
+    };
+
+    command
         .stdin(Stdio::null())
         .stdout(Stdio::null())
         .stderr(Stdio::null())

@@ -65,8 +65,17 @@ impl ActionHandle {
         self.get_value("Exec")
     }
 
+    fn terminal(&self) -> bool {
+        self.inner
+            .ini
+            .getbool("Desktop Entry", "Terminal")
+            .ok()
+            .flatten()
+            .unwrap_or(false)
+    }
+
     pub fn launch(&self) -> Result<()> {
-        utils::launch_from_exec_string(self.exec())
+        utils::launch_from_exec_string(self.exec(), self.terminal())
     }
 }
 

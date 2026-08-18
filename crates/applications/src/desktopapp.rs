@@ -149,7 +149,7 @@ impl DesktopAppHandle {
     }
 
     pub fn launch(&self) -> Result<()> {
-        utils::launch_from_exec_string(self.exec())
+        utils::launch_from_exec_string(self.exec(), self.terminal())
     }
 }
 
