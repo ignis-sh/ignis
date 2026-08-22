@@ -22,6 +22,7 @@ impl Action {
     }
 }
 
+/// A handle which represents a desktop application action.
 pub struct ActionHandle {
     pub(crate) inner: Arc<Action>,
     pub(crate) service: ApplicationService,
@@ -45,22 +46,29 @@ impl ActionHandle {
         )
     }
 
+    /// Returns the name of the action.
+    ///
+    /// For example: `Launch in new window`.
     pub fn name(&self) -> String {
         self.inner.name.clone()
     }
 
+    /// Returns the localized name of the action.
     pub fn name_locale(&self) -> String {
         self.get_value_locale("Name").unwrap_or_else(|| self.name())
     }
 
+    /// Returns the icon of the action.
     pub fn icon(&self) -> Option<String> {
         self.get_value("Icon")
     }
 
+    /// Returns the localized icon of the action.
     pub fn icon_locale(&self) -> Option<String> {
         self.get_value_locale("Icon").or_else(|| self.icon())
     }
 
+    /// Returns the exec string of the action.
     pub fn exec(&self) -> Option<String> {
         self.get_value("Exec")
     }
@@ -74,6 +82,7 @@ impl ActionHandle {
             .unwrap_or(false)
     }
 
+    /// Launches the action.
     pub fn launch(&self) -> Result<()> {
         utils::launch_from_exec_string(self.exec(), self.terminal())
     }

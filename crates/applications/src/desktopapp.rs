@@ -63,6 +63,7 @@ impl DesktopApp {
     }
 }
 
+/// A handle which represents a desktop application.
 #[derive(Clone)]
 pub struct DesktopAppHandle {
     pub(crate) inner: Arc<DesktopApp>,
@@ -91,52 +92,70 @@ impl DesktopAppHandle {
         )
     }
 
+    /// Returns the unique ID of the application.
     pub fn app_id(&self) -> String {
         self.inner.app_id.clone()
     }
 
+    /// Returns the name of the application.
+    ///
+    /// For example: `firefox`.
     pub fn name(&self) -> String {
         self.inner.name.clone()
     }
 
+    /// Returns the localized name of the application.
     pub fn name_locale(&self) -> String {
         self.get_value_locale("Name").unwrap_or_else(|| self.name())
     }
 
+    /// Returns the generic name of the application.
+    ///
+    /// For example: `Web browser`.
     pub fn generic_name(&self) -> Option<String> {
         self.get_value("GenericName")
     }
 
+    /// Returns the localized generic name of the application.
     pub fn generic_name_locale(&self) -> Option<String> {
         self.get_value_locale("GenericName")
     }
 
+    /// Returns the icon of the application.
+    ///
+    /// It's either the name of the icon or the absolute path.
     pub fn icon(&self) -> Option<String> {
         self.get_value("Icon")
     }
 
+    /// Returns the localized icon of the application.
     pub fn icon_locale(&self) -> Option<String> {
         self.get_value_locale("Icon")
     }
 
+    /// Returns a list of keywords describing the application.
     pub fn keywords(&self) -> Vec<String> {
         string_to_vec(self.get_value("Keywords"))
     }
 
+    /// Returns a list of localized keywords describing the application.
     pub fn keywords_locale(&self) -> Vec<String> {
         string_to_vec(self.get_value_locale("Keywords"))
     }
 
+    /// Returns the string containing the program to execute, possibly with arguments.
     pub fn exec(&self) -> Option<String> {
         self.get_value("Exec")
     }
 
+    /// Returns whether the program should run in a terminal window.
     pub fn terminal(&self) -> bool {
         self.get_value("Terminal")
             .and_then(|value| value.parse::<bool>().ok())
             .unwrap_or(false)
     }
 
+    /// Returns a list of application actions. Can be empty.
     pub fn actions(&self) -> Vec<ActionHandle> {
         self.inner
             .actions
@@ -148,6 +167,11 @@ impl DesktopAppHandle {
             .collect()
     }
 
+    /// Launches the application based on the [`exec()`] string.
+    ///
+    /// Starts a default terminal window if [`terminal()`] is `true`.
+    ///
+    /// The launched child process is detached from this process.
     pub fn launch(&self) -> Result<()> {
         utils::launch_from_exec_string(self.exec(), self.terminal())
     }

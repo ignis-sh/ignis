@@ -14,12 +14,16 @@ pub(crate) struct ApplicationServiceInner {
     matcher: Mutex<Matcher>,
 }
 
+/// A service to access desktop applications.
 #[derive(Clone)]
 pub struct ApplicationService {
     pub(crate) inner: Arc<ApplicationServiceInner>,
 }
 
 impl ApplicationService {
+    /// Creates a new instance.
+    ///
+    /// It loads all application entries from `XDG_DATA_DIRS` and gets the system locale.
     pub fn new() -> Self {
         Self::new_with_env(
             env::var_os("XDG_DATA_DIRS")
@@ -47,6 +51,10 @@ impl ApplicationService {
         }
     }
 
+    /// Starts watching for changes in application entries. Re-initializes apps if a change occurs.
+    ///
+    /// # Errors
+    /// `Error::NotifyError`
     pub fn watch(&self) -> Result<()> {
         let (tx, rx) = mpsc::channel();
 
@@ -108,6 +116,7 @@ impl ApplicationService {
             })
     }
 
+    /// Returns a list of applications.
     pub fn apps(&self) -> Vec<DesktopAppHandle> {
         self.inner
             .applications
@@ -121,6 +130,7 @@ impl ApplicationService {
             .collect()
     }
 
+    /// Returns an application by its ID, or `None` if it is not found.
     pub fn app_by_id(&self, app_id: &str) -> Option<DesktopAppHandle> {
         self.inner
             .applications
@@ -135,6 +145,7 @@ impl ApplicationService {
             })
     }
 
+    /// Fuzzily search through the application entries by provided application name.
     pub fn search_by_name(&self, query: &str) -> Vec<DesktopAppHandle> {
         let mut query_buf = Vec::new();
         let needle = Utf32Str::new(query, &mut query_buf);
