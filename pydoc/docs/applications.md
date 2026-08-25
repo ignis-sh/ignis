@@ -1,0 +1,3 @@
+## Applications
+
+::: ignis_applications

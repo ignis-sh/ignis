@@ -59,6 +59,38 @@
         pkgs
         pkgs.python314Packages
         ./crates/py_applications;
+
+      pydoc = let
+        pythonInventory = pkgs.fetchurl {
+          url = "https://docs.python.org/3/objects.inv";
+          hash = "sha256-2ykXFuFg85etBRkuKyQUDGj9VVspjhLfnvxwWtYqACQ=";
+        };
+      in
+        pkgs.runCommand "pydoc" {
+          src = ./.;
+          nativeBuildInputs = with pkgs; [
+            self.packages.${system}.python314Packages.ignis-applications
+
+            python314Packages.mkdocs
+            python314Packages.mkdocstrings
+            python314Packages.mkdocstrings-python
+            python314Packages.mkdocs-material
+          ];
+        } ''
+          export HOME="$TMPDIR/home"
+          mkdir -p "$HOME"
+          cp -r "$src/pydoc" ./pydoc
+          chmod -R +w ./pydoc
+
+          substituteInPlace ./pydoc/mkdocs.yml \
+                  --replace-fail \
+                  "https://docs.python.org/3/objects.inv" \
+                  "file://${pythonInventory}"
+
+          cd ./pydoc
+
+          mkdocs build --strict --site-dir $out
+        '';
     });
 
     formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);

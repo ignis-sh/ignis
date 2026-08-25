@@ -1,5 +1,32 @@
 use pyo3::prelude::*;
 
+/// Access desktop application entries defined according to the [XDG Desktop Entry Specification](https://specifications.freedesktop.org/desktop-entry/latest).
+///
+/// ### Example
+///
+/// ```python
+/// from ignis_applications import ApplicationService
+///
+/// service = ApplicationService()
+///
+/// # display names of all applications
+/// for i in service.apps:
+///     print(i.name)
+///
+/// # Fuzzy search by name
+/// firefox = service.search_by_name("firfx")
+///
+/// # Launch application
+/// firefox.launch()
+///
+/// # See actions
+///
+/// for action in firefox.actions:
+///     print(action.name)
+///
+///     # Launch action
+///     # action.launch()
+/// ```
 #[pymodule]
 mod ignis_applications {
     use pyo3::prelude::*;
@@ -73,9 +100,9 @@ mod ignis_applications {
 
     #[pymethods]
     impl DesktopApp {
-        /// Launches the application based on the [`exec()`] string.
+        /// Launches the application based on the [`exec`][exec] string.
         ///
-        /// Starts a default terminal window if [`terminal()`] is `true`.
+        /// Starts a default terminal window if [`terminal`][terminal] is `true`.
         ///
         /// The launched child process is detached from this process.
         fn launch(&self) -> PyResult<()> {

@@ -20,6 +20,5 @@ pythonPackages.buildPythonPackage {
   ];
 
   buildAndTestSubdir = "crates/py_applications";
-
   doCheck = false;
 }
