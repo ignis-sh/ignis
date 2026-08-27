@@ -6,7 +6,7 @@ on:
       - main
       - rust-rewrite
 
-    pull_request:
+  pull_request:
 
 jobs:
   doc:
@@ -25,7 +25,7 @@ jobs:
           nix build .#pydoc
 
       - name: Deploy
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'ref/heads/rust-rewrite')
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/rust-rewrite')
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.PY_DOC_DEPLOY_TOKEN }}
