@@ -1,7 +1,8 @@
 [workspace]
-members = ["crates/glib_utils",
+members = ["crates/applications","crates/glib_utils",
     "crates/notifications",
     "crates/notifications_glib",
+    "crates/py_applications",
 ]
 
 resolver = "3"
@@ -14,6 +15,7 @@ tokio = { version = "1.52.3", features = ["macros", "rt", "rt-multi-thread", "sy
 glib_utils = { path = "./crates/glib_utils" }
 tracing = "0.1.44"
 tracing-subscriber = "0.3.23"
+thiserror = "2.0.17"
 
 [workspace.package]
 license = "MIT"

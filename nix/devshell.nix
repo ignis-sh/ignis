@@ -34,6 +34,10 @@
     python313Packages.pygobject3
     just
     gi-docgen
+    maturin
+    python313Packages.mkdocs
+    python313Packages.mkdocstrings
+    python313Packages.mkdocstrings-python
   ];
 in {
   default = pkgs.mkShell {

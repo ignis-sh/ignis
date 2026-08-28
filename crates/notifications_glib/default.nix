@@ -21,7 +21,7 @@ stdenv.mkDerivation (finalAttrs: {
   cargoDeps = rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) src;
     name = "ignis-notifications-${finalAttrs.version}";
-    hash = "sha256-yzvK4JJJkOHH3/HPkqOTzwkXxv8vMnIMiB8xeWMyJ3o=";
+    hash = "sha256-yF88HTp8JNKs4+OKHCxJRJLLKmeoe7yDDmZbPg7Asmw=";
   };
 
   nativeBuildInputs = [
