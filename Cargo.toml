@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/applications","crates/glib_utils",
+members = ["crates/applications","crates/glib_utils", "crates/ignis_events",
     "crates/notifications",
     "crates/notifications_glib",
     "crates/py_applications",

@@ -11,6 +11,7 @@ tracing.workspace = true
 configparser = "3.2.0"
 notify = "8.2.0"
 nucleo-matcher = "0.3.1"
+ignis_events = { path = "../ignis_events" }
 
 [dev-dependencies]
 tempfile = "3.27.0"

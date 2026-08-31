@@ -34,6 +34,7 @@ mod ignis_applications {
     use applications::{
         ActionHandle, ApplicationService as RApplicationService, DesktopAppHandle, Error as RError,
     };
+
     use pyo3::exceptions::{PyOSError, PyValueError};
 
     fn to_py_err(e: RError) -> PyErr {
@@ -238,6 +239,30 @@ mod ignis_applications {
                 .into_iter()
                 .map(|handle| DesktopApp { inner: handle })
                 .collect()
+        }
+
+        /// Invoke a callback when application list changes.
+        ///
+        /// ## Example
+        ///
+        /// ```python
+        /// from ignis_applications import ApplicationService
+        ///
+        /// service = ApplicationService()
+        /// service.watch()
+        ///
+        /// # You can try to install/remove some program on your system
+        /// # and "refreshed" will be printed
+        /// service.on_apps_refreshed(lambda: print("refreshed!"))
+        /// ```
+        fn on_apps_refreshed(&self, callback: Py<PyAny>) {
+            self.inner.on_apps_refreshed.connect(move |_| {
+                Python::attach(|py| {
+                    if let Err(e) = callback.call0(py) {
+                        e.print(py)
+                    }
+                });
+            });
         }
     }
 }
