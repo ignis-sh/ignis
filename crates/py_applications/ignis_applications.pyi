@@ -2,8 +2,8 @@
 Access desktop application entries defined according to the [XDG Desktop Entry Specification](https://specifications.freedesktop.org/desktop-entry/latest).
 
 ### Example
-```python
 
+```python
 from ignis_applications import ApplicationService
 
 service = ApplicationService()
@@ -25,11 +25,10 @@ for action in firefox.actions:
 
     # Launch action
     # action.launch()
-
 ```
 """
 
-from typing import final
+from typing import Any, final
 
 @final
 class Action:
@@ -83,6 +82,23 @@ class ApplicationService:
     def get_app_by_id(self, /, app_id: str) -> DesktopApp |None:
         """
         An application by its ID, or `None` if it is not found.
+        """
+    def on_apps_refreshed(self, /, callback: Any) -> None:
+        """
+        Invoke a callback when application list changes.
+        
+        ## Example
+        
+        ```python
+        from ignis_applications import ApplicationService
+        
+        service = ApplicationService()
+        service.watch()
+        
+        # You can try to install/remove some program on your system
+        # and "refreshed" will be printed
+        service.on_apps_refreshed(lambda: print("refreshed!"))
+        ```
         """
     def search_by_name(self, /, query: str) -> list[DesktopApp]:
         """
