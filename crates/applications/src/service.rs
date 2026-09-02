@@ -1,5 +1,6 @@
 use crate::locale::SystemLocale;
 use crate::private_prelude::*;
+use ignis_events::Event;
 use notify::{EventKind, INotifyWatcher, RecursiveMode, Watcher};
 use nucleo_matcher::{Config, Matcher, Utf32Str};
 use std::sync::{Mutex, mpsc};
@@ -18,6 +19,11 @@ pub(crate) struct ApplicationServiceInner {
 #[derive(Clone)]
 pub struct ApplicationService {
     pub(crate) inner: Arc<ApplicationServiceInner>,
+
+    /// Emitted when the list of installed applications changed.
+    ///
+    /// This can occur, for example, when an application is installed or removed from the system.
+    pub on_apps_refreshed: Event<()>,
 }
 
 impl ApplicationService {
@@ -48,6 +54,7 @@ impl ApplicationService {
                 locale: SystemLocale::new(&locale_string),
                 matcher: Mutex::new(Matcher::new(Config::DEFAULT)),
             }),
+            on_apps_refreshed: Event::new(),
         }
     }
 
@@ -61,7 +68,9 @@ impl ApplicationService {
         let mut watcher = notify::recommended_watcher(tx)?;
 
         for path in &self.inner.app_dirs {
-            watcher.watch(&path, RecursiveMode::NonRecursive)?;
+            if path.exists() {
+                watcher.watch(&path, RecursiveMode::NonRecursive)?;
+            };
         }
 
         *self.inner.watcher.write().unwrap() = Some(watcher);
@@ -72,6 +81,8 @@ impl ApplicationService {
             fn refresh(service: ApplicationService) {
                 *service.inner.applications.write().unwrap() =
                     ApplicationService::init_apps(&service.inner.app_dirs);
+
+                service.on_apps_refreshed.emit(&());
 
                 tracing::debug!("Apps are refreshed");
             }
@@ -317,5 +328,26 @@ Type=Application
             service.search_by_name("igns").get(0).unwrap().name(),
             "Ignis"
         );
+    }
+
+    #[test]
+    fn test_on_apps_refreshed() {
+        let received = Arc::new(Mutex::new(false));
+
+        let ctx = TestContext::new();
+        let service = ctx.init_service();
+        service.watch().unwrap();
+
+        let received_clone = received.clone();
+
+        service.on_apps_refreshed.connect(move |_| {
+            *received_clone.lock().unwrap() = true;
+        });
+
+        ctx.add_app_entry("Asd");
+
+        std::thread::sleep(std::time::Duration::from_secs(1));
+
+        assert_eq!(*received.lock().unwrap(), true);
     }
 }
