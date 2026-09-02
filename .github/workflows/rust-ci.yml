@@ -54,4 +54,7 @@ jobs:
 
       - name: Run tests
         run: |
-          nix develop .#rustci --command cargo test --workspace
+          nix develop .#rustci --command bash -c '
+          cargo test --workspace --exclude notifications
+          dbus-run-session -- cargo test -p notifications -- --test-threads=1 --nocapture
+          '
