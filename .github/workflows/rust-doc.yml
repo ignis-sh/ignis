@@ -22,8 +22,9 @@ jobs:
 
       - name: Build documentation
         run: |
-          nix develop .#rustci
+          nix develop .#rustci --command bash -c '
           RUSTDOCFLAGS="--enable-index-page -Zunstable-options" cargo doc --no-deps
+          '
 
       - name: Deploy
         if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'ref/heads/rust-rewrite')

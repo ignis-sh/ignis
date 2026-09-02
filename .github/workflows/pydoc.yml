@@ -23,8 +23,8 @@ jobs:
       - name: Build pydoc
         run: |
           nix develop .#pydocbuild --command bash -c '
-            cd pydoc
-            mkdocs build
+          cd pydoc
+          mkdocs build
           '
 
       - name: Deploy
