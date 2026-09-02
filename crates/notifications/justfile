@@ -1,2 +1,0 @@
-test:
-    dbus-run-session -- cargo test -p notifications -- --test-threads=1 --nocapture
