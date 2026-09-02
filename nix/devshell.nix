@@ -70,7 +70,7 @@ in {
   };
 
   rustci = pkgs.mkShell {
-    rustNativeBuildInputs = with pkgs; [
+    nativeBuildInputs = with pkgs; [
       gobject-introspection
       pkg-config
     ];
