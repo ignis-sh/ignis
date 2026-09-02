@@ -39,8 +39,9 @@ jobs:
 
       - name: Clippy check
         run: |
-          nix develop .#rustci
-          cargo clippy --workspace --all-features -- -D warnings
+          nix develop .#rustci --command '
+            cargo clippy --workspace --all-features -- -D warnings
+          '
 
   test:
     name: Test crates
@@ -55,5 +56,6 @@ jobs:
 
       - name: Run tests
         run: |
-          nix develop .#rustci
-          cargo test --workspace
+          nix develop .#rustci --command '
+            cargo test --workspace
+          '

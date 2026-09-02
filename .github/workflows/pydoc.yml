@@ -22,9 +22,10 @@ jobs:
 
       - name: Build pydoc
         run: |
-          nix develop .#pydocbuild
-          cd pydoc
-          mkdocs build
+          nix develop .#pydocbuild --command bash -c '
+            cd pydoc
+            mkdocs build
+          '
 
       - name: Deploy
         if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/rust-rewrite')
