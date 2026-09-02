@@ -20,12 +20,9 @@ jobs:
       - name: Install nix
         uses: DeterminateSystems/nix-installer-action@main
 
-      - name: Setup nix devshell
-        run: |
-          nix develop .#pydocbuild
-
       - name: Build pydoc
         run: |
+          nix develop .#pydocbuild
           cd pydoc
           mkdocs build
 

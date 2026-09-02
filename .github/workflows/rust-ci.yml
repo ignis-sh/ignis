@@ -37,12 +37,10 @@ jobs:
       - name: Install nix
         uses: DeterminateSystems/nix-installer-action@main
 
-      - name: Setup nix devshell
+      - name: Clippy check
         run: |
           nix develop .#rustci
-
-      - name: Clippy check
-        run: cargo clippy --workspace --all-features -- -D warnings
+          cargo clippy --workspace --all-features -- -D warnings
 
   test:
     name: Test crates
@@ -55,10 +53,7 @@ jobs:
       - name: Install nix
         uses: DeterminateSystems/nix-installer-action@main
 
-      - name: Setup nix devshell
-        run: |
-          nix develop .#rustci
-
       - name: Run tests
         run: |
+          nix develop .#rustci
           cargo test --workspace
