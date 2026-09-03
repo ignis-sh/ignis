@@ -9,7 +9,7 @@ fn parse_exec(input: &str) -> Result<(String, Vec<String>)> {
         .filter(|s| !s.starts_with("%")) // TODO: support field codes
         .collect();
 
-    let executable = args.get(0).ok_or(Error::ExecEmpty)?.to_owned();
+    let executable = args.first().ok_or(Error::ExecEmpty)?.to_owned();
 
     Ok((executable, args[1..].to_owned()))
 }

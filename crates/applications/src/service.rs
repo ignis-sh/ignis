@@ -51,7 +51,7 @@ impl ApplicationService {
                 applications: RwLock::new(Self::init_apps(&app_dirs)),
                 watcher: RwLock::new(None),
                 app_dirs,
-                locale: SystemLocale::new(&locale_string),
+                locale: SystemLocale::new(locale_string),
                 matcher: Mutex::new(Matcher::new(Config::DEFAULT)),
             }),
             on_apps_refreshed: Event::new(),
@@ -69,7 +69,7 @@ impl ApplicationService {
 
         for path in &self.inner.app_dirs {
             if path.exists() {
-                watcher.watch(&path, RecursiveMode::NonRecursive)?;
+                watcher.watch(path, RecursiveMode::NonRecursive)?;
             };
         }
 
@@ -90,12 +90,11 @@ impl ApplicationService {
             for res in rx {
                 let service = service.clone();
                 match res {
-                    Ok(event) => match event.kind {
-                        // EventKind::Create(_) => refresh(service),
-                        // EventKind::Remove(_) => refresh(service),
-                        EventKind::Modify(_) => refresh(service),
-                        _ => {}
-                    },
+                    Ok(event) => {
+                        if let EventKind::Modify(_) = event.kind {
+                            refresh(service)
+                        }
+                    }
                     Err(e) => {
                         tracing::warn!("Watch error: {}", e)
                     }
@@ -106,9 +105,9 @@ impl ApplicationService {
         Ok(())
     }
 
-    fn init_apps(app_dirs: &Vec<PathBuf>) -> HashMap<String, Arc<DesktopApp>> {
+    fn init_apps(app_dirs: &[PathBuf]) -> HashMap<String, Arc<DesktopApp>> {
         app_dirs
-            .into_iter()
+            .iter()
             .filter_map(|dir| fs::read_dir(dir).ok())
             .flatten()
             .filter_map(|entry| entry.ok())
@@ -148,11 +147,9 @@ impl ApplicationService {
             .read()
             .unwrap()
             .get(app_id)
-            .and_then(|app| {
-                Some(DesktopAppHandle {
-                    inner: app.clone(),
-                    service: self.clone(),
-                })
+            .map(|app| DesktopAppHandle {
+                inner: app.clone(),
+                service: self.clone(),
             })
     }
 
@@ -182,6 +179,12 @@ impl ApplicationService {
         results.sort_unstable_by_key(|(_, score)| std::cmp::Reverse(*score));
 
         results.into_iter().map(|(handle, _)| handle).collect()
+    }
+}
+
+impl Default for ApplicationService {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

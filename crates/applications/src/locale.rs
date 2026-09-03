@@ -20,8 +20,8 @@ impl SystemLocale {
 
         Self {
             lang: lang.into(),
-            country: country,
-            modifier: modifier,
+            country,
+            modifier,
         }
     }
 

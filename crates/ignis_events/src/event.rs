@@ -2,15 +2,18 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use std::sync::Mutex;
 
+type Callback<T> = dyn Fn(&T) + Send + Sync + 'static;
+
+#[derive(Default)]
 struct EventInner<T> {
-    callbacks: Mutex<HashMap<usize, Arc<dyn Fn(&T) + Send + Sync + 'static>>>,
+    callbacks: Mutex<HashMap<usize, Arc<Callback<T>>>>,
     next_id: Mutex<usize>,
 }
 
 /// A struct which represents some event.
 ///
 /// Generic parameter `T` is a type of argument which callbacks accept.
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Event<T> {
     inner: Arc<EventInner<T>>,
 }

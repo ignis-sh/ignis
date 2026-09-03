@@ -28,7 +28,7 @@ impl DesktopApp {
 
         if ini
             .getbool("Desktop Entry", "NoDisplay")
-            .unwrap_or_else(|_| Some(false))
+            .unwrap_or(Some(false))
             .unwrap_or(false)
         {
             return None;
@@ -39,18 +39,12 @@ impl DesktopApp {
         };
 
         let actions: Vec<Arc<Action>> = ini
-            .get("Desktop Entry", "Actions")
-            .and_then(|a| {
-                Some(
-                    a.split(";")
-                        .into_iter()
+            .get("Desktop Entry", "Actions").map(|a| a.split(";")
                         .filter(|a| !a.is_empty())
                         .filter_map(|id| Action::new(String::from(id), ini.clone()))
-                        .map(|action| Arc::new(action))
-                        .collect(),
-                )
-            })
-            .unwrap_or_else(|| Vec::new());
+                        .map(Arc::new)
+                        .collect())
+            .unwrap_or_default();
 
         let name = ini.get("Desktop Entry", "Name")?;
 
