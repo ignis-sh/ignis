@@ -27,7 +27,7 @@ jobs:
           '
 
       - name: Deploy
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'ref/heads/rust-rewrite')
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/rust-rewrite')
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.RUST_DOC_DEPLOY_TOKEN }}
