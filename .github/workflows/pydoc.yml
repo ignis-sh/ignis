@@ -34,4 +34,4 @@ jobs:
           personal_token: ${{ secrets.PY_DOC_DEPLOY_TOKEN }}
           external_repository: ignis-sh/py-doc
           publish_branch: gh-pages
-          publish_dir: ./mkdocs/site
+          publish_dir: ./pydoc/site
