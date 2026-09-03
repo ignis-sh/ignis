@@ -23,7 +23,7 @@
   ];
 
   rustBuildInputs = with pkgs; [
-    rust-bin.stable.latest.default
+    rust-bin.nightly.latest.default
     gdk-pixbuf
     glib
     gtk4
@@ -56,5 +56,37 @@ in {
 
     GI_TYPELIB_PATH = "${ignis-gvc}/lib/ignis-gvc";
     LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [pkgs.gtk4-layer-shell];
+  };
+
+  pydocbuild = pkgs.mkShell {
+    packages = with pkgs; [
+      self.packages.${pkgs.system}.python314Packages.ignis-applications
+
+      python314Packages.mkdocs
+      python314Packages.mkdocstrings
+      python314Packages.mkdocstrings-python
+      python314Packages.mkdocs-material
+    ];
+  };
+
+  rustci = pkgs.mkShell {
+    nativeBuildInputs = with pkgs; [
+      gobject-introspection
+      pkg-config
+    ];
+
+    buildInputs = with pkgs; [
+      rust-bin.nightly.latest.default
+      gdk-pixbuf
+      glib
+      gtk4
+      meson
+      ninja
+      libnotify
+      python313Packages.pytest
+      python313Packages.pygobject3
+      just
+      gi-docgen
+    ];
   };
 }

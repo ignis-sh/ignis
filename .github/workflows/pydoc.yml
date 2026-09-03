@@ -22,7 +22,10 @@ jobs:
 
       - name: Build pydoc
         run: |
-          nix build .#pydoc
+          nix develop .#pydocbuild --command bash -c '
+          cd pydoc
+          mkdocs build
+          '
 
       - name: Deploy
         if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/rust-rewrite')
@@ -31,4 +34,4 @@ jobs:
           personal_token: ${{ secrets.PY_DOC_DEPLOY_TOKEN }}
           external_repository: ignis-sh/py-doc
           publish_branch: gh-pages
-          publish_dir: ./result
+          publish_dir: ./mkdocs/site
