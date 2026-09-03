@@ -39,11 +39,14 @@ impl DesktopApp {
         };
 
         let actions: Vec<Arc<Action>> = ini
-            .get("Desktop Entry", "Actions").map(|a| a.split(";")
-                        .filter(|a| !a.is_empty())
-                        .filter_map(|id| Action::new(String::from(id), ini.clone()))
-                        .map(Arc::new)
-                        .collect())
+            .get("Desktop Entry", "Actions")
+            .map(|a| {
+                a.split(";")
+                    .filter(|a| !a.is_empty())
+                    .filter_map(|id| Action::new(String::from(id), ini.clone()))
+                    .map(Arc::new)
+                    .collect()
+            })
             .unwrap_or_default();
 
         let name = ini.get("Desktop Entry", "Name")?;
