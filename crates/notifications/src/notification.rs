@@ -1,6 +1,6 @@
 use crate::private_prelude::*;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize)]
 pub(crate) struct Notification {
     pub(crate) id: u32,
     pub(crate) app_name: String,
@@ -13,7 +13,7 @@ pub(crate) struct Notification {
 }
 
 /// A handle to a notification.
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct NotificationHandle {
     pub(crate) inner: Arc<Notification>,
     pub(crate) service: NotificationService,

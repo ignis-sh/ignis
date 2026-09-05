@@ -1,17 +1,15 @@
 use crate::data::ServiceData;
 use crate::dbus::{DBusService, DBusServiceSignals};
 use crate::private_prelude::*;
+use ignis_events::Event;
 use std::sync::OnceLock;
-use tokio::sync::broadcast;
 use zbus::Connection;
 use zbus::connection::Builder;
 use zbus::object_server::InterfaceRef;
 
-#[derive(Debug)]
 pub(crate) struct NotificationServiceInner {
     pub(crate) data: ServiceData,
     pub(crate) connection: OnceLock<Option<Connection>>,
-    pub(crate) tx: broadcast::Sender<Event>,
     pub(crate) cache_dir: Option<PathBuf>,
     pub(crate) settings: Settings,
 }
@@ -20,9 +18,11 @@ pub(crate) struct NotificationServiceInner {
 ///
 /// [`NotificationService`] implements [`Clone`] and can be cloned cheapely since underlying data is
 /// shared.
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct NotificationService {
     pub(crate) inner: Arc<NotificationServiceInner>,
+    pub on_notified: Event<(u32, NotificationHandle, bool)>,
+    pub on_notification_closed: Event<(u32, CloseReason)>,
 }
 
 impl NotificationService {
@@ -33,15 +33,16 @@ impl NotificationService {
     /// Returns [`Error::IOError`] if loading notification history from file
     /// fails.
     pub fn new(cache_dir: Option<PathBuf>) -> Result<Self> {
-        let (tx, _) = broadcast::channel(64);
         Ok(Self {
             inner: Arc::new(NotificationServiceInner {
                 data: ServiceData::new(cache_dir.clone())?,
                 connection: OnceLock::new(),
-                tx,
                 cache_dir,
                 settings: Settings::default(),
             }),
+
+            on_notified: Event::<(u32, NotificationHandle, bool)>::new(),
+            on_notification_closed: Event::<(u32, CloseReason)>::new(),
         })
     }
 
@@ -50,21 +51,17 @@ impl NotificationService {
     /// It doesn't load the notification history from file and doesn't save it consequently.
     /// This method can not fail and is guaranteed to return the instance.
     pub fn new_in_memory() -> Self {
-        let (tx, _) = broadcast::channel(64);
         Self {
             inner: Arc::new(NotificationServiceInner {
                 data: ServiceData::new_in_memory(),
                 connection: OnceLock::new(),
-                tx,
                 cache_dir: None,
                 settings: Settings::default(),
             }),
-        }
-    }
 
-    /// Returns an instance of event receiver.
-    pub fn subscribe(&self) -> broadcast::Receiver<Event> {
-        self.inner.tx.subscribe()
+            on_notified: Event::<(u32, NotificationHandle, bool)>::new(),
+            on_notification_closed: Event::<(u32, CloseReason)>::new(),
+        }
     }
 
     /// Returns an instance of settings that affect behavior of the service.
@@ -136,10 +133,8 @@ impl NotificationService {
 
         self.inner.data.remove_notification(id)?;
 
-        let _ = self.inner.tx.send(Event::NotificationClosed {
-            id,
-            reason: CloseReason::Dismissed,
-        });
+        self.on_notification_closed
+            .emit(&(id, CloseReason::Dismissed));
 
         Ok(())
     }
@@ -459,23 +454,11 @@ mod tests {
             .await
             .unwrap();
 
-        let (tx, rx) = oneshot::channel();
-
-        let mut sub = ctx.service.subscribe();
-        tokio::spawn(async move {
-            while let Some(e) = sub.recv().await.ok() {
-                match e {
-                    Event::NotificationClosed { id: _, reason } => {
-                        tx.send(reason).unwrap();
-                        break;
-                    }
-                    _ => {}
-                }
-            }
+        ctx.service.on_notification_closed.connect(|(id, reason)| {
+            assert_eq!(reason, &CloseReason::Expired);
         });
 
-        let reason = rx.await.unwrap();
-        assert_eq!(reason, CloseReason::Expired);
+        tokio::time::sleep(Duration::from_secs(2)).await;
     }
 
     #[tokio::test]

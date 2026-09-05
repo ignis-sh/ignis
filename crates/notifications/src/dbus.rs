@@ -76,11 +76,7 @@ impl DBusService {
             service: self.service.clone(),
         };
 
-        let _ = self.service.inner.tx.send(Event::Notified {
-            id,
-            notification: handle,
-            replace,
-        });
+        self.service.on_notified.emit(&(id, handle, replace));
 
         if self.service.inner.settings.follow_xdg_timeout() {
             let actual_timeout = match timeout {
@@ -111,10 +107,7 @@ impl DBusService {
                             let _ = interface.notification_closed(id, reason.into()).await;
                         }
 
-                        let _ = service
-                            .inner
-                            .tx
-                            .send(Event::NotificationClosed { id, reason });
+                        service.on_notification_closed.emit(&(id, reason));
                     };
                 });
             }
@@ -142,10 +135,9 @@ impl DBusService {
 
         let _ = self.service.inner.data.remove_notification(id);
 
-        let _ = self.service.inner.tx.send(Event::NotificationClosed {
-            id,
-            reason: CloseReason::DBusCall,
-        });
+        self.service
+            .on_notification_closed
+            .emit(&(id, CloseReason::DBusCall));
 
         Ok(())
     }
