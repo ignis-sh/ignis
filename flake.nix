@@ -48,17 +48,33 @@
 
       ignis-notifications-glib = pkgs.callPackage ./crates/notifications_glib {};
 
-      python313Packages.ignis-applications =
-        mkPythonPkg
-        pkgs
-        pkgs.python313Packages
-        ./crates/py_applications;
+      python313Packages = {
+        ignis-applications =
+          mkPythonPkg
+          pkgs
+          pkgs.python313Packages
+          ./crates/py_applications;
 
-      python314Packages.ignis-applications =
-        mkPythonPkg
-        pkgs
-        pkgs.python314Packages
-        ./crates/py_applications;
+        ignis-notifications =
+          mkPythonPkg
+          pkgs
+          pkgs.python313Packages
+          ./crates/py_notifications;
+      };
+
+      python314Packages = {
+        ignis-applications =
+          mkPythonPkg
+          pkgs
+          pkgs.python314Packages
+          ./crates/py_applications;
+
+        ignis-notifications =
+          mkPythonPkg
+          pkgs
+          pkgs.python314Packages
+          ./crates/py_notifications;
+      };
     });
 
     formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
