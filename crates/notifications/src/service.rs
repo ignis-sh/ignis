@@ -21,7 +21,10 @@ pub(crate) struct NotificationServiceInner {
 #[derive(Clone)]
 pub struct NotificationService {
     pub(crate) inner: Arc<NotificationServiceInner>,
+    /// Emitted when a new notification has been received.
+    ///
     pub on_notified: Event<(u32, NotificationHandle, bool)>,
+    /// Emitted when a notification was closed.
     pub on_notification_closed: Event<(u32, CloseReason)>,
 }
 

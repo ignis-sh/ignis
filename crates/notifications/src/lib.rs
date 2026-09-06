@@ -4,8 +4,7 @@
 //!
 //! ## Example
 //! ```rust
-//! use notifications::{NotificationService, Event};
-//! use tokio::sync::mpsc;
+//! use notifications::NotificationService;
 //!
 //! # let rt = tokio::runtime::Runtime::new().unwrap();
 //! # rt.block_on(async {
@@ -13,19 +12,11 @@
 //! let service = NotificationService::new(None).unwrap();
 //! service.run().await.unwrap();
 //!
-//! // listen for events
-//! let mut rx = service.subscribe();
-//! tokio::spawn(async move {
-//!     while let Some(msg) = rx.recv().await.ok() {
-//!         match msg {
-//!            Event::Notified {id, notification, replace} => println!("New
-//!            notification! id: {}, summary: {}, replaces old one: {}", id, notification.summary(),
-//!            replace),
-//!            Event::NotificationClosed {id, reason} => println!("notificaiton
-//!            closed id: {}, reason: {:?}", id, reason),
-//!         }
-//!     }
-//! });
+//! service.on_notified.connect(|(id, notification, replace)| println!("New
+//! notification! id: {}, summary: {}, replaces old one: {}", id, notification.summary(), replace));
+//!
+//! service.on_notification_closed.connect(|(id, reason)| println!("Notification closed! id: {},
+//! reason: {:?}", id, reason));
 //! # });
 //!
 //! ```
