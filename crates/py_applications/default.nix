@@ -3,7 +3,7 @@
   rustPlatform,
 }:
 pythonPackages.buildPythonPackage {
-  pname = "py-ignis-applications";
+  pname = "ignis-applications";
   version = "0.1.0";
 
   src = ../..;
