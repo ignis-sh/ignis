@@ -6,7 +6,7 @@
   gdk-pixbuf,
 }:
 pythonPackages.buildPythonPackage {
-  pname = "py-ignis-notifications";
+  pname = "ignis-notifications";
   version = "0.1.0";
 
   src = ../..;
