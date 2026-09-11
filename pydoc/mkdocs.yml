@@ -46,7 +46,7 @@ plugins:
             show_root_heading: true
             show_source: false
 
-          # DOCSTRINGS -------------------------------------------------------------
+            # DOCSTRINGS -------------------------------------------------------------
             docstring_options:
               # Discard first line of `__init__` method docstrings,
               # useful when merging such docstrings into their parent class'.
@@ -57,8 +57,8 @@ plugins:
 
             # CROSS-REFERENCES -------------------------------------------------------
             # Enable relative crossrefs and scoped crossrefs, see Docstrings options.
-            relative_crossrefs: true  # Sponsors only!
-            scoped_crossrefs: true  # Sponsors only!
+            relative_crossrefs: true # Sponsors only!
+            scoped_crossrefs: true # Sponsors only!
 
             # Enable cross-references in signatures.
             signature_crossrefs: true
@@ -68,7 +68,7 @@ plugins:
 
             # MEMBERS ----------------------------------------------------------------
             # Only render pulic symbols.
-            filters: public  # Sponsors only!
+            filters: public # Sponsors only!
             # Comment the option otherwise to get the default filters.
 
             # Show class inherited members.
@@ -123,8 +123,8 @@ plugins:
 
             # OTHER ------------------------------------------------------------------
             # Show backlinks to other documentation sections within each symbol.
-            backlinks: tree  # Sponsors only!
+            backlinks: tree # Sponsors only!
 
             # Show base classes OR inheritance diagram.
             show_bases: false
-            show_inheritance_diagram: true  # Sponsors only!
+            show_inheritance_diagram: true # Sponsors only!
