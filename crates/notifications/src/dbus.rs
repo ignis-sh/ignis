@@ -1,5 +1,6 @@
 use crate::private_prelude::*;
 use gdk_pixbuf::{Colorspace, Pixbuf};
+use ignis_events::Event;
 use std::collections::HashMap;
 use tokio::time::{Duration, sleep};
 use tracing::error;
@@ -60,6 +61,7 @@ impl DBusService {
                 .unwrap_or(0)
                 .into(),
             timeout,
+            on_closed: Event::<CloseReason>::new(),
         });
 
         if let Err(e) =
@@ -76,7 +78,7 @@ impl DBusService {
             service: self.service.clone(),
         };
 
-        self.service.on_notified.emit(&(id, handle, replace));
+        self.service.inner.on_notified.emit(&(id, handle, replace));
 
         if self.service.inner.settings.follow_xdg_timeout() {
             let actual_timeout = match timeout {
@@ -107,7 +109,7 @@ impl DBusService {
                             let _ = interface.notification_closed(id, reason.into()).await;
                         }
 
-                        service.on_notification_closed.emit(&(id, reason));
+                        service.inner.on_notification_closed.emit(&(id, reason));
                     };
                 });
             }
@@ -136,6 +138,7 @@ impl DBusService {
         let _ = self.service.inner.data.remove_notification(id);
 
         self.service
+            .inner
             .on_notification_closed
             .emit(&(id, CloseReason::DBusCall));
 

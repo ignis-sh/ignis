@@ -227,6 +227,16 @@ mod ignis_notifications {
                 inner.dismiss().await.map_err(to_py_err)
             })
         }
+
+        fn on_closed<'py>(&self, callback: Py<PyAny>) {
+            self.inner.on_closed(move |reason| {
+                Python::attach(|py| {
+                    if let Err(e) = callback.call1(py, (CloseReason::from(reason),)) {
+                        e.print(py)
+                    }
+                })
+            });
+        }
     }
 
     /// Settings for [`NotificationService`][].
@@ -408,24 +418,22 @@ mod ignis_notifications {
         /// notification ([`Notification`][]) - The notification object.
         /// replace (bool) - whether this notification replaces an old one with the same ID.
         fn on_notified(&self, callback: Py<PyAny>) {
-            self.inner
-                .on_notified
-                .connect(move |(id, handle, replace)| {
-                    Python::attach(|py| {
-                        if let Err(e) = callback.call1(
-                            py,
-                            (
-                                id,
-                                Notification {
-                                    inner: handle.clone(),
-                                },
-                                replace,
-                            ),
-                        ) {
-                            e.print(py)
-                        }
-                    });
+            self.inner.on_notified(move |(id, handle, replace)| {
+                Python::attach(|py| {
+                    if let Err(e) = callback.call1(
+                        py,
+                        (
+                            id,
+                            Notification {
+                                inner: handle.clone(),
+                            },
+                            replace,
+                        ),
+                    ) {
+                        e.print(py)
+                    }
                 });
+            });
         }
 
         /// Connect a callback to invoke when a notification is closed.
@@ -435,15 +443,13 @@ mod ignis_notifications {
         /// reason ([`CloseReason`][]) - The reason why this notification was
         /// closed.
         fn on_notification_closed(&self, callback: Py<PyAny>) {
-            self.inner
-                .on_notification_closed
-                .connect(move |(id, reason)| {
-                    Python::attach(|py| {
-                        if let Err(e) = callback.call1(py, (id, CloseReason::from(reason))) {
-                            e.print(py)
-                        }
-                    })
-                });
+            self.inner.on_notification_closed(move |(id, reason)| {
+                Python::attach(|py| {
+                    if let Err(e) = callback.call1(py, (id, CloseReason::from(reason))) {
+                        e.print(py)
+                    }
+                })
+            });
         }
     }
 }

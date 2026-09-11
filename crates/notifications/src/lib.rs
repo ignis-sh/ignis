@@ -12,10 +12,10 @@
 //! let service = NotificationService::new(None).unwrap();
 //! service.run().await.unwrap();
 //!
-//! service.on_notified.connect(|(id, notification, replace)| println!("New
+//! service.on_notified(|(id, notification, replace)| println!("New
 //! notification! id: {}, summary: {}, replaces old one: {}", id, notification.summary(), replace));
 //!
-//! service.on_notification_closed.connect(|(id, reason)| println!("Notification closed! id: {},
+//! service.on_notification_closed(|(id, reason)| println!("Notification closed! id: {},
 //! reason: {:?}", id, reason));
 //! # });
 //!
