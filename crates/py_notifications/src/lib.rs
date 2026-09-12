@@ -455,5 +455,18 @@ mod ignis_notifications {
                 })
             });
         }
+
+        /// Invokes a callback when value of [`notifications`][] changes.
+        ///
+        /// It includes arriving of new notifications, closing and clearing notifications.
+        fn on_notify_notifications(&self, callback: Py<PyAny>) {
+            self.inner.on_notify_notifications(move || {
+                Python::attach(|py| {
+                    if let Err(e) = callback.call0(py) {
+                        e.print(py)
+                    }
+                })
+            });
+        }
     }
 }

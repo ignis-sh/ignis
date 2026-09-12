@@ -14,6 +14,7 @@ pub(crate) struct NotificationServiceInner {
     pub(crate) settings: Settings,
     pub(crate) on_notified: Event<(u32, NotificationHandle, bool)>,
     pub(crate) on_notification_closed: Event<(u32, CloseReason)>,
+    pub(crate) on_notify_notifications: Event<()>,
 }
 
 /// A notification daemon that follows XDG Desktop Notifications Specification.
@@ -27,14 +28,25 @@ pub struct NotificationService {
 
 impl NotificationService {
     fn new_with_data(data: ServiceData, cache_dir: Option<PathBuf>) -> Self {
+        let on_notified = Event::<(u32, NotificationHandle, bool)>::new();
+        let on_notification_closed = Event::<(u32, CloseReason)>::new();
+        let on_notify_notifications = Event::<()>::new();
+
+        let on_notify_notifications_clone = on_notify_notifications.clone();
+        on_notified.connect(move |_| on_notify_notifications_clone.emit(&()));
+
+        let on_notify_notifications_clone = on_notify_notifications.clone();
+        on_notification_closed.connect(move |_| on_notify_notifications_clone.emit(&()));
+
         Self {
             inner: Arc::new(NotificationServiceInner {
                 data,
                 connection: OnceLock::new(),
                 cache_dir,
                 settings: Settings::default(),
-                on_notified: Event::<(u32, NotificationHandle, bool)>::new(),
-                on_notification_closed: Event::<(u32, CloseReason)>::new(),
+                on_notified,
+                on_notification_closed,
+                on_notify_notifications,
             }),
         }
     }
@@ -188,7 +200,9 @@ impl NotificationService {
                 .await?;
         }
 
-        self.inner.data.clear()
+        let res = self.inner.data.clear();
+        self.inner.on_notify_notifications.emit(&());
+        res
     }
 
     /// Invokes a callback when a new notification is received.
@@ -214,6 +228,18 @@ impl NotificationService {
         F: Fn(&(u32, CloseReason)) + Send + Sync + 'static,
     {
         self.inner.on_notification_closed.connect(callback)
+    }
+
+    /// Invokes a callback when value of [`get_notifications`] changes.
+    ///
+    /// It includes arriving of new notifications, closing and clearing notifications.
+    pub fn on_notify_notifications<F>(&self, callback: F) -> usize
+    where
+        F: Fn() + Send + Sync + 'static,
+    {
+        self.inner
+            .on_notify_notifications
+            .connect(move |_| callback())
     }
 }
 
@@ -509,5 +535,47 @@ mod tests {
         n.dismiss().await.unwrap();
 
         tokio::time::sleep(Duration::from_secs(2)).await;
+    }
+
+    #[tokio::test]
+    async fn test_on_notify_notifications() {
+        let ctx = setup().await;
+
+        let dismissed_flag = Arc::new(std::sync::Mutex::new(false));
+        let notified_flag = Arc::new(std::sync::Mutex::new(false));
+        let clear_flag = Arc::new(std::sync::Mutex::new(false));
+
+        let dismissed_flag_clone = dismissed_flag.clone();
+        let notified_flag_clone = notified_flag.clone();
+        let clear_flag_clone = clear_flag.clone();
+
+        ctx.service
+            .on_notify_notifications(move || *notified_flag_clone.lock().unwrap() = true);
+
+        let id = create_random_notification()
+            .show_async()
+            .await
+            .unwrap()
+            .id();
+
+        tokio::time::sleep(Duration::from_secs(1)).await;
+        assert_eq!(*notified_flag.lock().unwrap(), true);
+
+        ctx.service
+            .on_notify_notifications(move || *dismissed_flag_clone.lock().unwrap() = true);
+
+        let n = ctx.service.get_notification_by_id(id).unwrap();
+        n.dismiss().await.unwrap();
+
+        tokio::time::sleep(Duration::from_secs(1)).await;
+        assert_eq!(*dismissed_flag.lock().unwrap(), true);
+
+        ctx.service
+            .on_notify_notifications(move || *clear_flag_clone.lock().unwrap() = true);
+
+        ctx.service.clear_notifications().await.unwrap();
+
+        tokio::time::sleep(Duration::from_secs(1)).await;
+        assert_eq!(*clear_flag.lock().unwrap(), true);
     }
 }
