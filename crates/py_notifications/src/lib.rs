@@ -232,7 +232,7 @@ mod ignis_notifications {
         ///
         /// The following arguments are passed to the callback:
         /// reason ([`CloseReason`][]) - The reason why this notification was closed.
-        fn on_closed<'py>(&self, callback: Py<PyAny>) {
+        fn on_closed(&self, callback: Py<PyAny>) {
             self.inner.on_closed(move |reason| {
                 Python::attach(|py| {
                     if let Err(e) = callback.call1(py, (CloseReason::from(reason),)) {

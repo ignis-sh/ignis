@@ -29,7 +29,7 @@ impl NotificationService {
     fn new_with_data(data: ServiceData, cache_dir: Option<PathBuf>) -> Self {
         Self {
             inner: Arc::new(NotificationServiceInner {
-                data: data,
+                data,
                 connection: OnceLock::new(),
                 cache_dir,
                 settings: Settings::default(),
