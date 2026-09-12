@@ -1,9 +1,4 @@
 use crate::private_prelude::*;
-use ignis_events::Event;
-
-fn default_close_event() -> Event<CloseReason> {
-    Event::<CloseReason>::new()
-}
 
 #[derive(Serialize, Deserialize)]
 pub(crate) struct Notification {
@@ -15,9 +10,6 @@ pub(crate) struct Notification {
     pub(crate) actions: Vec<Arc<Action>>,
     pub(crate) urgency: Urgency,
     pub(crate) timeout: i32,
-
-    #[serde(skip, default = "default_close_event")]
-    pub(crate) on_closed: Event<CloseReason>,
 }
 
 /// A handle to a notification.
@@ -88,6 +80,10 @@ impl NotificationHandle {
         Ok(())
     }
 
+    /// Invokes a callback when this notification is closed.
+    ///
+    /// The following arguments are passed to the callback:
+    /// 3. reason - The reason why the notification was closed
     pub fn on_closed<F>(&self, callback: F) -> usize
     where
         F: Fn(&CloseReason) + Send + Sync + 'static,

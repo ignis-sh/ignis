@@ -1,6 +1,5 @@
 use crate::private_prelude::*;
 use gdk_pixbuf::{Colorspace, Pixbuf};
-use ignis_events::Event;
 use std::collections::HashMap;
 use tokio::time::{Duration, sleep};
 use tracing::error;
@@ -61,7 +60,6 @@ impl DBusService {
                 .unwrap_or(0)
                 .into(),
             timeout,
-            on_closed: Event::<CloseReason>::new(),
         });
 
         if let Err(e) =

@@ -191,6 +191,12 @@ impl NotificationService {
         self.inner.data.clear()
     }
 
+    /// Invokes a callback when a new notification is received.
+    ///
+    /// The following arguments are passed to the callback:
+    /// 1. id - The ID of the notification
+    /// 2. handle - Notification handle
+    /// 3. replace - Whether this notification replaces the old one with the same ID
     pub fn on_notified<F>(&self, callback: F) -> usize
     where
         F: Fn(&(u32, NotificationHandle, bool)) + Send + Sync + 'static,
@@ -198,6 +204,11 @@ impl NotificationService {
         self.inner.on_notified.connect(callback)
     }
 
+    /// Invokes a callback when a notification is closed.
+    ///
+    /// The following arguments are passed to the callback:
+    /// 1. id - The ID of the notification
+    /// 3. reason - The reason why the notification was closed
     pub fn on_notification_closed<F>(&self, callback: F) -> usize
     where
         F: Fn(&(u32, CloseReason)) + Send + Sync + 'static,
@@ -465,7 +476,7 @@ mod tests {
             .await
             .unwrap();
 
-        ctx.service.on_notification_closed(|(id, reason)| {
+        ctx.service.on_notification_closed(|(_, reason)| {
             assert_eq!(reason, &CloseReason::Expired);
         });
 
