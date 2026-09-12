@@ -1,6 +1,6 @@
 use crate::private_prelude::*;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize)]
 pub(crate) struct Notification {
     pub(crate) id: u32,
     pub(crate) app_name: String,
@@ -13,7 +13,7 @@ pub(crate) struct Notification {
 }
 
 /// A handle to a notification.
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct NotificationHandle {
     pub(crate) inner: Arc<Notification>,
     pub(crate) service: NotificationService,
@@ -78,5 +78,24 @@ impl NotificationHandle {
     pub async fn dismiss(&self) -> Result<()> {
         self.service.dismiss_notification(self.id()).await?;
         Ok(())
+    }
+
+    /// Invokes a callback when this notification is closed.
+    ///
+    /// The following arguments are passed to the callback:
+    /// 3. reason - The reason why the notification was closed
+    pub fn on_closed<F>(&self, callback: F) -> usize
+    where
+        F: Fn(&CloseReason) + Send + Sync + 'static,
+    {
+        let this_id = self.id();
+        self.service
+            .inner
+            .on_notification_closed
+            .connect(move |(id, reason)| {
+                if *id == this_id {
+                    callback(reason)
+                }
+            })
     }
 }

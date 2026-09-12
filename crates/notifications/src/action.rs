@@ -1,6 +1,6 @@
 use crate::private_prelude::*;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize)]
 pub(crate) struct Action {
     pub(crate) notification_id: u32,
     pub(crate) label: String,
@@ -11,7 +11,7 @@ pub(crate) struct Action {
 ///
 /// Notification actions are typically presented as buttons in UI that allow user to
 /// interact with the application which sent the notification.
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct ActionHandle {
     pub(crate) inner: Arc<Action>,
     pub(crate) service: NotificationService,

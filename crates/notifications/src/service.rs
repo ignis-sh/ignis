@@ -1,31 +1,56 @@
 use crate::data::ServiceData;
 use crate::dbus::{DBusService, DBusServiceSignals};
 use crate::private_prelude::*;
+use ignis_events::Event;
 use std::sync::OnceLock;
-use tokio::sync::broadcast;
 use zbus::Connection;
 use zbus::connection::Builder;
 use zbus::object_server::InterfaceRef;
 
-#[derive(Debug)]
 pub(crate) struct NotificationServiceInner {
     pub(crate) data: ServiceData,
     pub(crate) connection: OnceLock<Option<Connection>>,
-    pub(crate) tx: broadcast::Sender<Event>,
     pub(crate) cache_dir: Option<PathBuf>,
     pub(crate) settings: Settings,
+    pub(crate) on_notified: Event<(u32, NotificationHandle, bool)>,
+    pub(crate) on_notification_closed: Event<(u32, CloseReason)>,
+    pub(crate) on_notify_notifications: Event<()>,
 }
 
 /// A notification daemon that follows XDG Desktop Notifications Specification.
 ///
 /// [`NotificationService`] implements [`Clone`] and can be cloned cheapely since underlying data is
 /// shared.
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct NotificationService {
     pub(crate) inner: Arc<NotificationServiceInner>,
 }
 
 impl NotificationService {
+    fn new_with_data(data: ServiceData, cache_dir: Option<PathBuf>) -> Self {
+        let on_notified = Event::<(u32, NotificationHandle, bool)>::new();
+        let on_notification_closed = Event::<(u32, CloseReason)>::new();
+        let on_notify_notifications = Event::<()>::new();
+
+        let on_notify_notifications_clone = on_notify_notifications.clone();
+        on_notified.connect(move |_| on_notify_notifications_clone.emit(&()));
+
+        let on_notify_notifications_clone = on_notify_notifications.clone();
+        on_notification_closed.connect(move |_| on_notify_notifications_clone.emit(&()));
+
+        Self {
+            inner: Arc::new(NotificationServiceInner {
+                data,
+                connection: OnceLock::new(),
+                cache_dir,
+                settings: Settings::default(),
+                on_notified,
+                on_notification_closed,
+                on_notify_notifications,
+            }),
+        }
+    }
+
     /// Creates a new instance of the service loading the notification history from file.
     /// * `cache_dir` - Overrides the default cache directory located at `~/.cache/ignis_notifications`.
     ///
@@ -33,16 +58,10 @@ impl NotificationService {
     /// Returns [`Error::IOError`] if loading notification history from file
     /// fails.
     pub fn new(cache_dir: Option<PathBuf>) -> Result<Self> {
-        let (tx, _) = broadcast::channel(64);
-        Ok(Self {
-            inner: Arc::new(NotificationServiceInner {
-                data: ServiceData::new(cache_dir.clone())?,
-                connection: OnceLock::new(),
-                tx,
-                cache_dir,
-                settings: Settings::default(),
-            }),
-        })
+        Ok(Self::new_with_data(
+            ServiceData::new(cache_dir.clone())?,
+            cache_dir,
+        ))
     }
 
     /// Creates a new instance of the service without any I/O operations.
@@ -50,21 +69,7 @@ impl NotificationService {
     /// It doesn't load the notification history from file and doesn't save it consequently.
     /// This method can not fail and is guaranteed to return the instance.
     pub fn new_in_memory() -> Self {
-        let (tx, _) = broadcast::channel(64);
-        Self {
-            inner: Arc::new(NotificationServiceInner {
-                data: ServiceData::new_in_memory(),
-                connection: OnceLock::new(),
-                tx,
-                cache_dir: None,
-                settings: Settings::default(),
-            }),
-        }
-    }
-
-    /// Returns an instance of event receiver.
-    pub fn subscribe(&self) -> broadcast::Receiver<Event> {
-        self.inner.tx.subscribe()
+        Self::new_with_data(ServiceData::new_in_memory(), None)
     }
 
     /// Returns an instance of settings that affect behavior of the service.
@@ -136,10 +141,9 @@ impl NotificationService {
 
         self.inner.data.remove_notification(id)?;
 
-        let _ = self.inner.tx.send(Event::NotificationClosed {
-            id,
-            reason: CloseReason::Dismissed,
-        });
+        self.inner
+            .on_notification_closed
+            .emit(&(id, CloseReason::Dismissed));
 
         Ok(())
     }
@@ -196,7 +200,46 @@ impl NotificationService {
                 .await?;
         }
 
-        self.inner.data.clear()
+        let res = self.inner.data.clear();
+        self.inner.on_notify_notifications.emit(&());
+        res
+    }
+
+    /// Invokes a callback when a new notification is received.
+    ///
+    /// The following arguments are passed to the callback:
+    /// 1. id - The ID of the notification
+    /// 2. handle - Notification handle
+    /// 3. replace - Whether this notification replaces the old one with the same ID
+    pub fn on_notified<F>(&self, callback: F) -> usize
+    where
+        F: Fn(&(u32, NotificationHandle, bool)) + Send + Sync + 'static,
+    {
+        self.inner.on_notified.connect(callback)
+    }
+
+    /// Invokes a callback when a notification is closed.
+    ///
+    /// The following arguments are passed to the callback:
+    /// 1. id - The ID of the notification
+    /// 3. reason - The reason why the notification was closed
+    pub fn on_notification_closed<F>(&self, callback: F) -> usize
+    where
+        F: Fn(&(u32, CloseReason)) + Send + Sync + 'static,
+    {
+        self.inner.on_notification_closed.connect(callback)
+    }
+
+    /// Invokes a callback when value of [`get_notifications`] changes.
+    ///
+    /// It includes arriving of new notifications, closing and clearing notifications.
+    pub fn on_notify_notifications<F>(&self, callback: F) -> usize
+    where
+        F: Fn() + Send + Sync + 'static,
+    {
+        self.inner
+            .on_notify_notifications
+            .connect(move |_| callback())
     }
 }
 
@@ -352,7 +395,7 @@ mod tests {
         // FIXME: Hacky workaround to prevent the test from hanging
         // For some reason calling NotificationService.close_notification() immediately
         // makes the handle "miss" the signal and therefore never call the closure
-        tokio::time::sleep(Duration::from_millis(1)).await;
+        tokio::time::sleep(Duration::from_millis(500)).await;
 
         ctx.service.dismiss_notification(id).await.unwrap();
 
@@ -388,7 +431,7 @@ mod tests {
         });
 
         // FIXME: the same here
-        tokio::time::sleep(Duration::from_millis(1)).await;
+        tokio::time::sleep(Duration::from_millis(500)).await;
 
         let n = ctx.service.get_notification_by_id(id).unwrap();
         assert_eq!(n.actions().len(), 2);
@@ -459,23 +502,11 @@ mod tests {
             .await
             .unwrap();
 
-        let (tx, rx) = oneshot::channel();
-
-        let mut sub = ctx.service.subscribe();
-        tokio::spawn(async move {
-            while let Some(e) = sub.recv().await.ok() {
-                match e {
-                    Event::NotificationClosed { id: _, reason } => {
-                        tx.send(reason).unwrap();
-                        break;
-                    }
-                    _ => {}
-                }
-            }
+        ctx.service.on_notification_closed(|(_, reason)| {
+            assert_eq!(reason, &CloseReason::Expired);
         });
 
-        let reason = rx.await.unwrap();
-        assert_eq!(reason, CloseReason::Expired);
+        tokio::time::sleep(Duration::from_secs(2)).await;
     }
 
     #[tokio::test]
@@ -486,5 +517,65 @@ mod tests {
     #[tokio::test]
     async fn test_requested_timeout() {
         check_timeout(1000).await;
+    }
+
+    #[tokio::test]
+    async fn test_on_closed() {
+        let ctx = setup().await;
+
+        let id = create_random_notification()
+            .show_async()
+            .await
+            .unwrap()
+            .id();
+
+        let n = ctx.service.get_notification_by_id(id).unwrap();
+        n.on_closed(|reason| assert_eq!(reason, &CloseReason::Dismissed));
+
+        n.dismiss().await.unwrap();
+
+        tokio::time::sleep(Duration::from_secs(2)).await;
+    }
+
+    #[tokio::test]
+    async fn test_on_notify_notifications() {
+        let ctx = setup().await;
+
+        let dismissed_flag = Arc::new(std::sync::Mutex::new(false));
+        let notified_flag = Arc::new(std::sync::Mutex::new(false));
+        let clear_flag = Arc::new(std::sync::Mutex::new(false));
+
+        let dismissed_flag_clone = dismissed_flag.clone();
+        let notified_flag_clone = notified_flag.clone();
+        let clear_flag_clone = clear_flag.clone();
+
+        ctx.service
+            .on_notify_notifications(move || *notified_flag_clone.lock().unwrap() = true);
+
+        let id = create_random_notification()
+            .show_async()
+            .await
+            .unwrap()
+            .id();
+
+        tokio::time::sleep(Duration::from_secs(1)).await;
+        assert_eq!(*notified_flag.lock().unwrap(), true);
+
+        ctx.service
+            .on_notify_notifications(move || *dismissed_flag_clone.lock().unwrap() = true);
+
+        let n = ctx.service.get_notification_by_id(id).unwrap();
+        n.dismiss().await.unwrap();
+
+        tokio::time::sleep(Duration::from_secs(1)).await;
+        assert_eq!(*dismissed_flag.lock().unwrap(), true);
+
+        ctx.service
+            .on_notify_notifications(move || *clear_flag_clone.lock().unwrap() = true);
+
+        ctx.service.clear_notifications().await.unwrap();
+
+        tokio::time::sleep(Duration::from_secs(1)).await;
+        assert_eq!(*clear_flag.lock().unwrap(), true);
     }
 }

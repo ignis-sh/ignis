@@ -3,13 +3,13 @@ use std::collections::BTreeMap;
 use std::fs;
 use std::sync::RwLock;
 
-#[derive(Serialize, Deserialize, Default, Debug)]
+#[derive(Serialize, Deserialize, Default)]
 struct ServiceDataInner {
     counter: u32,
     notifications: BTreeMap<u32, Arc<Notification>>,
 }
 
-#[derive(Default, Debug)]
+#[derive(Default)]
 pub(crate) struct ServiceData {
     inner: RwLock<ServiceDataInner>,
     file_path: Option<PathBuf>, // if None - file I/O is disabled

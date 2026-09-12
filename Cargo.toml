@@ -1,8 +1,10 @@
 [workspace]
-members = ["crates/applications","crates/glib_utils", "crates/ignis_events",
+members = [
+    "crates/ignis_events",
+    "crates/applications", 
     "crates/notifications",
-    "crates/notifications_glib",
     "crates/py_applications",
+    "crates/py_notifications",
 ]
 
 resolver = "3"

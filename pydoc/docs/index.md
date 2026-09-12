@@ -2,4 +2,5 @@
 
 ## Libraries
 
-[Applications](./applications.md)
+- [Applications](./applications.md)
+- [Notifications](./notifications.md)

@@ -1,0 +1,3 @@
+# Notifications
+
+::: ignis_notifications
