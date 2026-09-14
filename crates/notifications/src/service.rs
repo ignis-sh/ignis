@@ -15,6 +15,7 @@ pub(crate) struct NotificationServiceInner {
     pub(crate) on_notified: Event<(u32, NotificationHandle, bool)>,
     pub(crate) on_notification_closed: Event<(u32, CloseReason)>,
     pub(crate) on_notify_notifications: Event<()>,
+    pub(crate) on_notifications_cleared: Event<()>,
 }
 
 /// A notification daemon that follows XDG Desktop Notifications Specification.
@@ -31,12 +32,16 @@ impl NotificationService {
         let on_notified = Event::<(u32, NotificationHandle, bool)>::new();
         let on_notification_closed = Event::<(u32, CloseReason)>::new();
         let on_notify_notifications = Event::<()>::new();
+        let on_notifications_cleared = Event::<()>::new();
 
         let on_notify_notifications_clone = on_notify_notifications.clone();
         on_notified.connect(move |_| on_notify_notifications_clone.emit(&()));
 
         let on_notify_notifications_clone = on_notify_notifications.clone();
         on_notification_closed.connect(move |_| on_notify_notifications_clone.emit(&()));
+
+        let on_notify_notifications_clone = on_notify_notifications.clone();
+        on_notifications_cleared.connect(move |_| on_notify_notifications_clone.emit(&()));
 
         Self {
             inner: Arc::new(NotificationServiceInner {
@@ -47,6 +52,7 @@ impl NotificationService {
                 on_notified,
                 on_notification_closed,
                 on_notify_notifications,
+                on_notifications_cleared,
             }),
         }
     }
@@ -201,7 +207,7 @@ impl NotificationService {
         }
 
         let res = self.inner.data.clear();
-        self.inner.on_notify_notifications.emit(&());
+        self.inner.on_notifications_cleared.emit(&());
         res
     }
 
@@ -239,6 +245,16 @@ impl NotificationService {
     {
         self.inner
             .on_notify_notifications
+            .connect(move |_| callback())
+    }
+
+    /// Invokes a callback when notifications are cleared by a call to [`clear_notifications`].
+    pub fn on_notifications_cleared<F>(&self, callback: F) -> usize
+    where
+        F: Fn() + Send + Sync + 'static,
+    {
+        self.inner
+            .on_notifications_cleared
             .connect(move |_| callback())
     }
 }

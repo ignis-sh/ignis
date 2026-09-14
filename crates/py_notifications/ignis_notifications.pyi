@@ -123,6 +123,13 @@ class Notification:
         """
         The unique non-zero identifer of the notification.
         """
+    def on_closed(self, /, callback: Any) -> None:
+        """
+        Invokes a callback when this notification is closed.
+        
+        The following arguments are passed to the callback:
+        reason ([`CloseReason`][]) - The reason why this notification was closed.
+        """
     @property
     def summary(self, /) -> str:
         """
@@ -191,6 +198,10 @@ class NotificationService:
         reason ([`CloseReason`][]) - The reason why this notification was
         closed.
         """
+    def on_notifications_cleared(self, /, callback: Any) -> None:
+        """
+        Invokes a callback when notifications are cleared by a call to [`clear_notifications`][].
+        """
     def on_notified(self, /, callback: Any) -> None:
         """
         Connect a callback to invoke when a new notification is received.    
@@ -199,6 +210,12 @@ class NotificationService:
         id (int) - The ID of the notification
         notification ([`Notification`][]) - The notification object.
         replace (bool) - whether this notification replaces an old one with the same ID.
+        """
+    def on_notify_notifications(self, /, callback: Any) -> None:
+        """
+        Invokes a callback when value of [`notifications`][] changes.
+        
+        It includes arriving of new notifications, closing and clearing notifications.
         """
     def run(self, /) -> Any:
         """

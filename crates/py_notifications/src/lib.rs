@@ -468,5 +468,16 @@ mod ignis_notifications {
                 })
             });
         }
+
+        /// Invokes a callback when notifications are cleared by a call to [`clear_notifications`][].
+        fn on_notifications_cleared(&self, callback: Py<PyAny>) {
+            self.inner.on_notifications_cleared(move || {
+                Python::attach(|py| {
+                    if let Err(e) = callback.call0(py) {
+                        e.print(py)
+                    }
+                })
+            });
+        }
     }
 }
