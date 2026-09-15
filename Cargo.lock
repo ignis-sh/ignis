@@ -740,15 +740,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "glib_utils"
-version = "0.1.0"
-dependencies = [
- "gio",
- "glib",
- "tokio",
-]
-
-[[package]]
 name = "gobject-sys"
 version = "0.22.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1102,6 +1093,7 @@ dependencies = [
  "gdk-pixbuf",
  "gio",
  "glib",
+ "ignis_events",
  "image",
  "notify-rust",
  "rand 0.10.2",
@@ -1113,17 +1105,6 @@ dependencies = [
  "tracing",
  "zbus",
  "zvariant",
-]
-
-[[package]]
-name = "notifications_glib"
-version = "0.1.0"
-dependencies = [
- "gio",
- "glib",
- "glib_utils",
- "notifications",
- "tokio",
 ]
 
 [[package]]
@@ -1444,6 +1425,15 @@ name = "py_applications"
 version = "0.1.0"
 dependencies = [
  "applications",
+ "pyo3",
+ "pyo3-async-runtimes",
+]
+
+[[package]]
+name = "py_notifications"
+version = "0.1.0"
+dependencies = [
+ "notifications",
  "pyo3",
  "pyo3-async-runtimes",
 ]

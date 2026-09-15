@@ -61,6 +61,7 @@ in {
   pydocbuild = pkgs.mkShell {
     packages = with pkgs; [
       self.packages.${pkgs.system}.python314Packages.ignis-applications
+      self.packages.${pkgs.system}.python314Packages.ignis-notifications
 
       python314Packages.mkdocs
       python314Packages.mkdocstrings

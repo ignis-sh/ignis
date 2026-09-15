@@ -21,3 +21,4 @@ _version.py
 target/
 outputs/
 _build
+pydoc/site

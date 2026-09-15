@@ -1,9 +1,0 @@
-option (
-  'profile',
-  type: 'combo',
-  choices: [
-    'release',
-    'debug'
-  ],
-  value: 'release',
-)
