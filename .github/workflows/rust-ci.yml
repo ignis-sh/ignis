@@ -37,6 +37,8 @@ jobs:
       - name: Install nix
         uses: DeterminateSystems/nix-installer-action@main
 
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+
       - name: Clippy check
         run: |
           nix develop .#rustci --command cargo clippy --workspace --all-features -- -D warnings
@@ -51,6 +53,8 @@ jobs:
 
       - name: Install nix
         uses: DeterminateSystems/nix-installer-action@main
+
+      - uses: DeterminateSystems/magic-nix-cache-action@main
 
       - name: Run tests
         run: |

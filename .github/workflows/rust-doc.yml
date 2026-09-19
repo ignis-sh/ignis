@@ -20,6 +20,8 @@ jobs:
       - name: Install nix
         uses: DeterminateSystems/nix-installer-action@main
 
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+
       - name: Build documentation
         run: |
           nix develop .#rustci --command bash -c '
