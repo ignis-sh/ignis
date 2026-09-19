@@ -157,6 +157,7 @@
         inherit version;
         ignis-gvc = ignis-gvc.packages.${system}.ignis-gvc;
       };
+
       default = self.packages.${system}.ignis;
 
       ignis-notifications-glib = pkgs.callPackage ./crates/notifications_glib {};
