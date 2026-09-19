@@ -95,7 +95,6 @@
         (craneLib.buildPackage (
           individualCrateArgs
           // {
-            inherit pname version;
             cargoExtraArgs = "-p ${crate_name}";
             src = fileSetForCrate;
           }
