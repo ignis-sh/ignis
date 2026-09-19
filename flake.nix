@@ -13,6 +13,8 @@
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    crane.url = "github:ipetkov/crane";
   };
 
   outputs = {
@@ -20,6 +22,7 @@
     nixpkgs,
     ignis-gvc,
     rust-overlay,
+    crane,
     ...
   }: let
     systems = ["x86_64-linux" "aarch64-linux"];
@@ -29,16 +32,106 @@
     overlays = [
       rust-overlay.overlays.default
     ];
-
-    mkPythonPkg = pkgs: pythonPackages: path:
-      pkgs.callPackage path {
-        inherit pythonPackages;
-      };
   in {
     packages = forAllSystems (system: let
       pkgs = import nixpkgs {
-        inherit system;
+        inherit system overlays;
       };
+
+      inherit (pkgs) lib;
+
+      # CRANE STUFF
+
+      customRustToolchain = pkgs.rust-bin.nightly.latest.default;
+      craneLib =
+        (crane.mkLib pkgs).overrideToolchain customRustToolchain;
+
+      src = craneLib.cleanCargoSource ./.;
+
+      fileSetForCrate = crate:
+        lib.fileset.toSource {
+          root = ./.;
+          fileset = lib.fileset.unions [
+            ./Cargo.toml
+            ./Cargo.lock
+            (craneLib.fileset.commonCargoSources ./crates/applications)
+            (craneLib.fileset.commonCargoSources ./crates/ignis_events)
+            (craneLib.fileset.commonCargoSources ./crates/notifications)
+            (craneLib.fileset.commonCargoSources ./crates/py_notifications)
+            (craneLib.fileset.commonCargoSources ./crates/py_applications)
+            (craneLib.fileset.commonCargoSources crate)
+          ];
+        };
+
+      mkWheelPkg = python: pname: crate_name: let
+        commonArgs = {
+          inherit src;
+          strictDeps = true;
+
+          buildInputs = with pkgs; [
+            glib
+            gdk-pixbuf
+          ];
+
+          nativeBuildInputs = with pkgs; [
+            pkg-config
+            python
+          ];
+        };
+
+        cargoArtifacts = craneLib.buildDepsOnly commonArgs;
+
+        individualCrateArgs =
+          commonArgs
+          // {
+            inherit cargoArtifacts;
+            # inherit (craneLib.crateNameFromCargoToml {inherit src;}) version;
+            doCheck = false;
+          };
+      in
+        (craneLib.buildPackage (
+          individualCrateArgs
+          // {
+            inherit pname;
+            cargoExtraArgs = "-p ${crate_name}";
+            src = fileSetForCrate ./crates/${crate_name};
+          }
+        )).overrideAttrs (old: {
+          nativeBuildInputs = old.nativeBuildInputs ++ [pkgs.maturin];
+
+          buildPhase =
+            old.buildPhase
+            + ''
+              maturin build --offline --target-dir ./target --manifest-path crates/${crate_name}/Cargo.toml
+            '';
+
+          installPhase =
+            old.installPhase
+            + ''
+              cp target/wheels/*.whl $out/
+            '';
+        });
+
+      mkPyPkgFromWheel = ps: pname: version: wheel:
+        ps.buildPythonPackage {
+          inherit pname version;
+          format = "wheel";
+          src = wheel;
+          doCheck = false;
+
+          unpackPhase = ''
+            runHook preUnpack
+
+            wheel=$(find "$src" -maxdepth 1 -name '*.whl' -print -quit)
+            if [ -z "$wheel" ]; then
+              echo "error: no wheel found in $src"
+              exit 1
+            fi
+
+            mkdir -p dist
+            cp -r "$wheel" "dist/$(stripHash "$wheel")"
+          '';
+        };
     in {
       ignis = pkgs.callPackage ./nix {
         inherit version;
@@ -50,30 +143,30 @@
 
       python313Packages = {
         ignis-applications =
-          mkPythonPkg
-          pkgs
-          pkgs.python313Packages
-          ./crates/py_applications;
+          mkPyPkgFromWheel
+          pkgs.python313Packages "ignis-applications" "0.1.0"
+          (mkWheelPkg
+            pkgs.python313 "ignis-applications" "py_applications");
 
         ignis-notifications =
-          mkPythonPkg
-          pkgs
-          pkgs.python313Packages
-          ./crates/py_notifications;
+          mkPyPkgFromWheel
+          pkgs.python313Packages "ignis-notifications" "0.1.0"
+          (mkWheelPkg
+            pkgs.python313 "ignis-notifications" "py_notifications");
       };
 
       python314Packages = {
         ignis-applications =
-          mkPythonPkg
-          pkgs
-          pkgs.python314Packages
-          ./crates/py_applications;
+          mkPyPkgFromWheel
+          pkgs.python314Packages "ignis-applications" "0.1.0"
+          (mkWheelPkg
+            pkgs.python314 "ignis-applications" "py_applications");
 
         ignis-notifications =
-          mkPythonPkg
-          pkgs
-          pkgs.python314Packages
-          ./crates/py_notifications;
+          mkPyPkgFromWheel
+          pkgs.python314Packages "ignis-notifications" "0.1.0"
+          (mkWheelPkg
+            pkgs.python314 "ignis-notifications" "py_notifications");
       };
     });
 
