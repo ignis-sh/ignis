@@ -1,13 +1,9 @@
 [workspace]
 members = [
-    "crates/ignis_events",
-    "crates/applications", 
-    "crates/notifications",
-    "crates/py_applications",
-    "crates/py_notifications",
+    "crates/*",
 ]
 
-resolver = "3"
+resolver = "2"
 
 [workspace.dependencies]
 glib = "0.22.7"
