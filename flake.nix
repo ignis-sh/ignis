@@ -103,7 +103,7 @@
           nativeBuildInputs = old.nativeBuildInputs ++ [pkgs.maturin python];
 
           buildPhase = ''
-            maturin build --offline --target-dir ./target --manifest-path crates/${crate_name}/Cargo.toml
+            maturin build --offline --release --target-dir ./target --manifest-path crates/${crate_name}/Cargo.toml
           '';
 
           installPhase = ''
