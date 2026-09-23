@@ -2,6 +2,7 @@ use pyo3::prelude::*;
 
 /// Access desktop application entries defined according to the [XDG Desktop Entry Specification](https://specifications.freedesktop.org/desktop-entry/latest).
 ///
+///heh
 /// ### Example
 ///
 /// ```python
