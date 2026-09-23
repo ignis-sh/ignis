@@ -71,60 +71,36 @@
 
         nativeBuildInputs = with pkgs; [
           pkg-config
+          python314
         ];
 
         doCheck = false;
       };
 
-      commonArgsPy313 =
+      cargoArtifacts = craneLib.buildDepsOnly _commonArgs;
+
+      individualCrateArgs =
         _commonArgs
         // {
-          nativeBuildInputs = with pkgs; [
-            python313
-            pkg-config
-          ];
-        };
-
-      commonArgsPy314 =
-        _commonArgs
-        // {
-          nativeBuildInputs = with pkgs; [
-            python314
-            pkg-config
-          ];
-        };
-
-      cargoArtifactsPy313 = craneLib.buildDepsOnly commonArgsPy313;
-      cargoArtifactsPy314 = craneLib.buildDepsOnly commonArgsPy314;
-
-      individualCrateArgsPy313 =
-        commonArgsPy313
-        // {
-          cargoArtifacts = cargoArtifactsPy313;
-        };
-
-      individualCrateArgsPy314 =
-        commonArgsPy314
-        // {
-          cargoArtifacts = cargoArtifactsPy314;
+          inherit cargoArtifacts;
         };
 
       _mkWheelPkg = {
-        args,
         pname,
+        python,
         version,
         crate_name,
         crates,
       }:
         (craneLib.buildPackage (
-          args
+          individualCrateArgs
           // {
             inherit pname version;
             cargoExtraArgs = "-p ${crate_name}";
             src = fileSetForCrate crates;
           }
         )).overrideAttrs (old: {
-          nativeBuildInputs = old.nativeBuildInputs ++ [pkgs.maturin];
+          nativeBuildInputs = old.nativeBuildInputs ++ [pkgs.maturin python];
 
           buildPhase = ''
             maturin build --offline --target-dir ./target --manifest-path crates/${crate_name}/Cargo.toml
@@ -137,17 +113,17 @@
         });
 
       mkPythonPkg = {
-        args,
         pname,
         version,
         crate_name,
         crates,
+        python,
         ps,
       }:
         ps.buildPythonPackage {
           inherit pname version;
           format = "wheel";
-          src = _mkWheelPkg {inherit args pname version crate_name crates;};
+          src = _mkWheelPkg {inherit pname version crate_name crates python;};
           doCheck = false;
 
           unpackPhase = ''
@@ -189,31 +165,31 @@
 
       python313Packages = let
         ps = pkgs.python313Packages;
-        args = individualCrateArgsPy313;
+        python = pkgs.python313;
       in {
         ignis-applications = mkPythonPkg {
           inherit (pyApplicationsArgs) pname crate_name version crates;
-          inherit args ps;
+          inherit python ps;
         };
 
         ignis-notifications = mkPythonPkg {
           inherit (pyNotificationsArgs) pname crate_name version crates;
-          inherit args ps;
+          inherit python ps;
         };
       };
 
       python314Packages = let
         ps = pkgs.python314Packages;
-        args = individualCrateArgsPy314;
+        python = pkgs.python314;
       in {
         ignis-applications = mkPythonPkg {
           inherit (pyApplicationsArgs) pname crate_name version crates;
-          inherit args ps;
+          inherit python ps;
         };
 
         ignis-notifications = mkPythonPkg {
           inherit (pyNotificationsArgs) pname crate_name version crates;
-          inherit args ps;
+          inherit python ps;
         };
       };
     });
