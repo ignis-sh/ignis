@@ -4,7 +4,7 @@ members = [
     "crates/applications", 
     "crates/notifications",
     "crates/py_applications",
-    "crates/py_notifications",
+    "crates/py_notifications", "crates/mpris",
 ]
 
 resolver = "3"

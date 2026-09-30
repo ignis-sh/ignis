@@ -1,0 +1,16 @@
+[package]
+name = "mpris"
+version = "0.1.0"
+edition = "2024"
+license.workspace = true
+
+[dependencies]
+zbus = "5.19.0"
+thiserror = "2.0.17"
+tokio.workspace = true
+futures-util = "0.3.34"
+ignis_events = { path = "../ignis_events" }
+
+[dev-dependencies]
+fake = { version = "5.1.0", features = ["derive"] }
+rand = "0.10.3"
