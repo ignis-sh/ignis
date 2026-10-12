@@ -1,4 +1,4 @@
-use fake::{Dummy, Fake, Faker};
+use fake::Fake;
 use std::collections::HashMap;
 #[cfg(test)]
 use std::sync::Arc;
@@ -78,8 +78,8 @@ impl TestMediaPlayer2 {
     }
 }
 
-#[derive(Dummy)]
-pub struct TestPlayer {
+#[derive(Default)]
+pub struct TestPlayerData {
     pub can_control: bool,
     pub can_go_next: bool,
     pub can_go_previous: bool,
@@ -95,6 +95,10 @@ pub struct TestPlayer {
     pub rate: Mutex<f64>,
     pub shuffle: Mutex<bool>,
     pub volume: Mutex<f64>,
+}
+
+pub struct TestPlayer {
+    data: Arc<Mutex<TestPlayerData>>,
 }
 
 #[interface(name = "org.mpris.MediaPlayer2.Player")]
@@ -114,94 +118,100 @@ impl TestPlayer {
 
     #[zbus(property)]
     pub fn can_control(&self) -> bool {
-        self.can_control
+        self.data.lock().unwrap().can_control
     }
     #[zbus(property)]
     pub fn can_go_next(&self) -> bool {
-        self.can_go_next
+        self.data.lock().unwrap().can_go_next
     }
 
     #[zbus(property)]
     pub fn can_go_previous(&self) -> bool {
-        self.can_go_previous
+        self.data.lock().unwrap().can_go_previous
     }
 
     #[zbus(property)]
     pub fn can_pause(&self) -> bool {
-        self.can_pause
+        self.data.lock().unwrap().can_pause
     }
 
     #[zbus(property)]
     pub fn can_play(&self) -> bool {
-        self.can_play
+        self.data.lock().unwrap().can_play
     }
 
     #[zbus(property)]
     pub fn can_seek(&self) -> bool {
-        self.can_seek
+        self.data.lock().unwrap().can_seek
     }
 
     #[zbus(property)]
     pub fn loop_status(&self) -> String {
-        self.loop_status.lock().unwrap().clone()
+        self.data
+            .lock()
+            .unwrap()
+            .loop_status
+            .lock()
+            .unwrap()
+            .clone()
     }
 
     #[zbus(property)]
     pub fn set_loop_status(&self, value: &str) {
-        *self.loop_status.lock().unwrap() = String::from(value);
+        *self.data.lock().unwrap().loop_status.lock().unwrap() = String::from(value);
     }
 
     #[zbus(property)]
     pub fn maximum_rate(&self) -> f64 {
-        self.maximum_rate
+        self.data.lock().unwrap().maximum_rate
     }
 
     #[zbus(property)]
     pub fn metadata(&self) -> std::collections::HashMap<String, String> {
-        self.metadata.clone()
+        self.data.lock().unwrap().metadata.clone()
     }
 
     #[zbus(property)]
     pub fn minimum_rate(&self) -> f64 {
-        self.minimum_rate
+        self.data.lock().unwrap().minimum_rate
     }
 
     #[zbus(property)]
     pub fn playback_status(&self) -> String {
-        self.playback_status.clone()
+        self.data.lock().unwrap().playback_status.clone()
     }
 
     #[zbus(property)]
     pub fn position(&self) -> i64 {
-        self.position
+        self.data.lock().unwrap().position
     }
 
     #[zbus(property)]
     pub fn rate(&self) -> f64 {
-        *self.rate.lock().unwrap()
+        *self.data.lock().unwrap().rate.lock().unwrap()
     }
     #[zbus(property)]
     pub fn set_rate(&self, value: f64) {
-        *self.rate.lock().unwrap() = value;
+        *self.data.lock().unwrap().rate.lock().unwrap() = value;
     }
 
     #[zbus(property)]
     pub fn shuffle(&self) -> bool {
-        *self.shuffle.lock().unwrap()
+        *self.data.lock().unwrap().shuffle.lock().unwrap()
     }
     #[zbus(property)]
     pub fn set_shuffle(&self, value: bool) {
-        *self.shuffle.lock().unwrap() = value;
+        *self.data.lock().unwrap().shuffle.lock().unwrap() = value;
     }
 
     #[zbus(property)]
     pub fn volume(&self) -> f64 {
-        *self.volume.lock().unwrap()
+        *self.data.lock().unwrap().volume.lock().unwrap()
     }
 
     #[zbus(property)]
     pub fn set_volume(&self, value: f64) {
-        *self.volume.lock().unwrap() = value;
+        *self.data.lock().unwrap().volume.lock().unwrap() = value;
     }
 }
 
@@ -212,6 +222,7 @@ pub struct TestContext {
 pub struct TestPlayerInfo {
     pub connection: zbus::Connection,
     pub media_player_data: Arc<Mutex<TestMediaPlayer2Data>>,
+    pub player_data: Arc<Mutex<TestPlayerData>>,
     pub name: String,
 }
 
@@ -225,7 +236,7 @@ impl TestContext {
     pub async fn run_player(&self) -> TestPlayerInfo {
         let codename: String = fake::faker::lorem::en::Word().fake();
         let media_player_data = Arc::new(Mutex::new(TestMediaPlayer2Data::default()));
-        let player: TestPlayer = Faker.fake();
+        let player_data = Arc::new(Mutex::new(TestPlayerData::default()));
 
         let name = format!("org.mpris.MediaPlayer2.{}", codename);
 
@@ -240,7 +251,12 @@ impl TestContext {
                 },
             )
             .unwrap()
-            .serve_at("/org/mpris/MediaPlayer2", player)
+            .serve_at(
+                "/org/mpris/MediaPlayer2",
+                TestPlayer {
+                    data: player_data.clone(),
+                },
+            )
             .unwrap()
             .build()
             .await
@@ -254,6 +270,7 @@ impl TestContext {
         TestPlayerInfo {
             connection,
             media_player_data,
+            player_data,
             name,
         }
     }

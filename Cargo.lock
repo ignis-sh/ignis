@@ -1271,6 +1271,7 @@ dependencies = [
  "futures-util",
  "ignis_events",
  "rand 0.10.3",
+ "serde",
  "thiserror",
  "tokio",
  "zbus",

@@ -27,6 +27,7 @@ async fn player_proxy<'a>(connection: &zbus::Connection, name: &'a str) -> Resul
         .build()
         .await?)
 }
+
 struct MediaPlayerData {
     can_quit: bool,
     can_raise: bool,
@@ -53,6 +54,7 @@ struct PlayerData {
     rate: f64,
     shuffle: bool,
     volume: f64,
+    metadata: Metadata,
 }
 
 pub(crate) struct Player {
@@ -188,6 +190,7 @@ impl Player {
             rate,
             shuffle,
             volume,
+            metadata,
         ) = futures::join!(
             proxy.can_control(),
             proxy.can_go_next(),
@@ -201,7 +204,8 @@ impl Player {
             proxy.playback_status(),
             proxy.rate(),
             proxy.shuffle(),
-            proxy.volume()
+            proxy.volume(),
+            proxy.metadata()
         );
 
         PlayerData {
@@ -218,6 +222,7 @@ impl Player {
             rate: rate.unwrap_or_default(),
             shuffle: shuffle.unwrap_or_default(),
             volume: volume.unwrap_or_default(),
+            metadata: metadata.unwrap_or_default().into(),
         }
     }
 
@@ -417,6 +422,9 @@ impl PlayerHandle {
         self.inner.player_data.read().unwrap().maximum_rate
     }
 
+    pub fn metadata(&self) -> Metadata {
+        self.inner.player_data.read().unwrap().metadata.clone()
+    }
     // fn metadata(
     //     &self,
     // ) -> zbus::Result<std::collections::HashMap<String, zbus::zvariant::OwnedValue>>;
@@ -463,26 +471,43 @@ impl PlayerHandle {
 
 #[cfg(test)]
 mod tests {
-    use std::time::Duration;
+    use std::{collections::HashMap, time::Duration};
+
+    use zbus::object_server::InterfaceRef;
 
     use super::*;
     use crate::test_utils::*;
+
+    async fn init_handle(name: String) -> PlayerHandle {
+        let player = Player::new(name).await.unwrap();
+        PlayerHandle {
+            inner: Arc::new(player),
+        }
+    }
+
+    async fn get_media_iface_ref(connection: &zbus::Connection) -> InterfaceRef<TestMediaPlayer2> {
+        connection
+            .object_server()
+            .interface::<_, TestMediaPlayer2>("/org/mpris/MediaPlayer2")
+            .await
+            .unwrap()
+    }
+
+    async fn get_player_iface_ref(connection: &zbus::Connection) -> InterfaceRef<TestPlayer> {
+        connection
+            .object_server()
+            .interface::<_, TestPlayer>("/org/mpris/MediaPlayer2")
+            .await
+            .unwrap()
+    }
 
     #[tokio::test]
     async fn test_properties_changed() {
         let ctx = TestContext::new().await;
         let player_info = ctx.run_player().await;
-        let player = Player::new(player_info.name).await.unwrap();
-        let player_handle = PlayerHandle {
-            inner: Arc::new(player),
-        };
 
-        let iface_ref = player_info
-            .connection
-            .object_server()
-            .interface::<_, TestMediaPlayer2>("/org/mpris/MediaPlayer2")
-            .await
-            .unwrap();
+        let handle = init_handle(player_info.name).await;
+        let iface_ref = get_media_iface_ref(&player_info.connection).await;
 
         {
             let iface = iface_ref.get_mut().await;
@@ -499,6 +524,36 @@ mod tests {
             .unwrap();
 
         tokio::time::sleep(Duration::from_secs(1)).await;
-        assert_eq!(player_handle.can_quit(), true);
+        assert_eq!(handle.can_quit(), true);
+    }
+
+    #[tokio::test]
+    async fn test_metadata_parse() {
+        let ctx = TestContext::new().await;
+        let player_info = ctx.run_player().await;
+
+        let handle = init_handle(player_info.name).await;
+
+        let iface_ref = get_player_iface_ref(&player_info.connection).await;
+
+        {
+            let mut metadata: HashMap<String, String> = HashMap::new();
+            metadata.insert("mpris:artUrl".into(), "blah/blah".into());
+            metadata.insert("xesam:trackNumber".into(), "10".into());
+
+            player_info.player_data.lock().unwrap().metadata = metadata;
+        }
+
+        let iface = iface_ref.get().await;
+        iface
+            .metadata_changed(iface_ref.signal_emitter())
+            .await
+            .unwrap();
+
+        tokio::time::sleep(Duration::from_secs(1)).await;
+
+        let handle_metadata = handle.metadata();
+        assert_eq!(handle_metadata.art_url.unwrap(), "blah/blah");
+        assert_eq!(handle_metadata.track_number.unwrap(), 10);
     }
 }
