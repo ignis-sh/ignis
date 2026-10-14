@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Metadata {
     pub track_id: Option<String>,
     pub length: Option<i64>,

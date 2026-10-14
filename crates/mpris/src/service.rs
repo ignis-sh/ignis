@@ -83,9 +83,9 @@ impl MprisService {
     }
 
     fn remove_player(&self, name: &str) -> Option<PlayerHandle> {
-        Some(PlayerHandle {
-            inner: self.inner.players.lock().unwrap().remove(name)?,
-        })
+        Some(PlayerHandle::new(
+            self.inner.players.lock().unwrap().remove(name)?,
+        ))
     }
 
     async fn init_player(&self, name: &str) -> Option<PlayerHandle> {
@@ -98,7 +98,7 @@ impl MprisService {
             .unwrap()
             .insert(name.to_string(), shared);
 
-        Some(PlayerHandle { inner: clone })
+        Some(PlayerHandle::new(clone))
     }
 
     pub fn players(&self) -> Vec<PlayerHandle> {
@@ -107,7 +107,7 @@ impl MprisService {
             .lock()
             .unwrap()
             .values()
-            .map(|p| PlayerHandle { inner: p.clone() })
+            .map(|p| PlayerHandle::new(p.clone()))
             .collect()
     }
 }

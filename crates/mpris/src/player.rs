@@ -1,7 +1,9 @@
 use crate::dbus::{MediaPlayer2Proxy, PlayerProxy};
 use crate::private_prelude::*;
 use futures_util::StreamExt;
-use std::sync::{Arc, RwLock};
+use ignis_core::property::{Property, PropertyOwner};
+use std::collections::HashMap;
+use std::sync::Arc;
 use zbus::Connection;
 
 // TODO:
@@ -28,71 +30,119 @@ async fn player_proxy<'a>(connection: &zbus::Connection, name: &'a str) -> Resul
         .await?)
 }
 
-struct MediaPlayerData {
-    can_quit: bool,
-    can_raise: bool,
-    can_set_fullscreen: bool,
-    desktop_entry: String,
-    fullscreen: bool,
-    has_track_list: bool,
-    identity: String,
-    supported_mime_types: Vec<String>,
-    supported_uri_schemes: Vec<String>,
-}
+struct PlayerOwnerProperties {
+    can_quit: PropertyOwner<bool>,
+    can_raise: PropertyOwner<bool>,
+    can_set_fullscreen: PropertyOwner<bool>,
+    desktop_entry: PropertyOwner<String>,
+    fullscreen: PropertyOwner<bool>,
+    has_track_list: PropertyOwner<bool>,
+    identity: PropertyOwner<String>,
+    supported_mime_types: PropertyOwner<Vec<String>>,
+    supported_uri_schemes: PropertyOwner<Vec<String>>,
 
-struct PlayerData {
-    can_control: bool,
-    can_go_next: bool,
-    can_go_previous: bool,
-    can_pause: bool,
-    can_play: bool,
-    can_seek: bool,
-    loop_status: LoopStatus,
-    maximum_rate: f64,
-    minimum_rate: f64,
-    playback_status: PlaybackStatus,
-    rate: f64,
-    shuffle: bool,
-    volume: f64,
-    metadata: Metadata,
+    can_control: PropertyOwner<bool>,
+    can_go_next: PropertyOwner<bool>,
+    can_go_previous: PropertyOwner<bool>,
+    can_pause: PropertyOwner<bool>,
+    can_play: PropertyOwner<bool>,
+    can_seek: PropertyOwner<bool>,
+    loop_status: PropertyOwner<LoopStatus>,
+    maximum_rate: PropertyOwner<f64>,
+    minimum_rate: PropertyOwner<f64>,
+    playback_status: PropertyOwner<PlaybackStatus>,
+    rate: PropertyOwner<f64>,
+    shuffle: PropertyOwner<bool>,
+    volume: PropertyOwner<f64>,
+    metadata: PropertyOwner<Metadata>,
 }
 
 pub(crate) struct Player {
     name: String,
     connection: Connection,
-    media_player_data: Arc<RwLock<MediaPlayerData>>,
-    player_data: Arc<RwLock<PlayerData>>,
+    properties: Arc<PlayerOwnerProperties>,
 }
 
 impl Player {
     pub(crate) async fn new(name: String) -> Result<Self> {
         let connection = Connection::session().await?;
 
-        let media_player_data = Arc::new(RwLock::new(
-            Self::get_media_player_data(&media_player_proxy(&connection, &name).await?).await,
-        ));
-        let player_data = Arc::new(RwLock::new(
-            Self::get_player_data(&player_proxy(&connection, &name).await?).await,
-        ));
+        let media_player_proxy = media_player_proxy(&connection, &name).await?;
+        let player_proxy = player_proxy(&connection, &name).await?;
+
+        let properties = Arc::new(PlayerOwnerProperties {
+            can_quit: PropertyOwner::new(media_player_proxy.can_quit().await.unwrap_or_default()),
+
+            can_raise: PropertyOwner::new(media_player_proxy.can_raise().await.unwrap_or_default()),
+            can_set_fullscreen: PropertyOwner::new(
+                media_player_proxy
+                    .can_set_fullscreen()
+                    .await
+                    .unwrap_or_default(),
+            ),
+            desktop_entry: PropertyOwner::new(
+                media_player_proxy.desktop_entry().await.unwrap_or_default(),
+            ),
+            fullscreen: PropertyOwner::new(
+                media_player_proxy.fullscreen().await.unwrap_or_default(),
+            ),
+            has_track_list: PropertyOwner::new(
+                media_player_proxy
+                    .has_track_list()
+                    .await
+                    .unwrap_or_default(),
+            ),
+            identity: PropertyOwner::new(media_player_proxy.identity().await.unwrap_or_default()),
+            supported_mime_types: PropertyOwner::new(
+                media_player_proxy
+                    .supported_mime_types()
+                    .await
+                    .unwrap_or_default(),
+            ),
+            supported_uri_schemes: PropertyOwner::new(
+                media_player_proxy
+                    .supported_uri_schemes()
+                    .await
+                    .unwrap_or_default(),
+            ),
+
+            can_control: PropertyOwner::new(player_proxy.can_control().await.unwrap_or_default()),
+            can_go_next: PropertyOwner::new(player_proxy.can_go_next().await.unwrap_or_default()),
+            can_go_previous: PropertyOwner::new(
+                player_proxy.can_go_previous().await.unwrap_or_default(),
+            ),
+            can_pause: PropertyOwner::new(player_proxy.can_pause().await.unwrap_or_default()),
+            can_play: PropertyOwner::new(player_proxy.can_play().await.unwrap_or_default()),
+            can_seek: PropertyOwner::new(player_proxy.can_seek().await.unwrap_or_default()),
+            loop_status: PropertyOwner::new(
+                player_proxy.loop_status().await.unwrap_or_default().into(),
+            ),
+            maximum_rate: PropertyOwner::new(player_proxy.maximum_rate().await.unwrap_or_default()),
+            minimum_rate: PropertyOwner::new(player_proxy.minimum_rate().await.unwrap_or_default()),
+            playback_status: PropertyOwner::new(
+                player_proxy
+                    .playback_status()
+                    .await
+                    .unwrap_or_default()
+                    .into(),
+            ),
+            rate: PropertyOwner::new(player_proxy.rate().await.unwrap_or_default()),
+            shuffle: PropertyOwner::new(player_proxy.shuffle().await.unwrap_or_default()),
+            volume: PropertyOwner::new(player_proxy.volume().await.unwrap_or_default()),
+            metadata: PropertyOwner::new(player_proxy.metadata().await.unwrap_or_default().into()),
+        });
 
         let obj = Player {
             name: name.clone(),
             connection: connection.clone(),
-            media_player_data: media_player_data.clone(),
-            player_data: player_data.clone(),
+            properties: properties.clone(),
         };
 
         let (ready_tx, ready_rx) = tokio::sync::oneshot::channel();
 
         tokio::spawn(async move {
-            if let Err(e) = Self::listen_properties_change(
-                connection,
-                name,
-                media_player_data,
-                player_data,
-                ready_tx,
-            )
-            .await
+            if let Err(e) =
+                Self::listen_properties_change(connection, name, properties, ready_tx).await
             {
                 eprintln!("Property listener failed: {e:?}");
             }
@@ -106,16 +156,13 @@ impl Player {
     async fn listen_properties_change(
         connection: Connection,
         name: String,
-        media_player_data: Arc<RwLock<MediaPlayerData>>,
-        player_data: Arc<RwLock<PlayerData>>,
+        properties: Arc<PlayerOwnerProperties>,
         ready_tx: tokio::sync::oneshot::Sender<()>,
     ) -> Result<()> {
         let proxy =
             zbus::fdo::PropertiesProxy::new(&connection, name.clone(), "/org/mpris/MediaPlayer2")
                 .await?;
 
-        let media_player_proxy = media_player_proxy(&connection, &name).await?;
-        let player_proxy = player_proxy(&connection, &name).await?;
         let mut stream = proxy.receive_properties_changed().await?;
 
         let _ = ready_tx.send(());
@@ -124,12 +171,93 @@ impl Player {
             if let Some(args) = message.args().ok() {
                 match args.interface_name.as_str() {
                     "org.mpris.MediaPlayer2" => {
-                        *media_player_data.write().unwrap() =
-                            Self::get_media_player_data(&media_player_proxy).await;
-                    }
+                        for (key, value) in args.changed_properties {
+                            match key {
+                                "CanQuit" => properties
+                                    .can_quit
+                                    .set(bool::try_from(value).unwrap_or_default()),
+                                "CanRaise" => properties
+                                    .can_raise
+                                    .set(bool::try_from(value).unwrap_or_default()),
+                                "CanSetFullscreen" => properties
+                                    .can_set_fullscreen
+                                    .set(bool::try_from(value).unwrap_or_default()),
+                                "DesktopEntry" => properties
+                                    .desktop_entry
+                                    .set(String::try_from(value).unwrap_or_default()),
+                                "Fullscreen" => properties
+                                    .fullscreen
+                                    .set(bool::try_from(value).unwrap_or_default()),
+                                "HasTrackList" => properties
+                                    .has_track_list
+                                    .set(bool::try_from(value).unwrap_or_default()),
+                                "Identity" => properties
+                                    .identity
+                                    .set(String::try_from(value).unwrap_or_default()),
+                                "SupportedMimeTypes" => properties
+                                    .supported_mime_types
+                                    .set(Vec::try_from(value).unwrap_or_default()),
+                                "SupportedUriTypes" => properties
+                                    .supported_uri_schemes
+                                    .set(Vec::try_from(value).unwrap_or_default()),
 
+                                _ => {}
+                            }
+                        }
+                    }
+                    //
                     "org.mpris.MediaPlayer2.Player" => {
-                        *player_data.write().unwrap() = Self::get_player_data(&player_proxy).await;
+                        for (key, value) in args.changed_properties {
+                            match key {
+                                "CanControl" => properties
+                                    .can_control
+                                    .set(bool::try_from(value).unwrap_or_default()),
+                                "CanGoNext" => properties
+                                    .can_go_next
+                                    .set(bool::try_from(value).unwrap_or_default()),
+                                "CanGoPrevious" => properties
+                                    .can_go_previous
+                                    .set(bool::try_from(value).unwrap_or_default()),
+                                "CanPause" => properties
+                                    .can_pause
+                                    .set(bool::try_from(value).unwrap_or_default()),
+                                "CanPlay" => properties
+                                    .can_play
+                                    .set(bool::try_from(value).unwrap_or_default()),
+                                "CanSeek" => properties
+                                    .can_seek
+                                    .set(bool::try_from(value).unwrap_or_default()),
+                                "LoopStatus" => properties
+                                    .loop_status
+                                    .set(String::try_from(value).unwrap_or_default().into()),
+                                "MaximumRate" => properties
+                                    .maximum_rate
+                                    .set(f64::try_from(value).unwrap_or_default()),
+                                "Metadata" => properties
+                                    .metadata
+                                    .set(HashMap::try_from(value).unwrap_or_default().into()),
+
+                                "MinimumRate" => properties
+                                    .minimum_rate
+                                    .set(f64::try_from(value).unwrap_or_default()),
+                                "PlaybackStatus" => properties
+                                    .playback_status
+                                    .set(String::try_from(value).unwrap_or_default().into()),
+                                // "Position" => properties
+                                //     .position
+                                //     .set(Vec::try_from(value).unwrap_or_default()),
+                                "Rate" => properties
+                                    .rate
+                                    .set(f64::try_from(value).unwrap_or_default()),
+                                "Shuffle" => properties
+                                    .shuffle
+                                    .set(bool::try_from(value).unwrap_or_default()),
+                                "Volume" => properties
+                                    .volume
+                                    .set(f64::try_from(value).unwrap_or_default()),
+                                _ => {}
+                            }
+                        }
                     }
                     _ => {}
                 }
@@ -137,93 +265,6 @@ impl Player {
         }
 
         Ok(())
-    }
-
-    async fn get_media_player_data(proxy: &MediaPlayer2Proxy<'_>) -> MediaPlayerData {
-        let (
-            can_quit,
-            can_raise,
-            can_set_fullscreen,
-            desktop_entry,
-            fullscreen,
-            has_track_list,
-            identity,
-            supported_mime_types,
-            supported_uri_schemes,
-        ) = futures::join!(
-            proxy.can_quit(),
-            proxy.can_raise(),
-            proxy.can_set_fullscreen(),
-            proxy.desktop_entry(),
-            proxy.fullscreen(),
-            proxy.has_track_list(),
-            proxy.identity(),
-            proxy.supported_mime_types(),
-            proxy.supported_uri_schemes(),
-        );
-
-        MediaPlayerData {
-            can_quit: can_quit.unwrap_or_default(),
-            can_raise: can_raise.unwrap_or_default(),
-            can_set_fullscreen: can_set_fullscreen.unwrap_or_default(),
-            desktop_entry: desktop_entry.unwrap_or_default(),
-            fullscreen: fullscreen.unwrap_or_default(),
-            has_track_list: has_track_list.unwrap_or_default(),
-            identity: identity.unwrap_or_default(),
-            supported_mime_types: supported_mime_types.unwrap_or_default(),
-            supported_uri_schemes: supported_uri_schemes.unwrap_or_default(),
-        }
-    }
-
-    async fn get_player_data(proxy: &PlayerProxy<'_>) -> PlayerData {
-        let (
-            can_control,
-            can_go_next,
-            can_go_previous,
-            can_pause,
-            can_play,
-            can_seek,
-            loop_status,
-            maximum_rate,
-            minimum_rate,
-            playback_status,
-            rate,
-            shuffle,
-            volume,
-            metadata,
-        ) = futures::join!(
-            proxy.can_control(),
-            proxy.can_go_next(),
-            proxy.can_go_previous(),
-            proxy.can_pause(),
-            proxy.can_play(),
-            proxy.can_seek(),
-            proxy.loop_status(),
-            proxy.maximum_rate(),
-            proxy.minimum_rate(),
-            proxy.playback_status(),
-            proxy.rate(),
-            proxy.shuffle(),
-            proxy.volume(),
-            proxy.metadata()
-        );
-
-        PlayerData {
-            can_control: can_control.unwrap_or_default(),
-            can_go_next: can_go_next.unwrap_or_default(),
-            can_go_previous: can_go_previous.unwrap_or_default(),
-            can_pause: can_pause.unwrap_or_default(),
-            can_play: can_play.unwrap_or_default(),
-            can_seek: can_seek.unwrap_or_default(),
-            loop_status: loop_status.unwrap_or_default().into(),
-            maximum_rate: maximum_rate.unwrap_or_default(),
-            minimum_rate: minimum_rate.unwrap_or_default(),
-            playback_status: playback_status.unwrap_or_default().into(),
-            rate: rate.unwrap_or_default(),
-            shuffle: shuffle.unwrap_or_default(),
-            volume: volume.unwrap_or_default(),
-            metadata: metadata.unwrap_or_default().into(),
-        }
     }
 
     async fn media_player_proxy(&self) -> Result<MediaPlayer2Proxy<'_>> {
@@ -235,77 +276,75 @@ impl Player {
     }
 }
 
+pub struct PlayerHandleProperties {
+    pub can_quit: Property<bool>,
+    pub can_raise: Property<bool>,
+    pub can_set_fullscreen: Property<bool>,
+    pub desktop_entry: Property<String>,
+    pub fullscreen: Property<bool>,
+    pub has_track_list: Property<bool>,
+    pub identity: Property<String>,
+    pub supported_mime_types: Property<Vec<String>>,
+    pub supported_uri_schemes: Property<Vec<String>>,
+
+    pub can_control: Property<bool>,
+    pub can_go_next: Property<bool>,
+    pub can_go_previous: Property<bool>,
+    pub can_pause: Property<bool>,
+    pub can_play: Property<bool>,
+    pub can_seek: Property<bool>,
+    pub loop_status: Property<LoopStatus>,
+    pub maximum_rate: Property<f64>,
+    pub minimum_rate: Property<f64>,
+    pub playback_status: Property<PlaybackStatus>,
+    pub rate: Property<f64>,
+    pub shuffle: Property<bool>,
+    pub volume: Property<f64>,
+    pub metadata: Property<Metadata>,
+}
+
+impl PlayerHandleProperties {
+    fn new(inner: &Player) -> Self {
+        Self {
+            can_quit: inner.properties.can_quit.return_property(),
+            can_raise: inner.properties.can_raise.return_property(),
+            can_set_fullscreen: inner.properties.can_set_fullscreen.return_property(),
+            desktop_entry: inner.properties.desktop_entry.return_property(),
+            fullscreen: inner.properties.fullscreen.return_property(),
+            has_track_list: inner.properties.has_track_list.return_property(),
+            identity: inner.properties.identity.return_property(),
+            supported_mime_types: inner.properties.supported_mime_types.return_property(),
+            supported_uri_schemes: inner.properties.supported_uri_schemes.return_property(),
+
+            can_control: inner.properties.can_control.return_property(),
+            can_go_next: inner.properties.can_go_next.return_property(),
+            can_go_previous: inner.properties.can_go_previous.return_property(),
+            can_pause: inner.properties.can_pause.return_property(),
+            can_play: inner.properties.can_play.return_property(),
+            can_seek: inner.properties.can_seek.return_property(),
+            loop_status: inner.properties.loop_status.return_property(),
+            maximum_rate: inner.properties.maximum_rate.return_property(),
+            minimum_rate: inner.properties.minimum_rate.return_property(),
+            playback_status: inner.properties.playback_status.return_property(),
+            rate: inner.properties.rate.return_property(),
+            shuffle: inner.properties.shuffle.return_property(),
+            volume: inner.properties.volume.return_property(),
+            metadata: inner.properties.metadata.return_property(),
+        }
+    }
+}
+
 pub struct PlayerHandle {
     pub(crate) inner: Arc<Player>,
+    pub properties: PlayerHandleProperties,
 }
 
 impl PlayerHandle {
-    //
-    pub fn can_quit(&self) -> bool {
-        self.inner.media_player_data.read().unwrap().can_quit
-    }
-
-    pub fn can_raise(&self) -> bool {
-        self.inner.media_player_data.read().unwrap().can_raise
-    }
-
-    pub fn can_set_fullscreen(&self) -> bool {
-        self.inner
-            .media_player_data
-            .read()
-            .unwrap()
-            .can_set_fullscreen
-    }
-
-    pub fn desktop_entry(&self) -> String {
-        self.inner
-            .media_player_data
-            .read()
-            .unwrap()
-            .desktop_entry
-            .clone()
-    }
-
-    pub fn fullscreen(&self) -> bool {
-        self.inner.media_player_data.read().unwrap().fullscreen
-    }
-
-    pub async fn set_fullscreen(&self, value: bool) -> Result<()> {
-        let proxy = self.inner.media_player_proxy().await?;
-        proxy.set_fullscreen(value).await?;
-
-        Ok(())
-    }
-
-    pub fn has_track_list(&self) -> bool {
-        self.inner.media_player_data.read().unwrap().has_track_list
-    }
-
-    pub fn identity(&self) -> String {
-        self.inner
-            .media_player_data
-            .read()
-            .unwrap()
-            .identity
-            .clone()
-    }
-
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner
-            .media_player_data
-            .read()
-            .unwrap()
-            .supported_mime_types
-            .clone()
-    }
-
-    pub fn supported_uri_schemes(&self) -> Vec<String> {
-        self.inner
-            .media_player_data
-            .read()
-            .unwrap()
-            .supported_uri_schemes
-            .clone()
+    pub(crate) fn new(inner: Arc<Player>) -> Self {
+        Self {
+            inner: inner.clone(),
+            properties: PlayerHandleProperties::new(&inner),
+        }
     }
 
     pub async fn quit(&self) -> Result<()> {
@@ -367,6 +406,7 @@ impl PlayerHandle {
             .await?
             .set_position(track_id, position)
             .await?;
+
         Ok(())
     }
 
@@ -380,34 +420,6 @@ impl PlayerHandle {
     // #[zbus(signal)]
     // fn seeked(&self, position: i64) -> zbus::Result<()>;
 
-    pub fn can_control(&self) -> bool {
-        self.inner.player_data.read().unwrap().can_control
-    }
-
-    pub fn can_go_next(&self) -> bool {
-        self.inner.player_data.read().unwrap().can_go_next
-    }
-
-    pub fn can_go_previous(&self) -> bool {
-        self.inner.player_data.read().unwrap().can_go_previous
-    }
-
-    pub fn can_pause(&self) -> bool {
-        self.inner.player_data.read().unwrap().can_pause
-    }
-
-    pub fn can_play(&self) -> bool {
-        self.inner.player_data.read().unwrap().can_play
-    }
-
-    pub fn can_seek(&self) -> bool {
-        self.inner.player_data.read().unwrap().can_seek
-    }
-
-    pub fn loop_status(&self) -> LoopStatus {
-        self.inner.player_data.read().unwrap().loop_status
-    }
-
     pub async fn set_loop_status(&self, value: LoopStatus) -> Result<()> {
         self.inner
             .player_proxy()
@@ -415,56 +427,31 @@ impl PlayerHandle {
             .set_loop_status(&value.to_string())
             .await?;
 
+        self.inner.properties.loop_status.set(value);
+
         Ok(())
-    }
-
-    pub fn maximum_rate(&self) -> f64 {
-        self.inner.player_data.read().unwrap().maximum_rate
-    }
-
-    pub fn metadata(&self) -> Metadata {
-        self.inner.player_data.read().unwrap().metadata.clone()
-    }
-    // fn metadata(
-    //     &self,
-    // ) -> zbus::Result<std::collections::HashMap<String, zbus::zvariant::OwnedValue>>;
-
-    pub fn minimum_rate(&self) -> f64 {
-        self.inner.player_data.read().unwrap().minimum_rate
-    }
-
-    pub fn playback_status(&self) -> PlaybackStatus {
-        self.inner.player_data.read().unwrap().playback_status
     }
 
     // pub fn position(&self) -> i64 {
     //     self.inner.player_data.read().unwrap().posi
     // }
 
-    pub fn rate(&self) -> f64 {
-        self.inner.player_data.read().unwrap().rate
-    }
-
     pub async fn set_rate(&self, value: f64) -> Result<()> {
         self.inner.player_proxy().await?.set_rate(value).await?;
+        self.inner.properties.rate.set(value);
         Ok(())
-    }
-
-    pub fn shuffle(&self) -> bool {
-        self.inner.player_data.read().unwrap().shuffle
     }
 
     pub async fn set_shuffle(&self, value: bool) -> Result<()> {
         self.inner.player_proxy().await?.set_shuffle(value).await?;
+        self.inner.properties.shuffle.set(value);
         Ok(())
-    }
-
-    pub fn volume(&self) -> f64 {
-        self.inner.player_data.read().unwrap().volume
     }
 
     pub async fn set_volume(&self, value: f64) -> Result<()> {
         self.inner.player_proxy().await?.set_volume(value).await?;
+
+        self.inner.properties.volume.set(value);
         Ok(())
     }
 }
@@ -480,9 +467,7 @@ mod tests {
 
     async fn init_handle(name: String) -> PlayerHandle {
         let player = Player::new(name).await.unwrap();
-        PlayerHandle {
-            inner: Arc::new(player),
-        }
+        PlayerHandle::new(Arc::new(player))
     }
 
     async fn get_media_iface_ref(connection: &zbus::Connection) -> InterfaceRef<TestMediaPlayer2> {
@@ -524,7 +509,7 @@ mod tests {
             .unwrap();
 
         tokio::time::sleep(Duration::from_secs(1)).await;
-        assert_eq!(handle.can_quit(), true);
+        handle.properties.can_quit.read(|v| assert_eq!(*v, true))
     }
 
     #[tokio::test]
@@ -552,8 +537,9 @@ mod tests {
 
         tokio::time::sleep(Duration::from_secs(1)).await;
 
-        let handle_metadata = handle.metadata();
-        assert_eq!(handle_metadata.art_url.unwrap(), "blah/blah");
-        assert_eq!(handle_metadata.track_number.unwrap(), 10);
+        handle.properties.metadata.read(|v| {
+            assert_eq!(v.art_url.as_ref().unwrap(), "blah/blah");
+            assert_eq!(v.track_number.unwrap(), 10);
+        });
     }
 }

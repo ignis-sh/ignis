@@ -10,6 +10,7 @@ thiserror = "2.0.17"
 tokio.workspace = true
 futures-util = "0.3.34"
 ignis_events = { path = "../ignis_events" }
+ignis-core = { path = "../ignis-core" }
 futures = "0.3.34"
 serde = "1.0.229"
 
