@@ -154,9 +154,9 @@ mod tests {
 
         for _ in 0..n {
             ctx.run_player().await;
+            // give some time to process each dbus event
+            tokio::time::sleep(Duration::from_secs(1)).await;
         }
-
-        tokio::time::sleep(Duration::from_secs(1)).await;
 
         assert_eq!(service.players().len(), n);
     }
