@@ -1,6 +1,7 @@
 use crate::private_prelude::*;
 use futures_util::stream::StreamExt;
 use ignis_events::Event;
+use std::path::PathBuf;
 use std::sync::Mutex;
 use std::{collections::HashMap, sync::Arc};
 use zbus::Connection;
@@ -9,6 +10,7 @@ struct MprisServiceInner {
     pub(crate) players: Mutex<HashMap<String, Arc<Player>>>,
     player_added: Event<PlayerHandle>,
     player_removed: Event<PlayerHandle>,
+    cache_dir: Option<PathBuf>,
 }
 
 #[derive(Clone)]
@@ -17,14 +19,18 @@ pub struct MprisService {
 }
 
 impl MprisService {
-    pub fn new() -> Self {
+    fn new_with_cache_dir(cache_dir: Option<PathBuf>) -> Self {
         Self {
             inner: Arc::new(MprisServiceInner {
                 players: Mutex::new(HashMap::new()),
                 player_added: Event::<PlayerHandle>::new(),
                 player_removed: Event::<PlayerHandle>::new(),
+                cache_dir: file_utils::get_service_cache_dir(cache_dir).ok(),
             }),
         }
+    }
+    pub fn new() -> Self {
+        Self::new_with_cache_dir(None)
     }
 
     pub async fn run(&self) -> Result<()> {
@@ -89,7 +95,9 @@ impl MprisService {
     }
 
     async fn init_player(&self, name: &str) -> Option<PlayerHandle> {
-        let player = Player::new(name.to_string()).await.ok()?;
+        let player = Player::new(name.to_string(), self.inner.cache_dir.clone())
+            .await
+            .ok()?;
         let shared = Arc::new(player);
         let clone = shared.clone();
         self.inner

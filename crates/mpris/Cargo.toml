@@ -13,7 +13,12 @@ ignis_events = { path = "../ignis_events" }
 ignis-core = { path = "../ignis-core" }
 futures = "0.3.34"
 serde = "1.0.229"
+url = "2.5.8"
+directories = "6.0.0"
+uuid = { version = "1.28.0", features = ["v5"] }
+reqwest = "0.13.5"
 
 [dev-dependencies]
 fake = { version = "5.1.0", features = ["derive"] }
 rand = "0.10.3"
+tempfile = "3.27.0"

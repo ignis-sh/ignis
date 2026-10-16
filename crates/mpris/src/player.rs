@@ -3,7 +3,10 @@ use crate::private_prelude::*;
 use futures_util::StreamExt;
 use ignis_core::property::{Property, PropertyOwner};
 use std::collections::HashMap;
+use std::path::PathBuf;
 use std::sync::Arc;
+use url::Url;
+use uuid::Uuid;
 use zbus::Connection;
 
 // TODO:
@@ -55,6 +58,8 @@ struct PlayerOwnerProperties {
     shuffle: PropertyOwner<bool>,
     volume: PropertyOwner<f64>,
     metadata: PropertyOwner<Metadata>,
+
+    cached_art_cover: PropertyOwner<Option<PathBuf>>,
 }
 
 pub(crate) struct Player {
@@ -64,11 +69,16 @@ pub(crate) struct Player {
 }
 
 impl Player {
-    pub(crate) async fn new(name: String) -> Result<Self> {
+    pub(crate) async fn new(name: String, cache_dir: Option<PathBuf>) -> Result<Self> {
         let connection = Connection::session().await?;
 
         let media_player_proxy = media_player_proxy(&connection, &name).await?;
         let player_proxy = player_proxy(&connection, &name).await?;
+
+        let metadata: Metadata = player_proxy.metadata().await.unwrap_or_default().into();
+
+        let cached_art_cover_dir =
+            cache_dir.and_then(|v| file_utils::get_cached_art_cover_dir(v).ok());
 
         let properties = Arc::new(PlayerOwnerProperties {
             can_quit: PropertyOwner::new(media_player_proxy.can_quit().await.unwrap_or_default()),
@@ -129,7 +139,10 @@ impl Player {
             rate: PropertyOwner::new(player_proxy.rate().await.unwrap_or_default()),
             shuffle: PropertyOwner::new(player_proxy.shuffle().await.unwrap_or_default()),
             volume: PropertyOwner::new(player_proxy.volume().await.unwrap_or_default()),
-            metadata: PropertyOwner::new(player_proxy.metadata().await.unwrap_or_default().into()),
+            cached_art_cover: PropertyOwner::new(
+                Self::cache_art_cover(cached_art_cover_dir.clone(), &metadata).await,
+            ),
+            metadata: PropertyOwner::new(metadata),
         });
 
         let obj = Player {
@@ -141,8 +154,14 @@ impl Player {
         let (ready_tx, ready_rx) = tokio::sync::oneshot::channel();
 
         tokio::spawn(async move {
-            if let Err(e) =
-                Self::listen_properties_change(connection, name, properties, ready_tx).await
+            if let Err(e) = Self::listen_properties_change(
+                connection,
+                name,
+                cached_art_cover_dir,
+                properties,
+                ready_tx,
+            )
+            .await
             {
                 eprintln!("Property listener failed: {e:?}");
             }
@@ -156,6 +175,7 @@ impl Player {
     async fn listen_properties_change(
         connection: Connection,
         name: String,
+        cached_art_cover_dir: Option<PathBuf>,
         properties: Arc<PlayerOwnerProperties>,
         ready_tx: tokio::sync::oneshot::Sender<()>,
     ) -> Result<()> {
@@ -233,9 +253,21 @@ impl Player {
                                 "MaximumRate" => properties
                                     .maximum_rate
                                     .set(f64::try_from(value).unwrap_or_default()),
-                                "Metadata" => properties
-                                    .metadata
-                                    .set(HashMap::try_from(value).unwrap_or_default().into()),
+                                "Metadata" => {
+                                    let metadata =
+                                        HashMap::try_from(value).unwrap_or_default().into();
+
+                                    if let Some(path) = Self::cache_art_cover(
+                                        cached_art_cover_dir.clone(),
+                                        &metadata,
+                                    )
+                                    .await
+                                    {
+                                        properties.cached_art_cover.set(Some(path));
+                                    }
+
+                                    properties.metadata.set(metadata);
+                                }
 
                                 "MinimumRate" => properties
                                     .minimum_rate
@@ -274,6 +306,41 @@ impl Player {
     async fn player_proxy(&self) -> Result<PlayerProxy<'_>> {
         player_proxy(&self.connection, &self.name).await
     }
+
+    async fn cache_art_cover(
+        cached_art_cover_dir: Option<PathBuf>,
+        metadata: &Metadata,
+    ) -> Option<PathBuf> {
+        let url = Url::parse(&metadata.art_url.clone()?).ok()?;
+        let filename = Uuid::new_v5(&Uuid::NAMESPACE_URL, url.as_str().as_bytes());
+
+        let destination = cached_art_cover_dir?.join(filename.to_string());
+
+        if destination.exists() {
+            return Some(destination);
+        }
+
+        match url.scheme() {
+            "http" | "https" => {
+                let response = reqwest::get(url.as_str()).await.ok()?;
+
+                let bytes = response.bytes().await.ok()?;
+                tokio::fs::write(&destination, bytes).await.ok()?;
+                Some(destination)
+            }
+
+            "file" => {
+                let source = url.to_file_path().ok()?;
+                tokio::fs::copy(source, &destination).await.ok()?;
+                Some(destination)
+            }
+
+            scheme => {
+                eprintln!("Unsupported URI scheme: {scheme}");
+                None
+            }
+        }
+    }
 }
 
 pub struct PlayerHandleProperties {
@@ -301,6 +368,8 @@ pub struct PlayerHandleProperties {
     pub shuffle: Property<bool>,
     pub volume: Property<f64>,
     pub metadata: Property<Metadata>,
+
+    pub cached_art_cover: Property<Option<PathBuf>>,
 }
 
 impl PlayerHandleProperties {
@@ -330,6 +399,7 @@ impl PlayerHandleProperties {
             shuffle: inner.properties.shuffle.return_property(),
             volume: inner.properties.volume.return_property(),
             metadata: inner.properties.metadata.return_property(),
+            cached_art_cover: inner.properties.cached_art_cover.return_property(),
         }
     }
 }
@@ -458,16 +528,20 @@ impl PlayerHandle {
 
 #[cfg(test)]
 mod tests {
-    use std::{collections::HashMap, time::Duration};
+    use std::{collections::HashMap, fs, time::Duration};
 
     use zbus::object_server::InterfaceRef;
 
     use super::*;
     use crate::test_utils::*;
 
-    async fn init_handle(name: String) -> PlayerHandle {
-        let player = Player::new(name).await.unwrap();
+    async fn init_handle_with_cache(name: String, cache_dir: Option<PathBuf>) -> PlayerHandle {
+        let player = Player::new(name, cache_dir).await.unwrap();
         PlayerHandle::new(Arc::new(player))
+    }
+
+    async fn init_handle(name: String) -> PlayerHandle {
+        init_handle_with_cache(name, None).await
     }
 
     async fn get_media_iface_ref(connection: &zbus::Connection) -> InterfaceRef<TestMediaPlayer2> {
@@ -540,6 +614,60 @@ mod tests {
         handle.properties.metadata.read(|v| {
             assert_eq!(v.art_url.as_ref().unwrap(), "blah/blah");
             assert_eq!(v.track_number.unwrap(), 10);
+        });
+    }
+
+    #[tokio::test]
+    async fn test_art_cover_caching() {
+        let ctx = TestContext::new().await;
+
+        let player_info = ctx.run_player().await;
+
+        let iface_ref = get_player_iface_ref(&player_info.connection).await;
+
+        {
+            let mut metadata: HashMap<String, String> = HashMap::new();
+            metadata.insert("mpris:artUrl".into(), "https://picsum.photos/200".into());
+            player_info.player_data.lock().unwrap().metadata = metadata;
+        }
+
+        let iface = iface_ref.get().await;
+        iface
+            .metadata_changed(iface_ref.signal_emitter())
+            .await
+            .unwrap();
+
+        let handle =
+            init_handle_with_cache(player_info.name, Some(ctx.temp_dir.path().to_path_buf())).await;
+
+        tokio::time::sleep(Duration::from_secs(2)).await;
+        handle.properties.cached_art_cover.read(|v| {
+            v.as_ref().unwrap();
+        });
+
+        // local file caching
+
+        {
+            let local_file = ctx.temp_dir.path().to_path_buf().join("my-art.png");
+            fs::write(&local_file, "heh").unwrap();
+
+            let mut metadata: HashMap<String, String> = HashMap::new();
+            metadata.insert(
+                "mpris:artUrl".into(),
+                format!("file://{}", local_file.into_string().unwrap()),
+            );
+            player_info.player_data.lock().unwrap().metadata = metadata;
+        }
+
+        iface
+            .metadata_changed(iface_ref.signal_emitter())
+            .await
+            .unwrap();
+
+        tokio::time::sleep(Duration::from_secs(1)).await;
+        handle.properties.cached_art_cover.read(|v| {
+            let string = fs::read_to_string(v.as_ref().unwrap()).unwrap();
+            assert_eq!(string, "heh");
         });
     }
 }

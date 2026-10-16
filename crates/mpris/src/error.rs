@@ -10,6 +10,12 @@ pub enum Error {
 
     #[error("Sync error: {0}")]
     OneshotSyncError(#[from] tokio::sync::oneshot::error::RecvError),
+
+    #[error("I/O error: {0}")]
+    IOError(#[from] std::io::Error),
+
+    #[error("Failed to get cache directory")]
+    CacheDirRetrieveError,
 }
 
 pub type Result<T> = std::result::Result<T, Error>;

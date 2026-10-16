@@ -1,5 +1,6 @@
 mod dbus;
 mod error;
+mod file_utils;
 mod metadata;
 mod playback_status;
 mod player;

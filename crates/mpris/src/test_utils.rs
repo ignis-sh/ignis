@@ -1,8 +1,9 @@
+#[cfg(test)]
 use fake::Fake;
 use std::collections::HashMap;
-#[cfg(test)]
 use std::sync::Arc;
 use std::sync::Mutex;
+use tempfile::TempDir;
 use zbus::{conn::Builder, interface, object_server::SignalEmitter};
 
 #[derive(Default)]
@@ -217,6 +218,7 @@ impl TestPlayer {
 
 pub struct TestContext {
     conns: Mutex<HashMap<String, zbus::Connection>>,
+    pub temp_dir: TempDir,
 }
 
 pub struct TestPlayerInfo {
@@ -226,10 +228,23 @@ pub struct TestPlayerInfo {
     pub name: String,
 }
 
+fn no_tmp_cleanup() -> bool {
+    std::env::var_os("NO_TMP_CLEANUP")
+        .map(|v| v == "1")
+        .unwrap_or(false)
+}
+
 impl TestContext {
     pub async fn new() -> Self {
+        let mut temp_dir = TempDir::new().unwrap();
+
+        if no_tmp_cleanup() {
+            temp_dir.disable_cleanup(true);
+        }
+
         Self {
             conns: Mutex::new(HashMap::new()),
+            temp_dir,
         }
     }
 
