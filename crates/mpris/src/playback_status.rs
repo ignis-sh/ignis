@@ -25,12 +25,12 @@ impl From<String> for PlaybackStatus {
     }
 }
 
-impl Into<String> for PlaybackStatus {
-    fn into(self) -> String {
-        String::from(match self {
-            Self::Playing => "Playing",
-            Self::Paused => "Paused",
-            Self::Stopped => "Stopped",
+impl From<PlaybackStatus> for String {
+    fn from(value: PlaybackStatus) -> String {
+        String::from(match value {
+            PlaybackStatus::Playing => "Playing",
+            PlaybackStatus::Paused => "Paused",
+            PlaybackStatus::Stopped => "Stopped",
         })
     }
 }

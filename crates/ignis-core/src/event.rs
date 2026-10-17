@@ -17,6 +17,12 @@ pub struct EventOwner<T> {
     state: Arc<RwLock<EventState<T>>>,
 }
 
+impl<T> Default for EventOwner<T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 /// A struct which represents some event.
 ///
 /// Generic parameter `T` is a type of argument which callbacks accept.

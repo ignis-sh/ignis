@@ -18,19 +18,22 @@ pub struct MprisService {
     inner: Arc<MprisServiceInner>,
 }
 
+impl Default for MprisService {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl MprisService {
-    fn new_with_cache_dir(cache_dir: Option<PathBuf>) -> Self {
+    pub fn new() -> Self {
         Self {
             inner: Arc::new(MprisServiceInner {
                 players: Mutex::new(HashMap::new()),
                 player_added: Event::<PlayerHandle>::new(),
                 player_removed: Event::<PlayerHandle>::new(),
-                cache_dir: file_utils::get_service_cache_dir(cache_dir).ok(),
+                cache_dir: file_utils::get_service_cache_dir().ok(),
             }),
         }
-    }
-    pub fn new() -> Self {
-        Self::new_with_cache_dir(None)
     }
 
     pub async fn run(&self) -> Result<()> {

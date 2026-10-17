@@ -30,7 +30,7 @@ impl Metadata {
     pub(crate) fn from_map(map: HashMap<String, zbus::zvariant::OwnedValue>) -> Self {
         fn get_str(map: &HashMap<String, zbus::zvariant::OwnedValue>, key: &str) -> Option<String> {
             map.get(key)
-                .and_then(|v| Some(v.to_string().trim_matches('"').to_string()))
+                .map(|v| v.to_string().trim_matches('"').to_string())
         }
 
         Self {

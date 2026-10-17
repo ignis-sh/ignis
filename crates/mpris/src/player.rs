@@ -26,7 +26,7 @@ async fn media_player_proxy<'a>(
 }
 
 async fn player_proxy<'a>(connection: &zbus::Connection, name: &'a str) -> Result<PlayerProxy<'a>> {
-    Ok(PlayerProxy::builder(&connection)
+    Ok(PlayerProxy::builder(connection)
         .destination(name)
         .unwrap()
         .build()
@@ -188,7 +188,7 @@ impl Player {
         let _ = ready_tx.send(());
 
         while let Some(message) = stream.next().await {
-            if let Some(args) = message.args().ok() {
+            if let Ok(args) = message.args() {
                 match args.interface_name.as_str() {
                     "org.mpris.MediaPlayer2" => {
                         for (key, value) in args.changed_properties {
