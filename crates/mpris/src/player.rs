@@ -11,11 +11,6 @@ use url::Url;
 use uuid::Uuid;
 use zbus::Connection;
 
-// TODO:
-// Sync properties
-// Cache cover art
-// add signals
-
 async fn media_player_proxy<'a>(
     connection: &zbus::Connection,
     name: &'a str,
@@ -584,10 +579,6 @@ impl PlayerHandle {
         Ok(())
     }
 
-    // /// Seeked signal
-    // #[zbus(signal)]
-    // fn seeked(&self, position: i64) -> zbus::Result<()>;
-
     pub async fn set_loop_status(&self, value: LoopStatus) -> Result<()> {
         self.inner
             .player_proxy()
@@ -599,10 +590,6 @@ impl PlayerHandle {
 
         Ok(())
     }
-
-    // pub fn position(&self) -> i64 {
-    //     self.inner.player_data.read().unwrap().posi
-    // }
 
     pub async fn set_rate(&self, value: f64) -> Result<()> {
         self.inner.player_proxy().await?.set_rate(value).await?;
