@@ -5,6 +5,8 @@ use ignis_core::property::{Property, PropertyOwner};
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
+use std::time::Duration;
+use tokio::time::MissedTickBehavior;
 use url::Url;
 use uuid::Uuid;
 use zbus::Connection;
@@ -33,6 +35,30 @@ async fn player_proxy<'a>(connection: &zbus::Connection, name: &'a str) -> Resul
         .await?)
 }
 
+pub struct PositionTracker {
+    position_us: i64,
+    updated_at: std::time::Instant,
+    rate: f64,
+    playing: bool,
+}
+
+impl PositionTracker {
+    pub fn current(&self) -> i64 {
+        let elapsed = self.updated_at.elapsed().as_secs_f64();
+
+        if self.playing {
+            self.position_us + (elapsed * self.rate * 1_000_000.0) as i64
+        } else {
+            self.position_us
+        }
+    }
+
+    fn sync(&mut self, position_us: i64) {
+        self.position_us = position_us;
+        self.updated_at = std::time::Instant::now();
+    }
+}
+
 struct PlayerOwnerProperties {
     can_quit: PropertyOwner<bool>,
     can_raise: PropertyOwner<bool>,
@@ -59,6 +85,7 @@ struct PlayerOwnerProperties {
     volume: PropertyOwner<f64>,
     metadata: PropertyOwner<Metadata>,
 
+    position: PropertyOwner<i64>,
     cached_art_cover: PropertyOwner<Option<PathBuf>>,
 }
 
@@ -142,6 +169,7 @@ impl Player {
             cached_art_cover: PropertyOwner::new(
                 Self::cache_art_cover(cached_art_cover_dir.clone(), &metadata).await,
             ),
+            position: PropertyOwner::new(player_proxy.position().await.unwrap_or_default()),
             metadata: PropertyOwner::new(metadata),
         });
 
@@ -153,12 +181,15 @@ impl Player {
 
         let (ready_tx, ready_rx) = tokio::sync::oneshot::channel();
 
+        let name_clone = name.clone();
+        let connection_clone = connection.clone();
+        let properties_clone = properties.clone();
         tokio::spawn(async move {
             if let Err(e) = Self::listen_properties_change(
-                connection,
-                name,
+                connection_clone,
+                name_clone,
                 cached_art_cover_dir,
-                properties,
+                properties_clone,
                 ready_tx,
             )
             .await
@@ -168,6 +199,12 @@ impl Player {
         });
 
         ready_rx.await?;
+
+        tokio::spawn(async move {
+            if let Err(e) = Self::track_position(connection, name, properties).await {
+                eprintln!("Position tracker failed failed: {e:?}");
+            }
+        });
 
         Ok(obj)
     }
@@ -275,9 +312,6 @@ impl Player {
                                 "PlaybackStatus" => properties
                                     .playback_status
                                     .set(String::try_from(value).unwrap_or_default().into()),
-                                // "Position" => properties
-                                //     .position
-                                //     .set(Vec::try_from(value).unwrap_or_default()),
                                 "Rate" => properties
                                     .rate
                                     .set(f64::try_from(value).unwrap_or_default()),
@@ -341,6 +375,66 @@ impl Player {
             }
         }
     }
+
+    async fn track_position(
+        connection: Connection,
+        name: String,
+        properties: Arc<PlayerOwnerProperties>,
+    ) -> Result<()> {
+        let player = player_proxy(&connection, &name).await?;
+        let mut tracker = PositionTracker {
+            position_us: player.position().await?,
+            updated_at: std::time::Instant::now(),
+            rate: player.rate().await?,
+            playing: player.playback_status().await? == "Playing",
+        };
+
+        let mut seeked = player.receive_seeked().await?;
+        let mut status = player.receive_playback_status_changed().await;
+        let mut rate = player.receive_rate_changed().await;
+
+        let mut interval = tokio::time::interval(Duration::from_millis(200));
+        interval.set_missed_tick_behavior(MissedTickBehavior::Skip);
+
+        loop {
+            tokio::select! {
+                Some(signal) = seeked.next() => {
+                    let args = signal.args()?;
+                    tracker.sync(*args.position());
+                    properties.position.set(*args.position());
+                }
+
+                Some(change) = status.next() => {
+                    let new_status = change.get().await?;
+
+                    let current = tracker.current();
+                    tracker.sync(current);
+                    properties.position.set(current);
+                    tracker.playing = new_status == "Playing";
+                }
+
+                Some(change) = rate.next() => {
+                    let new_rate = change.get().await?;
+
+                    let current = tracker.current();
+                    tracker.sync(current);
+
+                    properties.position.set(current);
+                    tracker.rate = new_rate;
+                }
+
+                _ = interval.tick() => {
+                    let current = tracker.current();
+                    tracker.sync(current);
+                    properties.position.set(current);
+                }
+
+                else => break,
+            }
+        }
+
+        Ok(())
+    }
 }
 
 pub struct PlayerHandleProperties {
@@ -368,6 +462,8 @@ pub struct PlayerHandleProperties {
     pub shuffle: Property<bool>,
     pub volume: Property<f64>,
     pub metadata: Property<Metadata>,
+
+    pub position: Property<i64>,
 
     pub cached_art_cover: Property<Option<PathBuf>>,
 }
@@ -399,6 +495,8 @@ impl PlayerHandleProperties {
             shuffle: inner.properties.shuffle.return_property(),
             volume: inner.properties.volume.return_property(),
             metadata: inner.properties.metadata.return_property(),
+
+            position: inner.properties.position.return_property(),
             cached_art_cover: inner.properties.cached_art_cover.return_property(),
         }
     }
@@ -669,5 +767,22 @@ mod tests {
             let string = fs::read_to_string(v.as_ref().unwrap()).unwrap();
             assert_eq!(string, "heh");
         });
+    }
+
+    #[tokio::test]
+    async fn test_position() {
+        let ctx = TestContext::new().await;
+
+        let player_info = ctx.run_player().await;
+        {
+            let mut guard = player_info.player_data.lock().unwrap();
+            guard.playback_status = String::from("Playing");
+            guard.rate = 1.0;
+        }
+
+        let handle = init_handle(player_info.name.clone()).await;
+
+        tokio::time::sleep(Duration::from_secs(2)).await;
+        handle.properties.position.read(|v| assert!(*v > 1));
     }
 }

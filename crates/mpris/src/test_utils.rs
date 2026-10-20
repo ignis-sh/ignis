@@ -93,7 +93,7 @@ pub struct TestPlayerData {
     pub metadata: HashMap<String, String>,
     pub playback_status: String,
     pub position: i64,
-    pub rate: Mutex<f64>,
+    pub rate: f64,
     pub shuffle: Mutex<bool>,
     pub volume: Mutex<f64>,
 }
@@ -189,11 +189,11 @@ impl TestPlayer {
 
     #[zbus(property)]
     pub fn rate(&self) -> f64 {
-        *self.data.lock().unwrap().rate.lock().unwrap()
+        self.data.lock().unwrap().rate
     }
     #[zbus(property)]
     pub fn set_rate(&self, value: f64) {
-        *self.data.lock().unwrap().rate.lock().unwrap() = value;
+        self.data.lock().unwrap().rate = value;
     }
 
     #[zbus(property)]
