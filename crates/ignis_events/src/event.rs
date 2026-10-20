@@ -4,7 +4,6 @@ use std::sync::Mutex;
 
 type Callback<T> = dyn Fn(&T) + Send + Sync + 'static;
 
-#[derive(Default)]
 struct EventInner<T> {
     callbacks: Mutex<HashMap<usize, Arc<Callback<T>>>>,
     next_id: Mutex<usize>,
@@ -13,9 +12,15 @@ struct EventInner<T> {
 /// A struct which represents some event.
 ///
 /// Generic parameter `T` is a type of argument which callbacks accept.
-#[derive(Clone, Default)]
+#[derive(Clone)]
 pub struct Event<T> {
     inner: Arc<EventInner<T>>,
+}
+
+impl<T> Default for Event<T> {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl<T> Event<T> {
