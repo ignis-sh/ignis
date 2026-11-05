@@ -4,7 +4,8 @@ members = [
     "crates/applications", 
     "crates/notifications",
     "crates/py_applications",
-    "crates/py_notifications", "crates/mpris", "crates/ignis-core",
+    "crates/py_notifications", "crates/mpris", "crates/ignis-core", "crates/py-shared-ignis-core",
+    "crates/py-mpris", "crates/ignis-core-proc",
 ]
 
 resolver = "3"

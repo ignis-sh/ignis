@@ -2,6 +2,7 @@ use crate::event::{Event, EventOwner};
 use std::marker::PhantomData;
 use std::sync::{Arc, RwLock};
 
+#[derive(Default)]
 struct PropertyState<T> {
     value: T,
 }
@@ -12,6 +13,17 @@ pub struct Property<T, A = ReadOnly> {
     pub changed: Event<T>,
 }
 
+impl<T, A> Clone for Property<T, A> {
+    fn clone(&self) -> Self {
+        Self {
+            state: self.state.clone(),
+            _access: PhantomData,
+            changed: self.changed.clone(),
+        }
+    }
+}
+
+#[derive(Default)]
 pub struct PropertyOwner<T, A = ReadOnly> {
     state: Arc<RwLock<PropertyState<T>>>,
     // changed is emitted automatically in set()
@@ -32,19 +44,19 @@ impl<T, A> PropertyOwner<T, A> {
         }
     }
 
-    pub fn set(&self, value: T) {
-        self.changed.emit(&value);
-
-        let mut state = self.state.write().unwrap();
-        state.value = value;
-    }
-
     pub fn return_property(&self) -> Property<T, A> {
         Property {
             state: self.state.clone(),
             changed: self.changed.return_event(),
             _access: PhantomData,
         }
+    }
+}
+
+impl<T: Clone, A> PropertyOwner<T, A> {
+    pub fn set(&self, value: T) {
+        self.state.write().unwrap().value = value.clone();
+        self.changed.emit(&value);
     }
 }
 
@@ -63,7 +75,10 @@ impl<T> Property<T, ReadWrite> {
     }
 }
 
+#[derive(Clone)]
 pub struct ReadOnly;
+
+#[derive(Clone)]
 pub struct ReadWrite;
 
 #[cfg(test)]
@@ -80,13 +95,15 @@ mod tests {
         let received = Arc::new(Mutex::new(false));
 
         let received_clone = Arc::clone(&received);
+        let property_clone = property.clone();
 
         property.changed.connect(move |value: &bool| {
+            assert_eq!(property_clone.read(|v| *v), *value);
             *received_clone.lock().unwrap() = *value;
         });
 
         owner.set(true);
 
-        assert_eq!(*received.lock().unwrap(), true);
+        assert!(*received.lock().unwrap());
     }
 }

@@ -1,7 +1,8 @@
 use crate::dbus::{MediaPlayer2Proxy, PlayerProxy};
 use crate::private_prelude::*;
 use futures_util::StreamExt;
-use ignis_core::property::{Property, PropertyOwner};
+use ignis_core::Properties;
+use ignis_core::property::PropertyOwner;
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -54,6 +55,8 @@ impl PositionTracker {
     }
 }
 
+#[derive(Properties)]
+#[properties(handle = PlayerHandleProperties, export = player_properties)]
 struct PlayerOwnerProperties {
     can_quit: PropertyOwner<bool>,
     can_raise: PropertyOwner<bool>,
@@ -249,7 +252,7 @@ impl Player {
                                 "SupportedMimeTypes" => properties
                                     .supported_mime_types
                                     .set(Vec::try_from(value).unwrap_or_default()),
-                                "SupportedUriTypes" => properties
+                                "SupportedUriSchemes" => properties
                                     .supported_uri_schemes
                                     .set(Vec::try_from(value).unwrap_or_default()),
 
@@ -432,71 +435,7 @@ impl Player {
     }
 }
 
-pub struct PlayerHandleProperties {
-    pub can_quit: Property<bool>,
-    pub can_raise: Property<bool>,
-    pub can_set_fullscreen: Property<bool>,
-    pub desktop_entry: Property<String>,
-    pub fullscreen: Property<bool>,
-    pub has_track_list: Property<bool>,
-    pub identity: Property<String>,
-    pub supported_mime_types: Property<Vec<String>>,
-    pub supported_uri_schemes: Property<Vec<String>>,
-
-    pub can_control: Property<bool>,
-    pub can_go_next: Property<bool>,
-    pub can_go_previous: Property<bool>,
-    pub can_pause: Property<bool>,
-    pub can_play: Property<bool>,
-    pub can_seek: Property<bool>,
-    pub loop_status: Property<LoopStatus>,
-    pub maximum_rate: Property<f64>,
-    pub minimum_rate: Property<f64>,
-    pub playback_status: Property<PlaybackStatus>,
-    pub rate: Property<f64>,
-    pub shuffle: Property<bool>,
-    pub volume: Property<f64>,
-    pub metadata: Property<Metadata>,
-
-    pub position: Property<i64>,
-
-    pub cached_art_cover: Property<Option<PathBuf>>,
-}
-
-impl PlayerHandleProperties {
-    fn new(inner: &Player) -> Self {
-        Self {
-            can_quit: inner.properties.can_quit.return_property(),
-            can_raise: inner.properties.can_raise.return_property(),
-            can_set_fullscreen: inner.properties.can_set_fullscreen.return_property(),
-            desktop_entry: inner.properties.desktop_entry.return_property(),
-            fullscreen: inner.properties.fullscreen.return_property(),
-            has_track_list: inner.properties.has_track_list.return_property(),
-            identity: inner.properties.identity.return_property(),
-            supported_mime_types: inner.properties.supported_mime_types.return_property(),
-            supported_uri_schemes: inner.properties.supported_uri_schemes.return_property(),
-
-            can_control: inner.properties.can_control.return_property(),
-            can_go_next: inner.properties.can_go_next.return_property(),
-            can_go_previous: inner.properties.can_go_previous.return_property(),
-            can_pause: inner.properties.can_pause.return_property(),
-            can_play: inner.properties.can_play.return_property(),
-            can_seek: inner.properties.can_seek.return_property(),
-            loop_status: inner.properties.loop_status.return_property(),
-            maximum_rate: inner.properties.maximum_rate.return_property(),
-            minimum_rate: inner.properties.minimum_rate.return_property(),
-            playback_status: inner.properties.playback_status.return_property(),
-            rate: inner.properties.rate.return_property(),
-            shuffle: inner.properties.shuffle.return_property(),
-            volume: inner.properties.volume.return_property(),
-            metadata: inner.properties.metadata.return_property(),
-
-            position: inner.properties.position.return_property(),
-            cached_art_cover: inner.properties.cached_art_cover.return_property(),
-        }
-    }
-}
-
+#[derive(Clone)]
 pub struct PlayerHandle {
     pub(crate) inner: Arc<Player>,
     pub properties: PlayerHandleProperties,
@@ -506,7 +445,7 @@ impl PlayerHandle {
     pub(crate) fn new(inner: Arc<Player>) -> Self {
         Self {
             inner: inner.clone(),
-            properties: PlayerHandleProperties::new(&inner),
+            properties: inner.properties.handle(),
         }
     }
 

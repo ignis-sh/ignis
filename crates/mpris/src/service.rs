@@ -1,21 +1,29 @@
 use crate::private_prelude::*;
 use futures_util::stream::StreamExt;
-use ignis_events::Event;
+use ignis_core::Events;
+use ignis_core::event::EventOwner;
 use std::path::PathBuf;
 use std::sync::Mutex;
 use std::{collections::HashMap, sync::Arc};
 use zbus::Connection;
 
+#[derive(Events, Default)]
+#[events(handle = MprisServiceEvents, export = mpris_service_events)]
+struct MprisServiceOwnerEvents {
+    player_added: EventOwner<PlayerHandle>,
+    player_removed: EventOwner<PlayerHandle>,
+}
+
 struct MprisServiceInner {
     pub(crate) players: Mutex<HashMap<String, Arc<Player>>>,
-    player_added: Event<PlayerHandle>,
-    player_removed: Event<PlayerHandle>,
+    events: MprisServiceOwnerEvents,
     cache_dir: Option<PathBuf>,
 }
 
 #[derive(Clone)]
 pub struct MprisService {
     inner: Arc<MprisServiceInner>,
+    pub events: MprisServiceEvents,
 }
 
 impl Default for MprisService {
@@ -26,12 +34,14 @@ impl Default for MprisService {
 
 impl MprisService {
     pub fn new() -> Self {
+        let events = MprisServiceOwnerEvents::default();
+
         Self {
+            events: events.handle(),
             inner: Arc::new(MprisServiceInner {
                 players: Mutex::new(HashMap::new()),
-                player_added: Event::<PlayerHandle>::new(),
-                player_removed: Event::<PlayerHandle>::new(),
                 cache_dir: file_utils::get_service_cache_dir().ok(),
+                events,
             }),
         }
     }
@@ -69,14 +79,14 @@ impl MprisService {
                     (None, Some(_new_owner)) => {
                         // Name acquired
                         if let Some(handle) = self.init_player(&name).await {
-                            self.inner.player_added.emit(&handle);
+                            self.inner.events.player_added.emit(&handle);
                         }
                     }
 
                     (Some(_old_owner), None) => {
                         // Name lost
                         if let Some(handle) = self.remove_player(&name) {
-                            self.inner.player_removed.emit(&handle);
+                            self.inner.events.player_removed.emit(&handle);
                         }
                     }
 

@@ -30,6 +30,14 @@ pub struct Event<T> {
     state: Arc<RwLock<EventState<T>>>,
 }
 
+impl<T> Clone for Event<T> {
+    fn clone(&self) -> Self {
+        Self {
+            state: self.state.clone(),
+        }
+    }
+}
+
 impl<T> EventOwner<T> {
     pub fn new() -> Self {
         Self {

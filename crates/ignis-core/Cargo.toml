@@ -5,3 +5,4 @@ edition = "2024"
 license.workspace = true
 
 [dependencies]
+ignis-core-proc = { path = "../ignis-core-proc" }
