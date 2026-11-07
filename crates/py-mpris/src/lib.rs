@@ -9,7 +9,22 @@ mod py_mpris {
     use mpris::PlayerHandle as RPlayerHandle;
     use py_shared_ignis_core::ToPy;
     use pyo3::IntoPyObjectExt;
+    use pyo3::exceptions::PyIOError;
+    use pyo3::exceptions::PyOSError;
+    use pyo3::exceptions::PyValueError;
     use pyo3::prelude::*;
+    use zbus::zvariant::ObjectPath;
+
+    fn to_py_err(e: mpris::Error) -> PyErr {
+        let msg = e.to_string();
+        match e {
+            mpris::Error::DBusError(_) => PyOSError::new_err(msg),
+            mpris::Error::OneshotSyncError(_) => PyIOError::new_err(msg),
+            mpris::Error::IOError(_) => PyIOError::new_err(msg),
+            mpris::Error::CacheDirRetrieveError => PyOSError::new_err(msg),
+            mpris::Error::DBusFdoError(_) => PyOSError::new_err(msg),
+        }
+    }
 
     #[pyclass]
     pub struct Metadata {
@@ -156,6 +171,16 @@ mod py_mpris {
         }
     }
 
+    impl From<LoopStatus> for RLoopStatus {
+        fn from(value: LoopStatus) -> Self {
+            match value {
+                LoopStatus::None => Self::None,
+                LoopStatus::Track => Self::Track,
+                LoopStatus::Playlist => Self::Playlist,
+            }
+        }
+    }
+
     impl From<&RPlaybackStatus> for PlaybackStatus {
         fn from(value: &RPlaybackStatus) -> Self {
             match value {
@@ -214,6 +239,132 @@ mod py_mpris {
         }
     }
 
+    #[pymethods]
+    impl Player {
+        fn quit<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
+            let inner = self.inner.clone();
+            pyo3_async_runtimes::tokio::future_into_py(py, async move {
+                inner.quit().await.map_err(to_py_err)
+            })
+        }
+
+        fn raise<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
+            let inner = self.inner.clone();
+            pyo3_async_runtimes::tokio::future_into_py(py, async move {
+                inner.raise().await.map_err(to_py_err)
+            })
+        }
+
+        //
+        // MediaPlayer2.Player
+        //
+
+        fn next<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
+            let inner = self.inner.clone();
+            pyo3_async_runtimes::tokio::future_into_py(py, async move {
+                inner.next().await.map_err(to_py_err)
+            })
+        }
+
+        fn open_uri<'py>(&self, py: Python<'py>, uri: String) -> PyResult<Bound<'py, PyAny>> {
+            let inner = self.inner.clone();
+            pyo3_async_runtimes::tokio::future_into_py(py, async move {
+                inner.open_uri(&uri).await.map_err(to_py_err)
+            })
+        }
+
+        fn pause<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
+            let inner = self.inner.clone();
+            pyo3_async_runtimes::tokio::future_into_py(py, async move {
+                inner.pause().await.map_err(to_py_err)
+            })
+        }
+
+        fn play<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
+            let inner = self.inner.clone();
+            pyo3_async_runtimes::tokio::future_into_py(py, async move {
+                inner.play().await.map_err(to_py_err)
+            })
+        }
+
+        fn play_pause<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
+            let inner = self.inner.clone();
+            pyo3_async_runtimes::tokio::future_into_py(py, async move {
+                inner.play_pause().await.map_err(to_py_err)
+            })
+        }
+
+        fn previous<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
+            let inner = self.inner.clone();
+            pyo3_async_runtimes::tokio::future_into_py(py, async move {
+                inner.previous().await.map_err(to_py_err)
+            })
+        }
+
+        fn seek<'py>(&self, py: Python<'py>, offset: i64) -> PyResult<Bound<'py, PyAny>> {
+            let inner = self.inner.clone();
+            pyo3_async_runtimes::tokio::future_into_py(py, async move {
+                inner.seek(offset).await.map_err(to_py_err)
+            })
+        }
+
+        fn set_position<'py>(
+            &self,
+            py: Python<'py>,
+            track_id: String,
+            position: i64,
+        ) -> PyResult<Bound<'py, PyAny>> {
+            let track_id = ObjectPath::try_from(track_id)
+                .map_err(|e| PyValueError::new_err(format!("Invalid track ID: {e}")))?;
+            let inner = self.inner.clone();
+            pyo3_async_runtimes::tokio::future_into_py(py, async move {
+                inner
+                    .set_position(&track_id, position)
+                    .await
+                    .map_err(to_py_err)
+            })
+        }
+
+        fn stop<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
+            let inner = self.inner.clone();
+            pyo3_async_runtimes::tokio::future_into_py(py, async move {
+                inner.stop().await.map_err(to_py_err)
+            })
+        }
+
+        fn set_loop_status<'py>(
+            &self,
+            py: Python<'py>,
+            value: LoopStatus,
+        ) -> PyResult<Bound<'py, PyAny>> {
+            let inner = self.inner.clone();
+            pyo3_async_runtimes::tokio::future_into_py(py, async move {
+                inner.set_loop_status(value.into()).await.map_err(to_py_err)
+            })
+        }
+
+        fn set_rate<'py>(&self, py: Python<'py>, value: f64) -> PyResult<Bound<'py, PyAny>> {
+            let inner = self.inner.clone();
+            pyo3_async_runtimes::tokio::future_into_py(py, async move {
+                inner.set_rate(value).await.map_err(to_py_err)
+            })
+        }
+
+        fn set_shuffle<'py>(&self, py: Python<'py>, value: bool) -> PyResult<Bound<'py, PyAny>> {
+            let inner = self.inner.clone();
+            pyo3_async_runtimes::tokio::future_into_py(py, async move {
+                inner.set_shuffle(value).await.map_err(to_py_err)
+            })
+        }
+
+        fn set_volume<'py>(&self, py: Python<'py>, value: f64) -> PyResult<Bound<'py, PyAny>> {
+            let inner = self.inner.clone();
+            pyo3_async_runtimes::tokio::future_into_py(py, async move {
+                inner.set_volume(value).await.map_err(to_py_err)
+            })
+        }
+    }
+
     #[pyclass]
     struct MprisService {
         inner: RMprisService,
@@ -241,6 +392,13 @@ mod py_mpris {
                 .into_iter()
                 .map(Player::from_rust)
                 .collect()
+        }
+
+        fn run<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
+            let inner = self.inner.clone();
+            pyo3_async_runtimes::tokio::future_into_py(py, async move {
+                inner.run().await.map_err(to_py_err)
+            })
         }
     }
 }
