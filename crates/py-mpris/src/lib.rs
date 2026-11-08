@@ -60,6 +60,11 @@ mod ignis_mpris {
         }
 
         #[getter]
+        fn artist(&self) -> Option<String> {
+            self.inner.artist.clone()
+        }
+
+        #[getter]
         fn album_artist(&self) -> Option<String> {
             self.inner.album_artist.clone()
         }
