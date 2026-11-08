@@ -1,7 +1,7 @@
 use pyo3::prelude::*;
 
 #[pymodule]
-mod py_mpris {
+mod ignis_mpris {
     use mpris::LoopStatus as RLoopStatus;
     use mpris::Metadata as RMetadata;
     use mpris::MprisService as RMprisService;

@@ -3,7 +3,7 @@ requires = ["maturin>=1.14,<2.0"]
 build-backend = "maturin"
 
 [project]
-name = "py-mpris"
+name = "ignis-mpris"
 requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Rust",
