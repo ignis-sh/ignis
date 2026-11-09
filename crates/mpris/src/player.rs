@@ -307,7 +307,15 @@ impl Player {
                                     )
                                     .await
                                     {
-                                        properties.cached_art_cover.set(Some(path));
+                                        if path
+                                            != properties
+                                                .cached_art_cover
+                                                .return_property()
+                                                .read(|v| v.clone())
+                                                .unwrap_or_default()
+                                        {
+                                            properties.cached_art_cover.set(Some(path));
+                                        };
                                     }
 
                                     properties.metadata.set(metadata);
