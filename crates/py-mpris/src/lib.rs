@@ -238,6 +238,8 @@ mod ignis_mpris {
         Marker
     );
 
+    mpris::player_events!(py_shared_ignis_core::py_events, Player, inner.events);
+
     impl Player {
         fn from_rust(inner: RPlayerHandle) -> Self {
             Self { inner }

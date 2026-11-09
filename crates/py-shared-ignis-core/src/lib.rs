@@ -38,6 +38,12 @@ impl_to_py_clone!(
     bool, i8, i16, i32, i64, u8, u16, u32, u64, f32, f64, String, PathBuf
 );
 
+impl<M> ToPy<M> for () {
+    fn to_py(&self, py: Python<'_>) -> PyResult<Py<PyAny>> {
+        Ok(py.None())
+    }
+}
+
 impl<M, T: ToPy<M>> ToPy<M> for Vec<T> {
     fn to_py(&self, py: Python<'_>) -> PyResult<Py<PyAny>> {
         let items = self
@@ -176,11 +182,18 @@ impl PyProperty {
 /// py_shared_ignis_core::py_properties! { Player, inner.properties, Marker ; can_quit, ... }
 /// ```
 ///
+/// The trailing marker argument (see [`ToPy`]) is optional and defaults to `()`.
+///
 /// The crate invoking it must enable the `multiple-pymethods` feature of pyo3.
 #[macro_export]
 macro_rules! py_properties {
     ($ty:ty, $($path:ident).+, $marker:ty ; $($field:ident),* $(,)?) => {
         $crate::py_properties!(@acc [] $ty, [$($path).+], $marker ; $($field),*);
+    };
+
+    // The marker is optional; it is only needed when converting types from other crates.
+    ($ty:ty, $($path:ident).+ ; $($field:ident),* $(,)?) => {
+        $crate::py_properties!(@acc [] $ty, [$($path).+], () ; $($field),*);
     };
 
     // Accumulate one getter per field. A plain `$(...)*` over fields can't be used, because
@@ -221,11 +234,18 @@ macro_rules! py_properties {
 /// py_shared_ignis_core::py_events! { MprisService, inner.events, Marker ; player_added, ... }
 /// ```
 ///
+/// The trailing marker argument (see [`ToPy`]) is optional and defaults to `()`.
+///
 /// The crate invoking it must enable the `multiple-pymethods` feature of pyo3.
 #[macro_export]
 macro_rules! py_events {
     ($ty:ty, $($path:ident).+, $marker:ty ; $($field:ident),* $(,)?) => {
         $crate::py_events!(@acc [] $ty, [$($path).+], $marker ; $($field),*);
+    };
+
+    // The marker is optional; it is only needed when converting types from other crates.
+    ($ty:ty, $($path:ident).+ ; $($field:ident),* $(,)?) => {
+        $crate::py_events!(@acc [] $ty, [$($path).+], () ; $($field),*);
     };
 
     // See `py_properties` for why the getters are accumulated.

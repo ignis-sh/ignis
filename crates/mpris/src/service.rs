@@ -87,6 +87,7 @@ impl MprisService {
                         // Name lost
                         if let Some(handle) = self.remove_player(&name) {
                             self.inner.events.player_removed.emit(&handle);
+                            handle.inner.events.removed.emit(&());
                         }
                     }
 

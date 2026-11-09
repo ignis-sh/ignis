@@ -1,8 +1,9 @@
 use crate::dbus::{MediaPlayer2Proxy, PlayerProxy};
 use crate::private_prelude::*;
 use futures_util::StreamExt;
-use ignis_core::Properties;
+use ignis_core::event::EventOwner;
 use ignis_core::property::PropertyOwner;
+use ignis_core::{Events, Properties};
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -87,10 +88,17 @@ struct PlayerOwnerProperties {
     cached_art_cover: PropertyOwner<Option<PathBuf>>,
 }
 
+#[derive(Events, Default)]
+#[events(handle = PlayerHandleEvents, export = player_events)]
+pub(crate) struct PlayerOwnerEvents {
+    pub(crate) removed: EventOwner<()>,
+}
+
 pub(crate) struct Player {
     name: String,
     connection: Connection,
     properties: Arc<PlayerOwnerProperties>,
+    pub(crate) events: PlayerOwnerEvents,
 }
 
 impl Player {
@@ -175,6 +183,7 @@ impl Player {
             name: name.clone(),
             connection: connection.clone(),
             properties: properties.clone(),
+            events: PlayerOwnerEvents::default(),
         };
 
         let (ready_tx, ready_rx) = tokio::sync::oneshot::channel();
@@ -439,6 +448,7 @@ impl Player {
 pub struct PlayerHandle {
     pub(crate) inner: Arc<Player>,
     pub properties: PlayerHandleProperties,
+    pub events: PlayerHandleEvents,
 }
 
 impl PlayerHandle {
@@ -446,6 +456,7 @@ impl PlayerHandle {
         Self {
             inner: inner.clone(),
             properties: inner.properties.handle(),
+            events: inner.events.handle(),
         }
     }
 
