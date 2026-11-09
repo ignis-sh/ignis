@@ -85,7 +85,7 @@ struct PlayerOwnerProperties {
     metadata: PropertyOwner<Metadata>,
 
     position: PropertyOwner<i64>,
-    cached_art_cover: PropertyOwner<Option<PathBuf>>,
+    cached_cover_art: PropertyOwner<Option<PathBuf>>,
 }
 
 #[derive(Events, Default)]
@@ -110,8 +110,8 @@ impl Player {
 
         let metadata: Metadata = player_proxy.metadata().await.unwrap_or_default().into();
 
-        let cached_art_cover_dir =
-            cache_dir.and_then(|v| file_utils::get_cached_art_cover_dir(v).ok());
+        let cached_cover_art_dir =
+            cache_dir.and_then(|v| file_utils::get_cached_cover_art_dir(v).ok());
 
         let properties = Arc::new(PlayerOwnerProperties {
             can_quit: PropertyOwner::new(media_player_proxy.can_quit().await.unwrap_or_default()),
@@ -172,8 +172,8 @@ impl Player {
             rate: PropertyOwner::new(player_proxy.rate().await.unwrap_or_default()),
             shuffle: PropertyOwner::new(player_proxy.shuffle().await.unwrap_or_default()),
             volume: PropertyOwner::new(player_proxy.volume().await.unwrap_or_default()),
-            cached_art_cover: PropertyOwner::new(
-                Self::cache_art_cover(cached_art_cover_dir.clone(), &metadata).await,
+            cached_cover_art: PropertyOwner::new(
+                Self::cache_art_cover(cached_cover_art_dir.clone(), &metadata).await,
             ),
             position: PropertyOwner::new(player_proxy.position().await.unwrap_or_default()),
             metadata: PropertyOwner::new(metadata),
@@ -195,7 +195,7 @@ impl Player {
             if let Err(e) = Self::listen_properties_change(
                 connection_clone,
                 name_clone,
-                cached_art_cover_dir,
+                cached_cover_art_dir,
                 properties_clone,
                 ready_tx,
             )
@@ -219,7 +219,7 @@ impl Player {
     async fn listen_properties_change(
         connection: Connection,
         name: String,
-        cached_art_cover_dir: Option<PathBuf>,
+        cached_cover_art_dir: Option<PathBuf>,
         properties: Arc<PlayerOwnerProperties>,
         ready_tx: tokio::sync::oneshot::Sender<()>,
     ) -> Result<()> {
@@ -302,19 +302,19 @@ impl Player {
                                         HashMap::try_from(value).unwrap_or_default().into();
 
                                     if let Some(path) = Self::cache_art_cover(
-                                        cached_art_cover_dir.clone(),
+                                        cached_cover_art_dir.clone(),
                                         &metadata,
                                     )
                                     .await
                                     {
                                         if path
                                             != properties
-                                                .cached_art_cover
+                                                .cached_cover_art
                                                 .return_property()
                                                 .read(|v| v.clone())
                                                 .unwrap_or_default()
                                         {
-                                            properties.cached_art_cover.set(Some(path));
+                                            properties.cached_cover_art.set(Some(path));
                                         };
                                     }
 
@@ -357,13 +357,13 @@ impl Player {
     }
 
     async fn cache_art_cover(
-        cached_art_cover_dir: Option<PathBuf>,
+        cached_cover_art_dir: Option<PathBuf>,
         metadata: &Metadata,
     ) -> Option<PathBuf> {
         let url = Url::parse(&metadata.art_url.clone()?).ok()?;
         let filename = Uuid::new_v5(&Uuid::NAMESPACE_URL, url.as_str().as_bytes());
 
-        let destination = cached_art_cover_dir?.join(filename.to_string());
+        let destination = cached_cover_art_dir?.join(filename.to_string());
 
         if destination.exists() {
             return Some(destination);
@@ -684,7 +684,7 @@ mod tests {
             init_handle_with_cache(player_info.name, Some(ctx.temp_dir.path().to_path_buf())).await;
 
         tokio::time::sleep(Duration::from_secs(2)).await;
-        handle.properties.cached_art_cover.read(|v| {
+        handle.properties.cached_cover_art.read(|v| {
             v.as_ref().unwrap();
         });
 
@@ -708,7 +708,7 @@ mod tests {
             .unwrap();
 
         tokio::time::sleep(Duration::from_secs(1)).await;
-        handle.properties.cached_art_cover.read(|v| {
+        handle.properties.cached_cover_art.read(|v| {
             let string = fs::read_to_string(v.as_ref().unwrap()).unwrap();
             assert_eq!(string, "heh");
         });

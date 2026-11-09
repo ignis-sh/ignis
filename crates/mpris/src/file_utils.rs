@@ -11,7 +11,7 @@ pub(crate) fn get_service_cache_dir() -> Result<PathBuf> {
     Ok(cache_dir.to_path_buf())
 }
 
-pub(crate) fn get_cached_art_cover_dir(cache_dir: PathBuf) -> Result<PathBuf> {
+pub(crate) fn get_cached_cover_art_dir(cache_dir: PathBuf) -> Result<PathBuf> {
     let dir = cache_dir.join("images");
     fs::create_dir_all(&dir)?;
     Ok(dir)
