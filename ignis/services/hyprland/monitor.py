@@ -63,8 +63,10 @@ class HyprlandMonitor(DataGObject):
         def replace_ws(type_: Literal["active", "special"]) -> None:
             ws = data.pop(f"{type_}Workspace", None)
             if ws:
-                data[f"{type_}_workspace_id"] = ws["id"]
-                data[f"{type_}_workspace_name"] = ws["name"]
+                if "id" in ws:
+                    data[f"{type_}_workspace_id"] = ws["id"]
+                if "name" in ws:
+                    data[f"{type_}_workspace_name"] = ws["name"]
 
         replace_ws("active")
         replace_ws("special")
