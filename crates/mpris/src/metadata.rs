@@ -88,12 +88,12 @@ impl Metadata {
         }
 
         Self {
-            track_id: get_str(&map, "mpris:trackId"),
+            track_id: get_str(&map, "mpris:trackid"),
             length: get_str(&map, "mpris:length").and_then(|v| v.parse::<i64>().ok()),
             art_url: get_str(&map, "mpris:artUrl"),
 
             album: get_str(&map, "xesam:album"),
-            album_artist: get_str(&map, "xesam:album_artist"),
+            album_artist: get_str(&map, "xesam:albumArtist"),
             artist: get_str(&map, "xesam:artist"),
             as_text: get_str(&map, "xesam:asText"),
             audio_bpm: get_str(&map, "xesam:audioBPM"),
@@ -111,9 +111,8 @@ impl Metadata {
             title: get_str(&map, "xesam:title"),
             track_number: get_str(&map, "xesam:trackNumber").and_then(|v| v.parse::<u32>().ok()),
             url: get_str(&map, "xesam:url"),
-            use_count: get_str(&map, "xesam:trackNumber").and_then(|v| v.parse::<u32>().ok()),
-            // user_rating: downcast::<f32>(&map, "xesam:userRating"),
-            user_rating: None,
+            use_count: get_str(&map, "xesam:useCount").and_then(|v| v.parse::<u32>().ok()),
+            user_rating: get_str(&map, "xesam:userRating").and_then(|v| v.parse::<f32>().ok()),
         }
     }
 }
