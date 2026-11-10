@@ -62,6 +62,7 @@ in {
     packages = with pkgs; [
       self.packages.${pkgs.system}.python314Packages.ignis-applications
       self.packages.${pkgs.system}.python314Packages.ignis-notifications
+      self.packages.${pkgs.system}.python314Packages.ignis-mpris
 
       python314Packages.mkdocs
       python314Packages.mkdocstrings
