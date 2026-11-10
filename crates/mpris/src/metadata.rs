@@ -1,28 +1,82 @@
 use std::collections::HashMap;
 
+/// Metadata of the current track.
+///
+/// Fields are parsed from the
+/// [MPRIS metadata](https://specifications.freedesktop.org/mpris/latest/Track_List_Interface.html#Mapping:Metadata_Map)
+/// reported by the player. A field is `None` if the player doesn't provide it.
 #[derive(Clone, Default)]
 pub struct Metadata {
+    /// The unique identifier of the track within the context of the player's track list.
+    ///
+    /// Pass it to [`set_position`].
     pub track_id: Option<String>,
+
+    /// The duration of the track in microseconds.
     pub length: Option<i64>,
+
+    /// The location of an image representing the track or album, as a URI.
+    ///
+    /// See also `cached_cover_art` of the player, which provides a local copy of the image.
     pub art_url: Option<String>,
+
+    /// The album name.
     pub album: Option<String>,
+
+    /// The album artist(s).
     pub album_artist: Option<String>,
+
+    /// The track artist(s).
     pub artist: Option<String>,
+
+    /// The track lyrics.
     pub as_text: Option<String>,
+
+    /// The speed of the music, in beats per minute.
     pub audio_bpm: Option<String>,
+
+    /// An automatically-generated rating, based on things such as how often it has been played.
+    ///
+    /// It is in the range from 0.0 to 1.0.
     pub auto_rating: Option<String>,
+
+    /// A (list of) freeform comment(s).
     pub comment: Option<String>,
+
+    /// The composer(s) of the track.
     pub composer: Option<String>,
+
+    /// When the track was created, as an ISO 8601 date.
     pub content_created: Option<String>,
+
+    /// The disc number on the album that this track is from.
     pub disc_number: Option<String>,
+
+    /// When the track was first played, as an ISO 8601 date.
     pub first_used: Option<String>,
+
+    /// The genre(s) of the track.
     pub genre: Option<String>,
+
+    /// When the track was last played, as an ISO 8601 date.
     pub last_used: Option<String>,
+
+    /// The lyricist(s) of the track.
     pub lyricist: Option<String>,
+
+    /// The track title.
     pub title: Option<String>,
+
+    /// The track number on the album disc.
     pub track_number: Option<u32>,
+
+    /// The location of the media file, as a URI.
     pub url: Option<String>,
+
+    /// The number of times the track has been played.
     pub use_count: Option<u32>,
+
+    /// A user-specified rating, in the range from 0.0 to 1.0.
     pub user_rating: Option<f32>,
 }
 

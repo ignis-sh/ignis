@@ -7,10 +7,17 @@ use std::sync::Mutex;
 use std::{collections::HashMap, sync::Arc};
 use zbus::Connection;
 
+/// Events of [`MprisService`].
 #[derive(Events, Default)]
 #[events(handle = MprisServiceEvents, export = mpris_service_events)]
 struct MprisServiceOwnerEvents {
+    /// Emitted with the new player when a player appears on the bus.
+    ///
+    /// It is not emitted for players that are already running when the service starts. Use
+    /// `players` to get them.
     player_added: EventOwner<PlayerHandle>,
+
+    /// Emitted with the player when a player disappears from the bus, e.g. when it is closed.
     player_removed: EventOwner<PlayerHandle>,
 }
 
@@ -20,9 +27,17 @@ struct MprisServiceInner {
     cache_dir: Option<PathBuf>,
 }
 
+/// A service which tracks media players on the session bus.
+///
+/// A player is any D-Bus client which owns a name starting with `org.mpris.MediaPlayer2`.
+///
+/// [`MprisService`] implements [`Clone`] and can be cloned cheaply since underlying data is
+/// shared.
 #[derive(Clone)]
 pub struct MprisService {
     inner: Arc<MprisServiceInner>,
+
+    /// Events of the service.
     pub events: MprisServiceEvents,
 }
 
@@ -33,6 +48,12 @@ impl Default for MprisService {
 }
 
 impl MprisService {
+    /// Creates a new instance of the service.
+    ///
+    /// Cover arts are cached in `$XDG_CACHE_HOME/ignis-mpris/images`. If the cache directory
+    /// can't be created, cover arts are not cached.
+    ///
+    /// The service doesn't track players until [`MprisService::run`] is called.
     pub fn new() -> Self {
         let events = MprisServiceOwnerEvents::default();
 
@@ -46,6 +67,16 @@ impl MprisService {
         }
     }
 
+    /// Runs the service.
+    ///
+    /// Connects to the session bus, adds players which are already running and starts watching
+    /// for players appearing and disappearing in the background. Must be called only once.
+    ///
+    /// Players that fail to initialize are skipped.
+    ///
+    /// # Errors
+    /// Returns [`Error::DBusError`] or [`Error::DBusFdoError`] if connecting to the session bus or
+    /// listing the names on it fails.
     pub async fn run(&self) -> Result<()> {
         let connection = Connection::session().await?;
         let proxy = zbus::fdo::DBusProxy::new(&connection).await?;
@@ -123,6 +154,7 @@ impl MprisService {
         Some(PlayerHandle::new(clone))
     }
 
+    /// Returns the currently running players.
     pub fn players(&self) -> Vec<PlayerHandle> {
         self.inner
             .players

@@ -18,6 +18,9 @@ use syn::{Data, DeriveInput, Fields, Ident, PathArguments, Type, parse_macro_inp
 /// - `#[macro_export] macro_rules! player_properties`, which calls the passed macro with the
 ///   property names: `player_properties!(some::macro, args...)` expands to
 ///   `some::macro! { args... ; volume }`.
+///
+/// Doc comments on the struct and its fields are copied to the handle struct and passed along
+/// with the property names, so the invoked macro can reuse them.
 #[proc_macro_derive(Properties, attributes(properties))]
 pub fn derive_properties(input: TokenStream) -> TokenStream {
     let kind = Kind {
@@ -52,6 +55,9 @@ pub fn derive_properties(input: TokenStream) -> TokenStream {
 /// - `#[macro_export] macro_rules! mpris_service_events`, which calls the passed macro with the
 ///   event names: `mpris_service_events!(some::macro, args...)` expands to
 ///   `some::macro! { args... ; player_added }`.
+///
+/// Doc comments on the struct and its fields are copied to the handle struct and passed along
+/// with the event names, so the invoked macro can reuse them.
 #[proc_macro_derive(Events, attributes(events))]
 pub fn derive_events(input: TokenStream) -> TokenStream {
     let kind = Kind {
@@ -141,18 +147,32 @@ fn expand(input: DeriveInput, kind: &Kind) -> syn::Result<proc_macro2::TokenStre
     for field in fields {
         let name = field.ident.as_ref().unwrap();
         let args = generic_args(&field.ty, kind.owner_ty)?;
-        let docs = field.attrs.iter().filter(|a| a.path().is_ident("doc"));
+        let docs: Vec<_> = field
+            .attrs
+            .iter()
+            .filter(|a| a.path().is_ident("doc"))
+            .collect();
 
         handle_fields.push(quote! {
             #(#docs)*
             pub #name: #handle_ty #args
         });
         handle_inits.push(quote! { #name: self.#name.#return_fn() });
-        names.push(name);
+        // Doc comments are passed along with the name, so bindings can document generated items.
+        names.push(quote! { #(#docs)* #name });
     }
 
+    let handle_docs = input.attrs.iter().filter(|a| a.path().is_ident("doc"));
+
     let export_macro = export.map(|export| {
+        let export_doc = format!(
+            "Calls the given macro with the list of {attr_name} of [`{handle}`].\n\n\
+             `{export}!(some::macro, args...)` expands to `some::macro! {{ args... ; names... }}`, \
+             where each name is preceded by its doc comments."
+        );
+
         quote! {
+            #[doc = #export_doc]
             #[macro_export]
             macro_rules! #export {
                 ($($cb:ident)::+ , $($args:tt)*) => {
@@ -163,12 +183,14 @@ fn expand(input: DeriveInput, kind: &Kind) -> syn::Result<proc_macro2::TokenStre
     });
 
     Ok(quote! {
+        #(#handle_docs)*
         #[derive(Clone)]
         pub struct #handle {
             #(#handle_fields,)*
         }
 
         impl #owner {
+            /// Returns a handle exposing the public side of each field.
             pub fn handle(&self) -> #handle {
                 #handle {
                     #(#handle_inits,)*

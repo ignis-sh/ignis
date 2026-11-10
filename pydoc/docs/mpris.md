@@ -1,0 +1,3 @@
+# MPRIS
+
+::: ignis_mpris

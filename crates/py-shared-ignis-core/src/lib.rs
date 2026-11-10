@@ -184,31 +184,35 @@ impl PyProperty {
 ///
 /// The trailing marker argument (see [`ToPy`]) is optional and defaults to `()`.
 ///
+/// Attributes preceding a field name (e.g. doc comments) are applied to its getter, so the
+/// Python docstrings match the Rust ones.
+///
 /// The crate invoking it must enable the `multiple-pymethods` feature of pyo3.
 #[macro_export]
 macro_rules! py_properties {
-    ($ty:ty, $($path:ident).+, $marker:ty ; $($field:ident),* $(,)?) => {
-        $crate::py_properties!(@acc [] $ty, [$($path).+], $marker ; $($field),*);
+    ($ty:ty, $($path:ident).+, $marker:ty ; $($fields:tt)*) => {
+        $crate::py_properties!(@acc [] $ty, [$($path).+], $marker ; $($fields)*);
     };
 
     // The marker is optional; it is only needed when converting types from other crates.
-    ($ty:ty, $($path:ident).+ ; $($field:ident),* $(,)?) => {
-        $crate::py_properties!(@acc [] $ty, [$($path).+], () ; $($field),*);
+    ($ty:ty, $($path:ident).+ ; $($fields:tt)*) => {
+        $crate::py_properties!(@acc [] $ty, [$($path).+], () ; $($fields)*);
     };
 
     // Accumulate one getter per field. A plain `$(...)*` over fields can't be used, because
     // `$path` is a repetition too and macro_rules would require both to repeat equally.
-    (@acc [$($acc:tt)*] $ty:ty, [$($path:ident).+], $marker:ty ; $field:ident $(, $rest:ident)*) => {
+    (@acc [$($acc:tt)*] $ty:ty, [$($path:ident).+], $marker:ty ; $(#[$meta:meta])* $field:ident $(, $($rest:tt)*)?) => {
         $crate::py_properties!(
             @acc
             [
                 $($acc)*
+                $(#[$meta])*
                 #[getter]
                 fn $field(&self, py: $crate::pyo3::Python<'_>) -> $crate::pyo3::PyResult<$crate::PyProperty> {
                     $crate::PyProperty::new::<$marker, _, _>(py, self.$($path).+.$field.clone())
                 }
             ]
-            $ty, [$($path).+], $marker ; $($rest),*
+            $ty, [$($path).+], $marker ; $($($rest)*)?
         );
     };
 
@@ -236,30 +240,33 @@ macro_rules! py_properties {
 ///
 /// The trailing marker argument (see [`ToPy`]) is optional and defaults to `()`.
 ///
+/// Attributes preceding a field name are applied to its getter, see [`py_properties!`].
+///
 /// The crate invoking it must enable the `multiple-pymethods` feature of pyo3.
 #[macro_export]
 macro_rules! py_events {
-    ($ty:ty, $($path:ident).+, $marker:ty ; $($field:ident),* $(,)?) => {
-        $crate::py_events!(@acc [] $ty, [$($path).+], $marker ; $($field),*);
+    ($ty:ty, $($path:ident).+, $marker:ty ; $($fields:tt)*) => {
+        $crate::py_events!(@acc [] $ty, [$($path).+], $marker ; $($fields)*);
     };
 
     // The marker is optional; it is only needed when converting types from other crates.
-    ($ty:ty, $($path:ident).+ ; $($field:ident),* $(,)?) => {
-        $crate::py_events!(@acc [] $ty, [$($path).+], () ; $($field),*);
+    ($ty:ty, $($path:ident).+ ; $($fields:tt)*) => {
+        $crate::py_events!(@acc [] $ty, [$($path).+], () ; $($fields)*);
     };
 
     // See `py_properties` for why the getters are accumulated.
-    (@acc [$($acc:tt)*] $ty:ty, [$($path:ident).+], $marker:ty ; $field:ident $(, $rest:ident)*) => {
+    (@acc [$($acc:tt)*] $ty:ty, [$($path:ident).+], $marker:ty ; $(#[$meta:meta])* $field:ident $(, $($rest:tt)*)?) => {
         $crate::py_events!(
             @acc
             [
                 $($acc)*
+                $(#[$meta])*
                 #[getter]
                 fn $field(&self) -> $crate::PyEvent {
                     $crate::PyEvent::new::<$marker, _>(self.$($path).+.$field.clone())
                 }
             ]
-            $ty, [$($path).+], $marker ; $($rest),*
+            $ty, [$($path).+], $marker ; $($($rest)*)?
         );
     };
 

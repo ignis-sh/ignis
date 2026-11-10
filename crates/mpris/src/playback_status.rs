@@ -1,10 +1,18 @@
 // https://specifications.freedesktop.org/mpris/latest/Player_Interface.html#Enum:Playback_Status
 //
 
+/// The playback state of a player.
+///
+/// Unknown values reported by a player are treated as [`PlaybackStatus::Stopped`].
 #[derive(Copy, Clone)]
 pub enum PlaybackStatus {
+    /// A track is currently playing.
     Playing,
+
+    /// A track is currently paused.
     Paused,
+
+    /// There is no track currently playing.
     Stopped,
 }
 
@@ -45,10 +53,18 @@ impl std::fmt::Display for PlaybackStatus {
     }
 }
 
+/// The looping behavior of a player.
+///
+/// Unknown values reported by a player are treated as [`LoopStatus::None`].
 #[derive(Copy, Clone)]
 pub enum LoopStatus {
+    /// The playback will stop when there are no more tracks to play.
     None,
+
+    /// The current track will start again from the beginning once it has finished playing.
     Track,
+
+    /// The playback loops through a list of tracks.
     Playlist,
 }
 

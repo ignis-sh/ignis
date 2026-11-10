@@ -56,41 +56,107 @@ impl PositionTracker {
     }
 }
 
+/// Properties of a [`PlayerHandle`].
+///
+/// They are kept in sync with the player. A property the player doesn't provide has the default
+/// value of its type (e.g. `false` or an empty string).
 #[derive(Properties)]
 #[properties(handle = PlayerHandleProperties, export = player_properties)]
 struct PlayerOwnerProperties {
+    /// Whether the player can be closed with `quit`.
     can_quit: PropertyOwner<bool>,
+
+    /// Whether the player can be brought to the front with `raise`.
     can_raise: PropertyOwner<bool>,
+
+    /// Whether the player's fullscreen state can be changed.
     can_set_fullscreen: PropertyOwner<bool>,
+
+    /// The basename of the player's desktop entry, e.g. `"vlc"` for `vlc.desktop`.
+    ///
+    /// Empty if the player doesn't provide it.
     desktop_entry: PropertyOwner<String>,
+
+    /// Whether the player is occupying the fullscreen.
     fullscreen: PropertyOwner<bool>,
+
+    /// Whether the player has a track list.
     has_track_list: PropertyOwner<bool>,
+
+    /// A friendly name to identify the player to users, e.g. `"VLC media player"`.
     identity: PropertyOwner<String>,
+
+    /// The MIME types supported by the player, e.g. `"audio/mpeg"`.
     supported_mime_types: PropertyOwner<Vec<String>>,
+
+    /// The URI schemes supported by the player, e.g. `"file"` or `"http"`.
+    ///
+    /// A URI passed to `open_uri` should use one of them.
     supported_uri_schemes: PropertyOwner<Vec<String>>,
 
+    /// Whether the player can be controlled.
+    ///
+    /// If not, calling any method or setting any property will likely fail.
     can_control: PropertyOwner<bool>,
+
+    /// Whether `next` is expected to skip to the next track.
     can_go_next: PropertyOwner<bool>,
+
+    /// Whether `previous` is expected to skip to the previous track.
     can_go_previous: PropertyOwner<bool>,
+
+    /// Whether playback can be paused using `pause` or `play_pause`.
     can_pause: PropertyOwner<bool>,
+
+    /// Whether playback can be started using `play` or `play_pause`.
     can_play: PropertyOwner<bool>,
+
+    /// Whether the position can be changed using `seek` and `set_position`.
     can_seek: PropertyOwner<bool>,
+
+    /// The current loop status. Change it with `set_loop_status`.
     loop_status: PropertyOwner<LoopStatus>,
+
+    /// The maximum value which `rate` can take.
     maximum_rate: PropertyOwner<f64>,
+
+    /// The minimum value which `rate` can take.
     minimum_rate: PropertyOwner<f64>,
+
+    /// The current playback status.
     playback_status: PropertyOwner<PlaybackStatus>,
+
+    /// The current playback rate, where `1.0` is the normal speed. Change it with `set_rate`.
     rate: PropertyOwner<f64>,
+
+    /// Whether tracks are played in a random order. Change it with `set_shuffle`.
     shuffle: PropertyOwner<bool>,
+
+    /// The volume level, where `0.0` is muted and `1.0` is a sensible maximum. Change it with
+    /// `set_volume`.
     volume: PropertyOwner<f64>,
+
+    /// The metadata of the current track.
     metadata: PropertyOwner<Metadata>,
 
+    /// The current track position in microseconds.
+    ///
+    /// The position is computed locally from the last position reported by the player, the
+    /// playback status and the rate. Its `changed` event is emitted every 200 milliseconds.
     position: PropertyOwner<i64>,
+
+    /// The path to a local copy of the current track's cover art (`art_url` of `metadata`).
+    ///
+    /// The image is downloaded (`http` and `https` URIs) or copied (`file` URIs) into the cache
+    /// directory. `None` if the cover art can't be cached.
     cached_cover_art: PropertyOwner<Option<PathBuf>>,
 }
 
+/// Events of a [`PlayerHandle`].
 #[derive(Events, Default)]
 #[events(handle = PlayerHandleEvents, export = player_events)]
 pub(crate) struct PlayerOwnerEvents {
+    /// Emitted when the player disappears from the bus, e.g. when it is closed.
     pub(crate) removed: EventOwner<()>,
 }
 
@@ -452,10 +518,20 @@ impl Player {
     }
 }
 
+/// A handle to a media player.
+///
+/// Implements the `org.mpris.MediaPlayer2` and `org.mpris.MediaPlayer2.Player` D-Bus interfaces.
+///
+/// [`PlayerHandle`] implements [`Clone`] and can be cloned cheaply since underlying data is
+/// shared.
 #[derive(Clone)]
 pub struct PlayerHandle {
     pub(crate) inner: Arc<Player>,
+
+    /// Properties of the player.
     pub properties: PlayerHandleProperties,
+
+    /// Events of the player.
     pub events: PlayerHandleEvents,
 }
 
@@ -468,11 +544,23 @@ impl PlayerHandle {
         }
     }
 
+    /// Asks the player to quit.
+    ///
+    /// The player may ignore this. See `can_quit`.
+    ///
+    /// # Errors
+    /// Returns [`Error::DBusError`] or [`Error::DBusFdoError`] if the D-Bus call fails.
     pub async fn quit(&self) -> Result<()> {
         self.inner.media_player_proxy().await?.quit().await?;
         Ok(())
     }
 
+    /// Asks the player to bring its user interface to the front.
+    ///
+    /// The player may ignore this. See `can_raise`.
+    ///
+    /// # Errors
+    /// Returns [`Error::DBusError`] or [`Error::DBusFdoError`] if the D-Bus call fails.
     pub async fn raise(&self) -> Result<()> {
         self.inner.media_player_proxy().await?.raise().await?;
         Ok(())
@@ -482,41 +570,94 @@ impl PlayerHandle {
     // MediaPlayer2.Player
     //
 
+    /// Skips to the next track in the tracklist.
+    ///
+    /// If there is no next track (and endless playback and track repeat are both off), stops
+    /// playback. See `can_go_next`.
+    ///
+    /// # Errors
+    /// Returns [`Error::DBusError`] or [`Error::DBusFdoError`] if the D-Bus call fails.
     pub async fn next(&self) -> Result<()> {
         self.inner.player_proxy().await?.next().await?;
         Ok(())
     }
 
+    /// Opens the URI and starts playing it.
+    ///
+    /// The URI scheme should be one of `supported_uri_schemes` and the media type should be one of
+    /// `supported_mime_types`.
+    ///
+    /// # Errors
+    /// Returns [`Error::DBusError`] or [`Error::DBusFdoError`] if the D-Bus call fails, e.g. if the
+    /// URI is not supported.
     pub async fn open_uri(&self, uri: &str) -> Result<()> {
         self.inner.player_proxy().await?.open_uri(uri).await?;
         Ok(())
     }
 
+    /// Pauses playback.
+    ///
+    /// If playback is already paused, this has no effect. See `can_pause`.
+    ///
+    /// # Errors
+    /// Returns [`Error::DBusError`] or [`Error::DBusFdoError`] if the D-Bus call fails.
     pub async fn pause(&self) -> Result<()> {
         self.inner.player_proxy().await?.pause().await?;
         Ok(())
     }
 
+    /// Starts or resumes playback.
+    ///
+    /// If already playing, this has no effect. See `can_play`.
+    ///
+    /// # Errors
+    /// Returns [`Error::DBusError`] or [`Error::DBusFdoError`] if the D-Bus call fails.
     pub async fn play(&self) -> Result<()> {
         self.inner.player_proxy().await?.play().await?;
         Ok(())
     }
 
+    /// Pauses playback if it's playing, otherwise starts or resumes it.
+    ///
+    /// # Errors
+    /// Returns [`Error::DBusError`] or [`Error::DBusFdoError`] if the D-Bus call fails.
     pub async fn play_pause(&self) -> Result<()> {
         self.inner.player_proxy().await?.play_pause().await?;
         Ok(())
     }
 
+    /// Skips to the previous track in the tracklist.
+    ///
+    /// If there is no previous track (and endless playback and track repeat are both off), stops
+    /// playback. See `can_go_previous`.
+    ///
+    /// # Errors
+    /// Returns [`Error::DBusError`] or [`Error::DBusFdoError`] if the D-Bus call fails.
     pub async fn previous(&self) -> Result<()> {
         self.inner.player_proxy().await?.previous().await?;
         Ok(())
     }
 
+    /// Seeks forward in the current track by `offset` microseconds.
+    ///
+    /// A negative value seeks back. Seeking past the end of the track skips to the next track.
+    /// See `can_seek`.
+    ///
+    /// # Errors
+    /// Returns [`Error::DBusError`] or [`Error::DBusFdoError`] if the D-Bus call fails.
     pub async fn seek(&self, offset: i64) -> Result<()> {
         self.inner.player_proxy().await?.seek(offset).await?;
         Ok(())
     }
 
+    /// Sets the position of the current track to `position` microseconds.
+    ///
+    /// `track_id` must be the `track_id` from `metadata` of the current track, otherwise the call
+    /// is ignored. This prevents seeking in the wrong track if it has changed in the meantime.
+    /// See `can_seek`.
+    ///
+    /// # Errors
+    /// Returns [`Error::DBusError`] or [`Error::DBusFdoError`] if the D-Bus call fails.
     pub async fn set_position(
         &self,
         track_id: &zbus::zvariant::ObjectPath<'_>,
@@ -531,12 +672,22 @@ impl PlayerHandle {
         Ok(())
     }
 
+    /// Stops playback.
+    ///
+    /// # Errors
+    /// Returns [`Error::DBusError`] or [`Error::DBusFdoError`] if the D-Bus call fails.
     pub async fn stop(&self) -> Result<()> {
         self.inner.player_proxy().await?.stop().await?;
 
         Ok(())
     }
 
+    /// Sets the loop status.
+    ///
+    /// Updates `loop_status` if the call succeeds.
+    ///
+    /// # Errors
+    /// Returns [`Error::DBusError`] or [`Error::DBusFdoError`] if the D-Bus call fails.
     pub async fn set_loop_status(&self, value: LoopStatus) -> Result<()> {
         self.inner
             .player_proxy()
@@ -549,18 +700,37 @@ impl PlayerHandle {
         Ok(())
     }
 
+    /// Sets the playback rate.
+    ///
+    /// The value must be in the range from `minimum_rate` to `maximum_rate`. Updates `rate` if the
+    /// call succeeds.
+    ///
+    /// # Errors
+    /// Returns [`Error::DBusError`] or [`Error::DBusFdoError`] if the D-Bus call fails.
     pub async fn set_rate(&self, value: f64) -> Result<()> {
         self.inner.player_proxy().await?.set_rate(value).await?;
         self.inner.properties.rate.set(value);
         Ok(())
     }
 
+    /// Enables or disables shuffle.
+    ///
+    /// Updates `shuffle` if the call succeeds.
+    ///
+    /// # Errors
+    /// Returns [`Error::DBusError`] or [`Error::DBusFdoError`] if the D-Bus call fails.
     pub async fn set_shuffle(&self, value: bool) -> Result<()> {
         self.inner.player_proxy().await?.set_shuffle(value).await?;
         self.inner.properties.shuffle.set(value);
         Ok(())
     }
 
+    /// Sets the volume level.
+    ///
+    /// Negative values are treated as `0.0`. Updates `volume` if the call succeeds.
+    ///
+    /// # Errors
+    /// Returns [`Error::DBusError`] or [`Error::DBusFdoError`] if the D-Bus call fails.
     pub async fn set_volume(&self, value: f64) -> Result<()> {
         self.inner.player_proxy().await?.set_volume(value).await?;
 
