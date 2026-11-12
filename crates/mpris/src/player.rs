@@ -364,24 +364,29 @@ impl Player {
                                     .maximum_rate
                                     .set(f64::try_from(value).unwrap_or_default()),
                                 "Metadata" => {
-                                    let metadata =
+                                    let metadata: Metadata =
                                         HashMap::try_from(value).unwrap_or_default().into();
 
-                                    if let Some(path) = Self::cache_art_cover(
-                                        cached_cover_art_dir.clone(),
-                                        &metadata,
-                                    )
-                                    .await
-                                    {
-                                        if path
-                                            != properties
-                                                .cached_cover_art
-                                                .return_property()
-                                                .read(|v| v.clone())
-                                                .unwrap_or_default()
-                                        {
-                                            properties.cached_cover_art.set(Some(path));
-                                        };
+                                    let is_art_url_changed = properties
+                                        .metadata
+                                        .return_property()
+                                        .read(|v| v.art_url != metadata.art_url);
+
+                                    if is_art_url_changed {
+                                        let path = Self::cache_art_cover(
+                                            cached_cover_art_dir.clone(),
+                                            &metadata,
+                                        )
+                                        .await;
+
+                                        let is_path_changed = properties
+                                            .cached_cover_art
+                                            .return_property()
+                                            .read(|v| *v != path);
+
+                                        if is_path_changed {
+                                            properties.cached_cover_art.set(path);
+                                        }
                                     }
 
                                     properties.metadata.set(metadata);
@@ -427,26 +432,34 @@ impl Player {
         metadata: &Metadata,
     ) -> Option<PathBuf> {
         let url = Url::parse(&metadata.art_url.clone()?).ok()?;
-        let filename = Uuid::new_v5(&Uuid::NAMESPACE_URL, url.as_str().as_bytes());
-
-        let destination = cached_cover_art_dir?.join(filename.to_string());
-
-        if destination.exists() {
-            return Some(destination);
-        }
+        let cached_cover_art_dir = cached_cover_art_dir?;
 
         match url.scheme() {
             "http" | "https" => {
-                let response = reqwest::get(url.as_str()).await.ok()?;
+                let filename = Uuid::new_v5(&Uuid::NAMESPACE_URL, url.as_str().as_bytes());
+                let destination = cached_cover_art_dir.join(filename.to_string());
 
-                let bytes = response.bytes().await.ok()?;
-                tokio::fs::write(&destination, bytes).await.ok()?;
-                Some(destination)
+                if destination.exists() {
+                    Some(destination)
+                } else {
+                    let response = reqwest::get(url.as_str()).await.ok()?;
+
+                    let bytes = response.bytes().await.ok()?;
+                    tokio::fs::write(&destination, bytes).await.ok()?;
+
+                    Some(destination)
+                }
             }
 
             "file" => {
-                let source = url.to_file_path().ok()?;
-                tokio::fs::copy(source, &destination).await.ok()?;
+                let bytes = tokio::fs::read(url.to_file_path().ok()?).await.ok()?;
+                let filename = Uuid::new_v5(&Uuid::NAMESPACE_OID, &bytes);
+                let destination = cached_cover_art_dir.join(filename.to_string());
+
+                if !destination.exists() {
+                    tokio::fs::write(&destination, bytes).await.ok()?;
+                }
+
                 Some(destination)
             }
 
