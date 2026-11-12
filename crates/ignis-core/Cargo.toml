@@ -1,0 +1,8 @@
+[package]
+name = "ignis-core"
+version = "0.1.0"
+edition = "2024"
+license.workspace = true
+
+[dependencies]
+ignis-core-proc = { path = "../ignis-core-proc" }

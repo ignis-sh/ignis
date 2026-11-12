@@ -60,6 +60,12 @@
           pkgs
           pkgs.python313Packages
           ./crates/py_notifications;
+
+        ignis-mpris =
+          mkPythonPkg
+          pkgs
+          pkgs.python313Packages
+          ./crates/py-mpris;
       };
 
       python314Packages = {
@@ -74,6 +80,12 @@
           pkgs
           pkgs.python314Packages
           ./crates/py_notifications;
+
+        ignis-mpris =
+          mkPythonPkg
+          pkgs
+          pkgs.python314Packages
+          ./crates/py-mpris;
       };
     });
 

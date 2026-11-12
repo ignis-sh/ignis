@@ -1,0 +1,13 @@
+[package]
+name = "ignis-core-proc"
+version = "0.1.0"
+edition = "2024"
+license.workspace = true
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { version = "2.0.117", features = ["full"] }
+quote = "1.0.44"
+proc-macro2 = "1.0.106"
