@@ -479,7 +479,7 @@ impl Player {
         let mut tracker = PositionTracker {
             position_us: player.position().await?,
             updated_at: std::time::Instant::now(),
-            rate: player.rate().await?,
+            rate: player.rate().await.unwrap_or(1.0),
             playing: player.playback_status().await? == "Playing",
         };
 
